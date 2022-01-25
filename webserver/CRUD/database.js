@@ -56,5 +56,4 @@ class Database {
     };
 }
 
-
 exports.Database = Database;
