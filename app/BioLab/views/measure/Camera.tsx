@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 // react-native
-import {Image, Text, TouchableHighlight, View} from 'react-native';
+import {Image, Text, TextInput, TouchableHighlight, View} from 'react-native';
 
 // dependency
 import {RNCamera} from 'react-native-camera';
@@ -13,6 +13,8 @@ import {mainStyle, cameraStyle, deviceStyle} from '../../styles/style';
 import ImageColors from 'react-native-image-colors';
 import ImagePicker from 'react-native-image-crop-picker';
 
+// const [shouldShow, setShouldShow] = useState(true);
+
 export default function Camera() {
   const [{cameraRef}, {takePicture}] = useCamera(undefined);
 
@@ -20,7 +22,7 @@ export default function Camera() {
     try {
       let widthImg: any, heightImg: any;
       const data = await takePicture();
-      console.log(data.uri);
+      // console.log(data.uri);
 
       // const filePath = data.uri;
       // const name = new Date()
@@ -28,8 +30,8 @@ export default function Camera() {
       // await RNFS.moveFile(filePath, newFilePath)
       // .then(async () => {
       // console.log('IMAGE MOVED', filePath, '-- to --', newFilePath);
-      console.log('Reading picture...');
-      console.log(`${RNFS.ExternalDirectoryPath}/file.jpg`);
+      // console.log('Reading picture...');
+      // console.log(`${RNFS.ExternalDirectoryPath}/file.jpg`);
 
       await ImagePicker.openCropper({
         path: data.uri,
@@ -40,9 +42,7 @@ export default function Camera() {
         cropperRotateButtonsHidden: true,
         hideBottomControls: true,
       }).then(async image => {
-        console.log(image);
         const result = await ImageColors.getColors(`${image.path}`, {});
-
         // HexToRgb source: https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
         const hexToRgb = (hex: {
           replace: (
@@ -70,9 +70,23 @@ export default function Camera() {
             .substring(1)
             .match(/.{2}/g)
             .map((x: string) => parseInt(x, 16));
+        // console.log(hexToRgb(result.vibrant));
 
-        console.log(result);
-        console.log(hexToRgb(result.vibrant));
+        let assignName = 'test';
+
+        RNFS.moveFile(
+          image.path,
+          `${image.path.substring(
+            0,
+            image.path.lastIndexOf('/'),
+          )}/${assignName}.jpg`,
+        );
+        let newPath = `${image.path.substring(
+          0,
+          image.path.lastIndexOf('/'),
+        )}/${assignName}.jpg`;
+
+        // setShouldShow(!shouldShow);
       });
 
       // })
@@ -80,7 +94,7 @@ export default function Camera() {
       //   console.log(error);
       // });
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
 
@@ -91,6 +105,12 @@ export default function Camera() {
         type={RNCamera.Constants.Type.back}
         style={cameraStyle.preview}
         flashMode={RNCamera.Constants.FlashMode.on}>
+        {/* {shouldShow ? (
+          <View>
+            <Text>Sample name:</Text>
+            <TextInput placeholder="useless placeholder" />
+          </View>
+        ) : null} */}
         <TouchableHighlight
           activeOpacity={0.5}
           onPress={() => captureHandle()}
