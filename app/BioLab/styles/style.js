@@ -152,7 +152,6 @@ export const cameraStyle = StyleSheet.create({
   },
   capturebutton: {
     padding: 10,
-    textAlign: 'center',
     marginBottom: 50
   }
 })
