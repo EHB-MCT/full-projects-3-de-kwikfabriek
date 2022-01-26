@@ -11,120 +11,125 @@ const {
     Database
 } = require('./CRUD/database.js');
 
-
-const {
-    User
-} = require('./CRUD/user.js');
-
 const {
     UserDB
 } = require('./CRUD/UserDB.js');
+
+let userDB = new UserDB;
+let dataBase = new Database;
 
 
 app.use(bodyParser.json());
 app.use(cors());
 
-let host = "db";
-let username = "username";
-let password = "username";
-let database = "BioLab";
 
-
-// app.post("/upload", upload.single('image'), (req, res) => {
-//     if (!req.file) {
-//         console.log("No file upload");
-//     } else {
-//         console.log(req.file.filename)
-//         var imgsrc = 'http://127.0.0.1:3000/images/' + req.file.filename
-//         var insertData = "INSERT INTO users_file(file_src)VALUES(?)"
-//         db.query(insertData, [imgsrc], (err, result) => {
-//             if (err) throw err
-//             console.log("file uploaded")
-//         })
-//     }
-// });
-
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
     console.log("Mainpage")
     res.status(200).send({
         message: "Server Biolab",
     });
 })
 
-app.get('/users', (req, res) => {
-    console.log("All users")
-    let Users = new UserDB()
-    const allUsers = Users.getAll();
-    res.status(200).send(allUsers);
+app.get('/users', async (req, res) => {
+    console.log("All users");
+    userDB.getAll("SELECT * FROM users").then((users) => {
+        res.send(users)
+    })
 })
 
-
-app.get('/user', (req, res) => {
-    console.log("One users")
-    let Student = new UserDB()
-    const student = Student.getUserFromUserID("1");
-    res.status(200).send({
-        value: student,
-        message: "Name of one student"
-    });
-})
-
-app.get('/images', (req, res) => {
-    console.log("All images")
-    res.send('All images')
-})
-
-
-app.get('/addUser', function (req, res) {
-    console.log("Add user")
+app.post('/login', async (req, res) => {
+    console.log("Login route called");
     try {
-        var con = mysql.createConnection({
-            host: "db",
-            user: "username",
-            password: "username",
-            database: "BioLab"
-        });
-
-        if (!con) {
-            console.log("Connection failed");
-        } else {
-            var QUERY = "INSERT INTO users (username, password) VALUES ('Georgette', '1578')";
-            con.query(QUERY, (err, results) => {
-                if (err) throw err
-                console.log("Query succesfull")
-                res.send(results)
-            })
+        if (!req.body.username || !req.body.password) {
+            res.status(400).send('Bad login: Missing email or password! Try again.');
+            return;
         }
+        userDB.checkPassword(req.body.username, req.body.password).then((verifyPass) => {
+            if (verifyPass) {
+                console.log("You are logged in, have fun!")
+                res.status(200).send("You are logged in, have fun!");
+            } else if (!verifyPass) {
+                console.log("Fool, wrong password or username!")
+                res.status(500).send("Fool, wrong password or username!");
+            }
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            error: 'Something went wrong',
+            value: error
+        })
+    }
+
+})
+
+app.post('/register', async (req, res) => {
+    console.log("Register route called");
+    try {
+        if (!req.body.username || !req.body.password) {
+            res.status(400).send('Bad login: Missing email or password! Try again.');
+            return;
+        }
+
+        userDB.createUser(req.body.username, req.body.password).then((result) => {
+            if (result == true) {
+                console.log("You are logged in, have fun!")
+            } else if (result = false) {
+                console.log("Fool, wrong password or username!")
+            }
+        })
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            error: 'Something went wrong',
+            value: error
+        })
+    } finally {
+        console.log("Query succesfull!")
+    }
+})
+
+app.get('/imageData', async (req, res) => {
+    console.log("All images")
+    userDB.getAllImageData("SELECT * FROM images").then((data) => {
+        res.send(data)
+    })
+})
+
+app.get('/user', async (req, res) => {
+    console.log("One user")
+    userDB.getUserFromUserID("1").then((user) => {
+        res.send(user)
+    })
+})
+
+
+
+app.get('/connection', async (req, res) => {
+    dataBase.maakVerbindingMetDatabase();
+    res.status(200).send("Succesfull connection.")
+})
+
+
+app.post('/addUser', async (req, res) => {
+    console.log("Add user path")
+    try {
+        if (!req.body.username || !req.body.password) {
+            res.status(400).send('Bad Register: Missing username or password! Try again.');
+            return;
+        }
+        var QUERY = `INSERT INTO users(username, password) VALUES ("${req.body.username}", "${req.body.password}" )`
+        dataBase.voerSqlQueryUit(QUERY).then((data) => {
+            res.status(201).send(data)
+        })
     } catch (error) {
         console.log(error, "Sending doesn't work")
 
     } finally {
         console.log("User added to BioLab server.")
     }
-
 });
-
-
-app.get('/test', (req, res) => {
-    var con = mysql.createConnection({
-        host: "db",
-        user: "username",
-        password: "username",
-        database: "BioLab"
-    });
-
-    // Connecting to the database.
-    con.connect(function (err, connection) {
-        // Executing the MySQL query (select all data from the 'users' table).
-        con.query('SELECT * FROM users', function (error, results, fields) {
-            // If some error occurs, we throw an error.
-            if (error) throw error;
-            // Getting the 'response' from the database and sending it to our route.
-            res.send(results)
-        });
-    });
-})
-
 
 
 app.listen(port, () => {

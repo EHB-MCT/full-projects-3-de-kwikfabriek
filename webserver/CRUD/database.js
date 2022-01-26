@@ -11,10 +11,10 @@ class Database {
 
     maakVerbindingMetDatabase() {
         this.mijnVerbinding = mysql.createConnection({
-            host: this.host,
-            user: this.user,
-            password: this.wachtwoord,
-            database: this.database
+            host: "db",
+            user: "username",
+            password: "username",
+            database: "Biolab"
         });
 
         this.mijnVerbinding.connect(function (err) {

@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const {
     DatabaseFactory
 } = require('./databaseFactory');
@@ -7,6 +8,10 @@ const {
     User
 } = require('./user.js');
 
+const {
+    Image
+} = require('./image.js');
+
 
 class UserDB {
     getVerbinding() {
@@ -14,12 +19,25 @@ class UserDB {
         return databaseFactory.getDatabase();
     }
 
-    getAll() {
+    getAll(mijnSqlQuery) {
         return new Promise((resolve, reject) => {
-            this.getVerbinding().voerSqlQueryUit("SELECT * FROM users").then((resultaat) => {
+            this.getVerbinding().voerSqlQueryUit(mijnSqlQuery).then((resultaat) => {
                 let resultatenArray = [];
                 resultaat.map((value) => {
                     resultatenArray.push(this.converteerQueryNaarObject(value));
+                });
+                resolve(resultatenArray);
+                console.log(resultatenArray);
+            });
+        });
+    }
+
+    getAllImageData(mijnSqlQuery) {
+        return new Promise((resolve, reject) => {
+            this.getVerbinding().voerSqlQueryUit(mijnSqlQuery).then((resultaat) => {
+                let resultatenArray = [];
+                resultaat.map((value) => {
+                    resultatenArray.push(this.converteerQueryNaarObjectImages(value));
                 });
                 resolve(resultatenArray);
                 console.log(resultatenArray);
@@ -40,14 +58,13 @@ class UserDB {
     checkPassword(username, password) {
         return new Promise((resolve, reject) => {
             this.getVerbinding().voerSqlQueryUit("SELECT * FROM users WHERE username = ?", [username]).then((resultaat) => {
-                resultaat = this.converteerQueryNaarObject(resultaat)
-                bcrypt.compare(password, resultaat.password, function (err, result) {
-                    if (result == true) {
-                        resolve(resultaat)
-                    } else {
-                        resolve(false);
-                    }
-                });
+                console.log(username);
+                resultaat = this.converteerQueryNaarObjectPassword(resultaat);
+                console.log(resultaat);
+                const verifyPass = bcrypt.compareSync(password, resultaat.password);
+                console.log(verifyPass);
+                resolve(verifyPass);
+
             });
         });
     }
@@ -55,8 +72,8 @@ class UserDB {
     createUser(username, password) {
         return new Promise((resolve, reject) => {
             this.hashPass(password).then(hashedPassword => {
-                this.getVerbinding().voerSqlQueryUit("INSERT INTO users (name, password) VALUES (?, ?)", [username, hashedPassword]).then(() => {
-                    this.getUserFromEmail(username).then((value) => {
+                this.getVerbinding().voerSqlQueryUit("INSERT INTO users (username, password) VALUES (?, ?)", [username, hashedPassword]).then(() => {
+                    this.getUserFromUserID(username).then((value) => {
                         resolve(value);
                     });
                 });
@@ -66,13 +83,22 @@ class UserDB {
 
     hashPass(password) {
         return new Promise((resolve, reject) => {
-            // bcrypt werkt blijkbaar niet meer -> oplossing zoeken naar nieuwe dependency
-            resolve(password);
+            const hashedPassword = bcrypt.hash(password, 10);
+            resolve(hashedPassword);
         })
     }
 
     converteerQueryNaarObject(query) {
         return new User(query.id, query.username, query.password);
+    }
+
+
+    converteerQueryNaarObjectPassword(query) {
+        return new User(query.username, query.password);
+    }
+
+    converteerQueryNaarObjectImages(query) {
+        return new Image(query.sampleID, query.time);
     }
 }
 
