@@ -1,7 +1,15 @@
 import React, {useEffect, useState} from 'react';
 
 // react-native
-import {Image, Text, TextInput, TouchableHighlight, View} from 'react-native';
+import {
+  Animated,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableHighlight,
+  View,
+} from 'react-native';
 
 // dependency
 import {RNCamera} from 'react-native-camera';
@@ -12,12 +20,11 @@ import RNFS from 'react-native-fs';
 import RNFetchBlob from 'rn-fetch-blob';
 
 // cameraStyle
-import {mainStyle, cameraStyle, deviceStyle} from '../../styles/style';
+import {cameraStyle} from '../../styles/style';
 import ImageColors from 'react-native-image-colors';
 import ImagePicker from 'react-native-image-crop-picker';
 
 export default function Camera() {
-  let imageData: Image;
   let [shouldShow, setShouldShow] = useState(true);
   const [cameraShow, setCameraShow] = useState(true);
   const [{cameraRef}, {takePicture}] = useCamera(undefined);
@@ -27,77 +34,65 @@ export default function Camera() {
       new Date().getMonth() + 1
     }${new Date().getDate()}_`,
   );
-  let [submitImageName, setSubmitImageName] = useState(false);
+  const [nameInUse, setNameInUse] = useState(false);
 
   const captureHandle = async () => {
     try {
-      RNFetchBlob.fs
-        .ls(`${RNFS.ExternalDirectoryPath}/Pictures/`)
-        .then(async files => {
-          if (files.indexOf(`${text}.jpg`) > -1) {
-            console.log(
-              'You already have a sample image containing the same name!',
-            );
-            return setShouldShow(true);
-          } else {
-            let widthImg: any, heightImg: any;
-            const data = await takePicture();
-            await ImagePicker.openCropper({
-              path: data.uri,
-              width: data.width,
-              height: data.height,
-              mediaType: 'photo',
-              cropperCircleOverlay: true,
-              cropperRotateButtonsHidden: true,
-              hideBottomControls: true,
-            }).then(async image => {
-              const result = await ImageColors.getColors(`${image.path}`, {});
-              // HexToRgb source: https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
-              const hexToRgb = (hex: {
-                replace: (
-                  arg0: RegExp,
-                  arg1: (m: any, r: any, g: any, b: any) => string,
-                ) => {
-                  (): any;
-                  new (): any;
-                  substring: {
-                    (arg0: number): {
-                      (): any;
-                      new (): any;
-                      match: {(arg0: RegExp): any[]; new (): any};
-                    };
-                    new (): any;
-                  };
-                };
-              }) =>
-                hex
-                  .replace(
-                    /^#?([a-f\d])([a-f\d])([a-f\d])$/i,
-                    (m: any, r: string, g: string, b: string) =>
-                      '#' + r + r + g + g + b + b,
-                  )
-                  .substring(1)
-                  .match(/.{2}/g)
-                  .map((x: string) => parseInt(x, 16));
+      let widthImg: any, heightImg: any;
+      const data = await takePicture();
+      await ImagePicker.openCropper({
+        path: data.uri,
+        width: data.width,
+        height: data.height,
+        mediaType: 'photo',
+        cropperCircleOverlay: true,
+        cropperRotateButtonsHidden: true,
+        hideBottomControls: true,
+      }).then(async image => {
+        const result = await ImageColors.getColors(`${image.path}`, {});
+        // HexToRgb source: https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+        const hexToRgb = (hex: {
+          replace: (
+            arg0: RegExp,
+            arg1: (m: any, r: any, g: any, b: any) => string,
+          ) => {
+            (): any;
+            new (): any;
+            substring: {
+              (arg0: number): {
+                (): any;
+                new (): any;
+                match: {(arg0: RegExp): any[]; new (): any};
+              };
+              new (): any;
+            };
+          };
+        }) =>
+          hex
+            .replace(
+              /^#?([a-f\d])([a-f\d])([a-f\d])$/i,
+              (m: any, r: string, g: string, b: string) =>
+                '#' + r + r + g + g + b + b,
+            )
+            .substring(1)
+            .match(/.{2}/g)
+            .map((x: string) => parseInt(x, 16));
 
-              console.log(hexToRgb(result.vibrant));
+        console.log(hexToRgb(result.vibrant));
 
-              let assignName = text;
-              RNFS.moveFile(
-                image.path,
-                `${image.path.substring(
-                  0,
-                  image.path.lastIndexOf('/'),
-                )}/${assignName}.jpg`,
-              );
-              console.log('succesfully saved image');
-              setShouldShow(true);
-              setConfirmationShow(true);
-              setTimeout(() => setConfirmationShow(false), 3500);
-            });
-          }
-        })
-        .catch(error => console.log(error));
+        let assignName = text;
+        RNFS.moveFile(
+          image.path,
+          `${image.path.substring(
+            0,
+            image.path.lastIndexOf('/'),
+          )}/${assignName}.jpg`,
+        );
+        console.log('succesfully saved image');
+        setShouldShow(true);
+        setConfirmationShow(true);
+        setTimeout(() => setConfirmationShow(false), 3500);
+      });
     } catch (error) {
       console.log(error);
     }
@@ -132,12 +127,37 @@ export default function Camera() {
             <Text style={cameraStyle.assignNameText}>Sample name:</Text>
             <TextInput
               style={cameraStyle.assignNameBox}
-              onChangeText={onChangeText}
+              onChangeText={text => {
+                onChangeText(text);
+                RNFetchBlob.fs
+                  .ls(`${RNFS.ExternalDirectoryPath}/Pictures/`)
+                  .then(files => {
+                    if (files.indexOf(`${text}.jpg`) > -1) {
+                      setNameInUse(true);
+                    } else {
+                      setNameInUse(false);
+                    }
+                  });
+              }}
               value={text}
             />
             <TouchableHighlight
-              style={cameraStyle.assignNameSubmitHighlight}
-              onPress={() => setShouldShow(false)}
+              style={
+                (cameraStyle.assignNameSubmitHighlight,
+                nameInUse ? cameraStyle.inUse : cameraStyle.notInUse)
+              }
+              onPress={() => {
+                RNFetchBlob.fs
+                  .ls(`${RNFS.ExternalDirectoryPath}/Pictures/`)
+                  .then(files => {
+                    if (files.indexOf(`${text}.jpg`) > -1) {
+                      setNameInUse(true);
+                      return setShouldShow(true);
+                    } else {
+                      setShouldShow(false);
+                    }
+                  });
+              }}
               underlayColor="rgba(50,50,100,1)">
               <Text style={cameraStyle.assignNameSubmit}>Submit</Text>
             </TouchableHighlight>

@@ -177,6 +177,7 @@ export const cameraStyle = StyleSheet.create({
     paddingLeft: 12,
     paddingRight: 12,
     borderRadius: 10,
+    marginBottom: 20
   },
   assignNameText: {
     fontSize: 18,
@@ -184,10 +185,8 @@ export const cameraStyle = StyleSheet.create({
   },
   assignNameSubmitHighlight: {
     borderRadius: 20,
-
   },
   assignNameSubmit: {
-    marginTop: 20,
     fontSize: 24,
     padding: 15,
     textAlign: "center",
@@ -203,6 +202,12 @@ export const cameraStyle = StyleSheet.create({
   },
   ImageSavedText: {
     fontSize: 24,
+  },
+  inUse: {
+    backgroundColor: 'rgba(160,65,65,1)',
+  },
+  notInUse: {
+    backgroundColor: 'rgba(70,70,100,1)',
   },
 })
 
