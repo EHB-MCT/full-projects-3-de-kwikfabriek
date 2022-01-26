@@ -149,16 +149,9 @@ export const cameraStyle = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'flex-end',
-    marginTop: 50,
-    marginBottom: 150
   },
   capturebutton: {
-    color: 'white',
-    backgroundColor: '#2196F3',
     padding: 10,
-    paddingLeft: 40,
-    paddingRight: 40,
-    textAlign: 'center',
     marginBottom: 50
   }
 })
