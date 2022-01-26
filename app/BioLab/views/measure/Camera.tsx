@@ -45,11 +45,9 @@ export default function Camera() {
         width: data.width,
         height: data.height,
         mediaType: 'photo',
-        cropperCircleOverlay: true,
         cropperRotateButtonsHidden: true,
         hideBottomControls: true,
       }).then(async image => {
-        const result = await ImageColors.getColors(`${image.path}`, {});
         // HexToRgb source: https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
         const hexToRgb = (hex: {
           replace: (
@@ -78,7 +76,9 @@ export default function Camera() {
             .match(/.{2}/g)
             .map((x: string) => parseInt(x, 16));
 
-        console.log(hexToRgb(result.vibrant));
+        const result = await ImageColors.getColors(`${image.path}`, {});
+        console.log(result);
+        console.log(hexToRgb(result.average));
 
         let assignName = text;
         RNFS.moveFile(
@@ -94,13 +94,9 @@ export default function Camera() {
         setTimeout(() => setConfirmationShow(false), 3500);
       });
     } catch (error) {
-      console.log(error);
+      console.log(error, 'haha');
     }
   };
-
-  // useEffect(() => {
-
-  // });
 
   return (
     <View style={cameraStyle.body}>
@@ -109,7 +105,8 @@ export default function Camera() {
           ref={cameraRef}
           type={RNCamera.Constants.Type.back}
           style={cameraStyle.preview}
-          flashMode={RNCamera.Constants.FlashMode.on}>
+          flashMode={RNCamera.Constants.FlashMode.torch}
+          whiteBalance={RNCamera.Constants.WhiteBalance.auto}>
           <TouchableHighlight
             activeOpacity={0.5}
             onPress={() => captureHandle()}
@@ -127,7 +124,7 @@ export default function Camera() {
             <Text style={cameraStyle.assignNameText}>Sample name:</Text>
             <TextInput
               style={cameraStyle.assignNameBox}
-              onChangeText={text => {
+              onChangeText={async text => {
                 onChangeText(text);
                 RNFetchBlob.fs
                   .ls(`${RNFS.ExternalDirectoryPath}/Pictures/`)
