@@ -2,7 +2,7 @@
 import React, { Component, useState, useEffect } from 'react';
 
 // react native
-import { PermissionsAndroid, LogBox, Touchable } from 'react-native';
+import { PermissionsAndroid, LogBox, Touchable, TouchableHighlightBase } from 'react-native';
 import { Text, View, ScrollView, Pressable } from 'react-native';
 
 // dependency
@@ -18,8 +18,8 @@ LogBox.ignoreAllLogs();
 
 
 const SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
+
 const SENSOR_UUID = '6d68efe5-04b6-4a85-abc4-c2670b7bf7fd';
-const STATUS_UUID = '88ec1bb2-9dda-4c0c-a1ad-9605c432beef';
 
 
 export default class DeviceList extends Component<{ navigation: any }, {
@@ -30,6 +30,7 @@ export default class DeviceList extends Component<{ navigation: any }, {
   connected: Boolean,
   error: String | null,
   data: String,
+  sensorDataArray: number[],
   status: Number,
 }> {
 
@@ -48,6 +49,7 @@ export default class DeviceList extends Component<{ navigation: any }, {
       connected: false,
       error: null,
       data: "",
+      sensorDataArray: [],
       status: 1
     }
 
@@ -170,31 +172,46 @@ export default class DeviceList extends Component<{ navigation: any }, {
 
         device.monitorCharacteristicForService(SERVICE_UUID, SENSOR_UUID, (error, characteristic) => {
             if (characteristic?.value != null) {
-              this.setState({
-                data: base64.decode(characteristic?.value ?? "")
-              });
+              // this.setState({
+              //   data: base64.decode(characteristic?.value ?? "")
+              // });
+
+              let value: string = base64.decode(characteristic?.value ?? null);
+
+              switch(value){
+                case 'BEGIN':
+                  this.setState({
+                    sensorDataArray: []
+                  });
+                  break;
+                case 'END':
+
+                  const sum: number = this.state.sensorDataArray.reduce((a, b) => a + b, 0);
+                  const avg: number = (sum / this.state.sensorDataArray.length) || 0;
+
+                  this.setState({
+                    data: avg.toString()
+                  });
+
+                  break;
+                default:
+                  if(value){
+                    let stateSensorData: number[]  = this.state.sensorDataArray;
+                    stateSensorData.push(Number(value));
+                    this.setState({
+                      sensorDataArray: stateSensorData
+                    })
+                  }
+                  break;
+              }
+
               console.log(
-                'Message update received: ',
-                base64.decode(characteristic?.value),
+                'Status update received: ', this.state.sensorDataArray
               );
             }
         },
           'messagetransaction',
         );
-
-        device.monitorCharacteristicForService(SERVICE_UUID, STATUS_UUID, (error, characteristic) => {
-          if (characteristic?.value != null) {
-            this.setState({
-              status: Number(base64.decode(characteristic?.value ?? ""))
-            });
-            console.log(
-              'Message update received: ',
-              base64.decode(characteristic?.value),
-            );
-          }
-      },
-        'messagetransaction',
-      );
 
 
       });
@@ -244,6 +261,13 @@ export default class DeviceList extends Component<{ navigation: any }, {
     if(this.state.connectedDevice) this.disconnect();
   }
 
+
+  changeStatus(status: Number){
+    this.setState({
+      status: status
+    });
+    this.sendData(`status ${status}`, SENSOR_UUID);
+  }
 
   statusToString(status: Number){
     switch(status){
@@ -330,6 +354,13 @@ export default class DeviceList extends Component<{ navigation: any }, {
 
           <Text style={deviceStyle.statusText}>{ this.statusToString(this.state.status) }</Text>
           <Text style={deviceStyle.statusText}>Value: { this.state.data }</Text>
+
+          <Pressable
+            style={deviceStyle.button}
+            onPress={()=> {this.changeStatus(2)}}
+          >
+            <Text style={deviceStyle.buttonText}>Measure sample</Text>
+          </Pressable>
           
         </View>
       </View>
