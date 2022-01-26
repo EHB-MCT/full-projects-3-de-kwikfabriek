@@ -6,9 +6,9 @@
  * @flow strict-local
  */
 
- import React, { Component } from 'react';
- import { NavigationContainer } from '@react-navigation/native';
- import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React, { Component } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import {
   SafeAreaView,
@@ -35,12 +35,13 @@ import MapView from './views/MapView';
 import Data from './views/Data';
 import InfoView from './views/InfoView';
 import DeviceList from './views/measure/DeviceList';
+import User from './views/user';
 
 const Stack = createNativeStackNavigator();
 
 export default class App extends Component {
 
-  constructor(props: any){
+  constructor(props: any) {
     super(props);
   }
 
@@ -94,6 +95,12 @@ export default class App extends Component {
             options={{ title: 'Camera' }}
           />
 
+          <Stack.Screen
+            name="User"
+            component={User}
+            options={{ title: 'User' }}
+          />
+
         </Stack.Navigator>
       </NavigationContainer>
     );
@@ -106,9 +113,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5FCFF',
   },
-  toolbar:{
-    paddingTop:30,
-    paddingBottom:10,
-    flexDirection:'row'
+  toolbar: {
+    paddingTop: 30,
+    paddingBottom: 10,
+    flexDirection: 'row'
   }
 });

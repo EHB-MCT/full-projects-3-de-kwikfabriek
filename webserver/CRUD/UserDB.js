@@ -45,10 +45,10 @@ class UserDB {
         });
     }
 
-    getUserFromUserID(UserID) {
+    getUserFromUserName(UserName) {
         return new Promise((resolve, reject) => {
-            this.getVerbinding().voerSqlQueryUit("SELECT * FROM users WHERE id = ?", [UserID]).then((resultaat) => {
-                resultaat = this.converteerQueryNaarObject(resultaat)
+            this.getVerbinding().voerSqlQueryUit("SELECT * FROM users WHERE userName = ?", [UserName]).then((resultaat) => {
+                resultaat = this.converteerQueryNaarObjectPassword(resultaat)
                 resolve(resultaat);
                 console.log(resultaat);
             });
@@ -58,7 +58,6 @@ class UserDB {
     checkPassword(username, password) {
         return new Promise((resolve, reject) => {
             this.getVerbinding().voerSqlQueryUit("SELECT * FROM users WHERE username = ?", [username]).then((resultaat) => {
-                console.log(username);
                 resultaat = this.converteerQueryNaarObjectPassword(resultaat);
                 console.log(resultaat);
                 const verifyPass = bcrypt.compareSync(password, resultaat.password);
@@ -69,11 +68,21 @@ class UserDB {
         });
     }
 
+    checkDuplicates(username, password) {
+        return new Promise((resolve, reject) => {
+            this.getVerbinding().voerSqlQueryUit("SELECT * FROM users WHERE username = ?", [username]).then((resultaat) => {
+                resultaat = this.converteerQueryNaarObjectPassword(resultaat);
+                console.log(resultaat);
+                resolve(resultaat);
+            });
+        });
+    }
+
     createUser(username, password) {
         return new Promise((resolve, reject) => {
             this.hashPass(password).then(hashedPassword => {
                 this.getVerbinding().voerSqlQueryUit("INSERT INTO users (username, password) VALUES (?, ?)", [username, hashedPassword]).then(() => {
-                    this.getUserFromUserID(username).then((value) => {
+                    this.getUserFromUserName(username).then((value) => {
                         resolve(value);
                     });
                 });

@@ -71,11 +71,20 @@ app.post('/register', async (req, res) => {
             return;
         }
 
+        userDB.checkDuplicates(req.body.name).then((result) => {
+            if (result) {
+                return;
+            }
+        })
+
         userDB.createUser(req.body.username, req.body.password).then((result) => {
-            if (result == true) {
+            console.log(result, "this is result");
+            if (result) {
                 console.log("You are logged in, have fun!")
-            } else if (result = false) {
+                res.status(200).send("Acount created!");
+            } else if (!result) {
                 console.log("Fool, wrong password or username!")
+                res.status(500).send("Fool, wrong password or username!");
             }
         })
 

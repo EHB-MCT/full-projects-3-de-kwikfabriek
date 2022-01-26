@@ -26,8 +26,19 @@ export default class Home extends Component<{ navigation: any }> {
           <Text style={{ opacity: 0 }}></Text>
 
 
-          <View style={styles.toolbar}>
-            {/* Hier kunnen er knoppen komen */}
+
+
+          <View>
+            <View>
+              <TouchableHighlight onPress={() =>
+                this.props.navigation.navigate('User', {})
+              } underlayColor="rgba(0,0,0,0)">
+
+                <Text>Account</Text>
+
+              </TouchableHighlight>
+
+            </View>
 
           </View>
 
@@ -83,6 +94,10 @@ export default class Home extends Component<{ navigation: any }> {
               </TouchableHighlight>
 
             </View>
+
+
+
+
           </View>
           {/* </LinearGradient> */}
 
