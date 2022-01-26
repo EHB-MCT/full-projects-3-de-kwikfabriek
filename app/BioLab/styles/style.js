@@ -191,7 +191,19 @@ export const cameraStyle = StyleSheet.create({
     fontSize: 24,
     padding: 15,
     textAlign: "center",
-  }
+  },
+  imageSavedCont: {
+    flex: 1,
+    position: 'absolute',
+    width: "100%",
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgb(120,120,170)",
+  },
+  ImageSavedText: {
+    fontSize: 24,
+  },
 })
 
 

@@ -6,7 +6,10 @@ import {Image, Text, TextInput, TouchableHighlight, View} from 'react-native';
 // dependency
 import {RNCamera} from 'react-native-camera';
 import {useCamera} from 'react-native-camera-hooks';
+
+// file managers
 import RNFS from 'react-native-fs';
+import RNFetchBlob from 'rn-fetch-blob';
 
 // cameraStyle
 import {mainStyle, cameraStyle, deviceStyle} from '../../styles/style';
@@ -18,6 +21,7 @@ export default function Camera() {
   let [shouldShow, setShouldShow] = useState(true);
   const [cameraShow, setCameraShow] = useState(true);
   const [{cameraRef}, {takePicture}] = useCamera(undefined);
+  let [confirmationShow, setConfirmationShow] = useState(false);
   const [text, onChangeText] = useState(
     `${new Date().getFullYear()}${
       new Date().getMonth() + 1
@@ -27,59 +31,73 @@ export default function Camera() {
 
   const captureHandle = async () => {
     try {
-      let widthImg: any, heightImg: any;
-      const data = await takePicture();
-      await ImagePicker.openCropper({
-        path: data.uri,
-        width: data.width,
-        height: data.height,
-        mediaType: 'photo',
-        cropperCircleOverlay: true,
-        cropperRotateButtonsHidden: true,
-        hideBottomControls: true,
-      }).then(async image => {
-        const result = await ImageColors.getColors(`${image.path}`, {});
-        // HexToRgb source: https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
-        const hexToRgb = (hex: {
-          replace: (
-            arg0: RegExp,
-            arg1: (m: any, r: any, g: any, b: any) => string,
-          ) => {
-            (): any;
-            new (): any;
-            substring: {
-              (arg0: number): {
-                (): any;
-                new (): any;
-                match: {(arg0: RegExp): any[]; new (): any};
-              };
-              new (): any;
-            };
-          };
-        }) =>
-          hex
-            .replace(
-              /^#?([a-f\d])([a-f\d])([a-f\d])$/i,
-              (m: any, r: string, g: string, b: string) =>
-                '#' + r + r + g + g + b + b,
-            )
-            .substring(1)
-            .match(/.{2}/g)
-            .map((x: string) => parseInt(x, 16));
+      RNFetchBlob.fs
+        .ls(`${RNFS.ExternalDirectoryPath}/Pictures/`)
+        .then(async files => {
+          if (files.indexOf(`${text}.jpg`) > -1) {
+            console.log(
+              'You already have a sample image containing the same name!',
+            );
+            return setShouldShow(true);
+          } else {
+            let widthImg: any, heightImg: any;
+            const data = await takePicture();
+            await ImagePicker.openCropper({
+              path: data.uri,
+              width: data.width,
+              height: data.height,
+              mediaType: 'photo',
+              cropperCircleOverlay: true,
+              cropperRotateButtonsHidden: true,
+              hideBottomControls: true,
+            }).then(async image => {
+              const result = await ImageColors.getColors(`${image.path}`, {});
+              // HexToRgb source: https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+              const hexToRgb = (hex: {
+                replace: (
+                  arg0: RegExp,
+                  arg1: (m: any, r: any, g: any, b: any) => string,
+                ) => {
+                  (): any;
+                  new (): any;
+                  substring: {
+                    (arg0: number): {
+                      (): any;
+                      new (): any;
+                      match: {(arg0: RegExp): any[]; new (): any};
+                    };
+                    new (): any;
+                  };
+                };
+              }) =>
+                hex
+                  .replace(
+                    /^#?([a-f\d])([a-f\d])([a-f\d])$/i,
+                    (m: any, r: string, g: string, b: string) =>
+                      '#' + r + r + g + g + b + b,
+                  )
+                  .substring(1)
+                  .match(/.{2}/g)
+                  .map((x: string) => parseInt(x, 16));
 
-        console.log(hexToRgb(result.vibrant));
+              console.log(hexToRgb(result.vibrant));
 
-        let assignName = text;
-        RNFS.moveFile(
-          image.path,
-          `${image.path.substring(
-            0,
-            image.path.lastIndexOf('/'),
-          )}/${assignName}.jpg`,
-        );
-        console.log('succesfully saved image');
-        setShouldShow(true);
-      });
+              let assignName = text;
+              RNFS.moveFile(
+                image.path,
+                `${image.path.substring(
+                  0,
+                  image.path.lastIndexOf('/'),
+                )}/${assignName}.jpg`,
+              );
+              console.log('succesfully saved image');
+              setShouldShow(true);
+              setConfirmationShow(true);
+              setTimeout(() => setConfirmationShow(false), 3500);
+            });
+          }
+        })
+        .catch(error => console.log(error));
     } catch (error) {
       console.log(error);
     }
@@ -124,6 +142,13 @@ export default function Camera() {
               <Text style={cameraStyle.assignNameSubmit}>Submit</Text>
             </TouchableHighlight>
           </View>
+        </View>
+      ) : null}
+      {confirmationShow ? (
+        <View style={cameraStyle.imageSavedCont}>
+          <Text style={cameraStyle.ImageSavedText}>
+            Image saved succesfully
+          </Text>
         </View>
       ) : null}
     </View>
