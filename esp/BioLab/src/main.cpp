@@ -69,13 +69,15 @@ class CharacteristicsCallbacks : public BLECharacteristicCallbacks{
         sensor_characteristic->setValue("BEGIN");
         sensor_characteristic->notify();
 
-        for (size_t i = 0; i < 10; i++)
+        for (size_t i = 0; i < 20; i++)
         {
-          char sensorValue[6] = "";
-          sensor_characteristic->setValue(dtostrf(sensor.sensorData(), 4, 0, sensorValue));
+
+          string sensorData = sensor.sensorData();
+
+          sensor_characteristic->setValue(sensorData);
           sensor_characteristic->notify();
 
-          delay(100);
+          delay(50);
         }
 
         sensor_characteristic->setValue("END");

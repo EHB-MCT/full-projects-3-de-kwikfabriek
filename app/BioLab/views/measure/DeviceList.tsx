@@ -21,6 +21,12 @@ const SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
 
 const SENSOR_UUID = '6d68efe5-04b6-4a85-abc4-c2670b7bf7fd';
 
+interface RGB {
+  r: number,
+  g: number,
+  b: number
+}
+
 
 export default class DeviceList extends Component<{ navigation: any }, {
   devices: Device[], 
@@ -30,7 +36,7 @@ export default class DeviceList extends Component<{ navigation: any }, {
   connected: Boolean,
   error: String | null,
   data: String,
-  sensorDataArray: number[],
+  sensorDataArray: RGB[],
   status: Number,
 }> {
 
@@ -186,18 +192,52 @@ export default class DeviceList extends Component<{ navigation: any }, {
                   break;
                 case 'END':
 
-                  const sum: number = this.state.sensorDataArray.reduce((a, b) => a + b, 0);
-                  const avg: number = (sum / this.state.sensorDataArray.length) || 0;
+                  let sum: number = 0;
+
+                  let avgR: number;
+                  let avgG: number;
+                  let avgB: number;
+
+                  let arrR: number[] = [];
+                  let arrG: number[] = [];
+                  let arrB: number[] = [];
+
+                  for (let index = 0; index < this.state.sensorDataArray.length; index++) {
+                    arrR.push(this.state.sensorDataArray[index].r);
+                    arrG.push(this.state.sensorDataArray[index].g);
+                    arrB.push(this.state.sensorDataArray[index].b);
+                  }
+
+                  sum = arrR.reduce((a, b) => a + b, 0);
+                  avgR = (sum / arrR.length) || 0;
+
+                  sum = arrG.reduce((a, b) => a + b, 0);
+                  avgG = (sum / arrG.length) || 0;
+
+                  sum = arrB.reduce((a, b) => a + b, 0);
+                  avgB = (sum / arrB.length) || 0;
 
                   this.setState({
-                    data: avg.toString()
+                    data: `R: ${avgR} G: ${avgG} B: ${avgB}`
                   });
+
+                  console.log('AVG', `${avgR}\t${avgG}\t${avgB}`);
 
                   break;
                 default:
-                  if(value){
-                    let stateSensorData: number[]  = this.state.sensorDataArray;
-                    stateSensorData.push(Number(value));
+                  if(value && value !== "BAD"){
+
+                    let stateSensorData: RGB[]  = this.state.sensorDataArray;
+
+                    let splittedValue = value.split(',');
+
+                    let currentValue: RGB = {
+                      r: Number(splittedValue[0]),
+                      g: Number(splittedValue[1]),
+                      b: Number(splittedValue[2]),
+                    }
+
+                    stateSensorData.push(currentValue);
                     this.setState({
                       sensorDataArray: stateSensorData
                     })
@@ -205,9 +245,6 @@ export default class DeviceList extends Component<{ navigation: any }, {
                   break;
               }
 
-              console.log(
-                'Status update received: ', this.state.sensorDataArray
-              );
             }
         },
           'messagetransaction',

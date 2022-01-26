@@ -1,4 +1,8 @@
 #include <Arduino.h>
+#include <string>
+#include <iostream>
+
+using namespace std;
 
 // sensor libs hier
 
@@ -17,7 +21,7 @@ class Sensor{
   public:
     Sensor(int pSensorPin, int pLedPin);
     void sensorSetup();
-    int sensorData();
+    string sensorData();
 
     void enableLed();
     void disableLed();
