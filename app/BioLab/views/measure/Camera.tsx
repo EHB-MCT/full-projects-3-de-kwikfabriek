@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 // react-native
 import {Image, Text, TextInput, TouchableHighlight, View} from 'react-native';
@@ -13,26 +13,22 @@ import {mainStyle, cameraStyle, deviceStyle} from '../../styles/style';
 import ImageColors from 'react-native-image-colors';
 import ImagePicker from 'react-native-image-crop-picker';
 
-// const [shouldShow, setShouldShow] = useState(true);
-
 export default function Camera() {
+  let imageData: Image;
+  let [shouldShow, setShouldShow] = useState(true);
+  const [cameraShow, setCameraShow] = useState(true);
   const [{cameraRef}, {takePicture}] = useCamera(undefined);
+  const [text, onChangeText] = useState(
+    `${new Date().getFullYear()}${
+      new Date().getMonth() + 1
+    }${new Date().getDate()}_`,
+  );
+  let [submitImageName, setSubmitImageName] = useState(false);
 
   const captureHandle = async () => {
     try {
       let widthImg: any, heightImg: any;
       const data = await takePicture();
-      // console.log(data.uri);
-
-      // const filePath = data.uri;
-      // const name = new Date()
-      // const newFilePath = RNFS.ExternalDirectoryPath + `/file.jpg`;
-      // await RNFS.moveFile(filePath, newFilePath)
-      // .then(async () => {
-      // console.log('IMAGE MOVED', filePath, '-- to --', newFilePath);
-      // console.log('Reading picture...');
-      // console.log(`${RNFS.ExternalDirectoryPath}/file.jpg`);
-
       await ImagePicker.openCropper({
         path: data.uri,
         width: data.width,
@@ -70,10 +66,10 @@ export default function Camera() {
             .substring(1)
             .match(/.{2}/g)
             .map((x: string) => parseInt(x, 16));
-        // console.log(hexToRgb(result.vibrant));
 
-        let assignName = 'test';
+        console.log(hexToRgb(result.vibrant));
 
+        let assignName = text;
         RNFS.moveFile(
           image.path,
           `${image.path.substring(
@@ -81,46 +77,55 @@ export default function Camera() {
             image.path.lastIndexOf('/'),
           )}/${assignName}.jpg`,
         );
-        let newPath = `${image.path.substring(
-          0,
-          image.path.lastIndexOf('/'),
-        )}/${assignName}.jpg`;
-
-        // setShouldShow(!shouldShow);
+        console.log('succesfully saved image');
+        setShouldShow(true);
       });
-
-      // })
-      // .catch(error => {
-      //   console.log(error);
-      // });
     } catch (error) {
-      // console.log(error);
+      console.log(error);
     }
   };
 
+  // useEffect(() => {
+
+  // });
+
   return (
     <View style={cameraStyle.body}>
-      <RNCamera
-        ref={cameraRef}
-        type={RNCamera.Constants.Type.back}
-        style={cameraStyle.preview}
-        flashMode={RNCamera.Constants.FlashMode.on}>
-        {/* {shouldShow ? (
-          <View>
-            <Text>Sample name:</Text>
-            <TextInput placeholder="useless placeholder" />
+      {cameraShow ? (
+        <RNCamera
+          ref={cameraRef}
+          type={RNCamera.Constants.Type.back}
+          style={cameraStyle.preview}
+          flashMode={RNCamera.Constants.FlashMode.on}>
+          <TouchableHighlight
+            activeOpacity={0.5}
+            onPress={() => captureHandle()}
+            underlayColor="rgba(0,0,0,0)">
+            <Image
+              source={require('../../assets/FP3_image_capture.png')}
+              style={cameraStyle.capturebutton}
+            />
+          </TouchableHighlight>
+        </RNCamera>
+      ) : null}
+      {shouldShow ? (
+        <View style={cameraStyle.assignName}>
+          <View style={cameraStyle.assignNameSubmitContainer}>
+            <Text style={cameraStyle.assignNameText}>Sample name:</Text>
+            <TextInput
+              style={cameraStyle.assignNameBox}
+              onChangeText={onChangeText}
+              value={text}
+            />
+            <TouchableHighlight
+              style={cameraStyle.assignNameSubmitHighlight}
+              onPress={() => setShouldShow(false)}
+              underlayColor="rgba(50,50,100,1)">
+              <Text style={cameraStyle.assignNameSubmit}>Submit</Text>
+            </TouchableHighlight>
           </View>
-        ) : null} */}
-        <TouchableHighlight
-          activeOpacity={0.5}
-          onPress={() => captureHandle()}
-          underlayColor="rgba(0,0,0,0)">
-          <Image
-            source={require('../../assets/FP3_image_capture.png')}
-            style={cameraStyle.capturebutton}
-          />
-        </TouchableHighlight>
-      </RNCamera>
+        </View>
+      ) : null}
     </View>
   );
 }
