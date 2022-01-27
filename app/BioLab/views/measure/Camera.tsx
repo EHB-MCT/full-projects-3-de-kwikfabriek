@@ -1,48 +1,53 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
 // react-native
-import {Image, Text, TouchableHighlight, View} from 'react-native';
+import {
+  Animated,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableHighlight,
+  View,
+} from 'react-native';
 
 // dependency
 import {RNCamera} from 'react-native-camera';
 import {useCamera} from 'react-native-camera-hooks';
+
+// file managers
 import RNFS from 'react-native-fs';
+import RNFetchBlob from 'rn-fetch-blob';
 
 // cameraStyle
-import {mainStyle, cameraStyle, deviceStyle} from '../../styles/style';
+import {cameraStyle} from '../../styles/style';
 import ImageColors from 'react-native-image-colors';
 import ImagePicker from 'react-native-image-crop-picker';
 
 export default function Camera() {
+  let [shouldShow, setShouldShow] = useState(true);
+  const [cameraShow, setCameraShow] = useState(true);
   const [{cameraRef}, {takePicture}] = useCamera(undefined);
+  let [confirmationShow, setConfirmationShow] = useState(false);
+  const [text, onChangeText] = useState(
+    `${new Date().getFullYear()}${
+      new Date().getMonth() + 1
+    }${new Date().getDate()}_`,
+  );
+  const [nameInUse, setNameInUse] = useState(false);
 
   const captureHandle = async () => {
     try {
       let widthImg: any, heightImg: any;
       const data = await takePicture();
-      console.log(data.uri);
-
-      // const filePath = data.uri;
-      // const name = new Date()
-      // const newFilePath = RNFS.ExternalDirectoryPath + `/file.jpg`;
-      // await RNFS.moveFile(filePath, newFilePath)
-      // .then(async () => {
-      // console.log('IMAGE MOVED', filePath, '-- to --', newFilePath);
-      console.log('Reading picture...');
-      console.log(`${RNFS.ExternalDirectoryPath}/file.jpg`);
-
       await ImagePicker.openCropper({
         path: data.uri,
         width: data.width,
         height: data.height,
         mediaType: 'photo',
-        cropperCircleOverlay: true,
         cropperRotateButtonsHidden: true,
         hideBottomControls: true,
       }).then(async image => {
-        console.log(image);
-        const result = await ImageColors.getColors(`${image.path}`, {});
-
         // HexToRgb source: https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
         const hexToRgb = (hex: {
           replace: (
@@ -71,36 +76,98 @@ export default function Camera() {
             .match(/.{2}/g)
             .map((x: string) => parseInt(x, 16));
 
+        const result = await ImageColors.getColors(`${image.path}`, {});
         console.log(result);
         console.log(hexToRgb(result.average));
-      });
 
-      // })
-      // .catch(error => {
-      //   console.log(error);
-      // });
+        let assignName = text;
+        RNFS.moveFile(
+          image.path,
+          `${image.path.substring(
+            0,
+            image.path.lastIndexOf('/'),
+          )}/${assignName}.jpg`,
+        );
+        console.log('succesfully saved image');
+        setShouldShow(true);
+        setConfirmationShow(true);
+        setTimeout(() => setConfirmationShow(false), 3500);
+      });
     } catch (error) {
-      console.log(error);
+      console.log(error, 'haha');
     }
   };
 
   return (
     <View style={cameraStyle.body}>
-      <RNCamera
-        ref={cameraRef}
-        type={RNCamera.Constants.Type.back}
-        style={cameraStyle.preview}
-        flashMode={RNCamera.Constants.FlashMode.on}>
-        <TouchableHighlight
-          activeOpacity={0.5}
-          onPress={() => captureHandle()}
-          underlayColor="rgba(0,0,0,0)">
-          <Image
-            source={require('../../assets/FP3_image_capture.png')}
-            style={cameraStyle.capturebutton}
-          />
-        </TouchableHighlight>
-      </RNCamera>
+      {cameraShow ? (
+        <RNCamera
+          ref={cameraRef}
+          type={RNCamera.Constants.Type.back}
+          style={cameraStyle.preview}
+          flashMode={RNCamera.Constants.FlashMode.torch}
+          whiteBalance={RNCamera.Constants.WhiteBalance.auto}>
+          <TouchableHighlight
+            activeOpacity={0.5}
+            onPress={() => captureHandle()}
+            underlayColor="rgba(0,0,0,0)">
+            <Image
+              source={require('../../assets/FP3_image_capture.png')}
+              style={cameraStyle.capturebutton}
+            />
+          </TouchableHighlight>
+        </RNCamera>
+      ) : null}
+      {shouldShow ? (
+        <View style={cameraStyle.assignName}>
+          <View style={cameraStyle.assignNameSubmitContainer}>
+            <Text style={cameraStyle.assignNameText}>Sample name:</Text>
+            <TextInput
+              style={cameraStyle.assignNameBox}
+              onChangeText={async text => {
+                onChangeText(text);
+                RNFetchBlob.fs
+                  .ls(`${RNFS.ExternalDirectoryPath}/Pictures/`)
+                  .then(files => {
+                    if (files.indexOf(`${text}.jpg`) > -1) {
+                      setNameInUse(true);
+                    } else {
+                      setNameInUse(false);
+                    }
+                  });
+              }}
+              value={text}
+            />
+            <TouchableHighlight
+              style={
+                (cameraStyle.assignNameSubmitHighlight,
+                nameInUse ? cameraStyle.inUse : cameraStyle.notInUse)
+              }
+              onPress={() => {
+                RNFetchBlob.fs
+                  .ls(`${RNFS.ExternalDirectoryPath}/Pictures/`)
+                  .then(files => {
+                    if (files.indexOf(`${text}.jpg`) > -1) {
+                      setNameInUse(true);
+                      return setShouldShow(true);
+                    } else {
+                      setShouldShow(false);
+                    }
+                  });
+              }}
+              underlayColor="rgba(50,50,100,1)">
+              <Text style={cameraStyle.assignNameSubmit}>Submit</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      ) : null}
+      {confirmationShow ? (
+        <View style={cameraStyle.imageSavedCont}>
+          <Text style={cameraStyle.ImageSavedText}>
+            Image saved succesfully
+          </Text>
+        </View>
+      ) : null}
     </View>
   );
 }

@@ -157,7 +157,62 @@ export const cameraStyle = StyleSheet.create({
   capturebutton: {
     padding: 10,
     marginBottom: 50
-  }
+  },
+  assignName: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0,0,0,0.8)",
+  },
+  assignNameSubmitContainer: {
+    backgroundColor: "rgb(100,100,150)",
+    padding: 30,
+    width: '80%',
+    borderRadius: 10,
+  },
+  assignNameBox: {
+    backgroundColor: "rgb(120,120,170)",
+    fontSize: 22,
+    paddingTop: 6,
+    paddingBottom: 6,
+    paddingLeft: 12,
+    paddingRight: 12,
+    borderRadius: 10,
+    marginBottom: 20
+  },
+  assignNameText: {
+    fontSize: 18,
+    marginBottom: 20,
+  },
+  assignNameSubmitHighlight: {
+    borderRadius: 20,
+  },
+  assignNameSubmit: {
+    fontSize: 24,
+    padding: 15,
+    textAlign: "center",
+  },
+  imageSavedCont: {
+    flex: 1,
+    position: 'absolute',
+    width: "100%",
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgb(120,120,170)",
+  },
+  ImageSavedText: {
+    fontSize: 24,
+  },
+  inUse: {
+    backgroundColor: 'rgba(160,65,65,1)',
+  },
+  notInUse: {
+    backgroundColor: 'rgba(70,70,100,1)',
+  },
 })
 
 
