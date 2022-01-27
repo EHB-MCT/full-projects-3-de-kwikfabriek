@@ -72,7 +72,7 @@ export default function Camera() {
             .map((x: string) => parseInt(x, 16));
 
         console.log(result);
-        console.log(hexToRgb(result.vibrant));
+        console.log(hexToRgb(result.average));
       });
 
       // })

@@ -2,7 +2,7 @@
 import React, { Component, useState, useEffect } from 'react';
 
 // react native
-import { PermissionsAndroid, LogBox, Touchable, TouchableHighlightBase } from 'react-native';
+import { PermissionsAndroid, LogBox, Animated } from 'react-native';
 import { Text, View, ScrollView, Pressable } from 'react-native';
 
 // dependency
@@ -11,6 +11,10 @@ import base64 from 'react-native-base64';
 
 // deviceStyle
 import { mainStyle, deviceStyle } from '../../styles/style';
+
+// andere
+import {formatNumber} from '../../functions/formatNumber';
+
 
 // verberg warning logs in console
 LogBox.ignoreLogs(['new NativeEventEmitter']);
@@ -24,7 +28,8 @@ const SENSOR_UUID = '6d68efe5-04b6-4a85-abc4-c2670b7bf7fd';
 interface RGB {
   r: number,
   g: number,
-  b: number
+  b: number,
+  c: number // clear
 }
 
 
@@ -35,9 +40,10 @@ export default class DeviceList extends Component<{ navigation: any }, {
   scanning: Boolean,
   connected: Boolean,
   error: String | null,
-  data: String,
+  data: RGB | null,
   sensorDataArray: RGB[],
   status: Number,
+  currentColor: string,
 }> {
 
   manager: BleManager;
@@ -54,9 +60,10 @@ export default class DeviceList extends Component<{ navigation: any }, {
       scanning: false,
       connected: false,
       error: null,
-      data: "",
+      data: {r: 0, g: 0, b: 0, c: 0},
       sensorDataArray: [],
-      status: 1
+      status: 1,
+      currentColor: "rgb(0, 0, 0)",
     }
 
     this.scanDevices();
@@ -178,9 +185,6 @@ export default class DeviceList extends Component<{ navigation: any }, {
 
         device.monitorCharacteristicForService(SERVICE_UUID, SENSOR_UUID, (error, characteristic) => {
             if (characteristic?.value != null) {
-              // this.setState({
-              //   data: base64.decode(characteristic?.value ?? "")
-              // });
 
               let value: string = base64.decode(characteristic?.value ?? null);
 
@@ -192,20 +196,31 @@ export default class DeviceList extends Component<{ navigation: any }, {
                   break;
                 case 'END':
 
+                  this.setState({
+                    status: 3
+                  })
+
                   let sum: number = 0;
 
                   let avgR: number;
                   let avgG: number;
                   let avgB: number;
+                  let avgC: number;
+
+                  let fixR: number;
+                  let fixG: number;
+                  let fixB: number;
 
                   let arrR: number[] = [];
                   let arrG: number[] = [];
                   let arrB: number[] = [];
+                  let arrC: number[] = [];
 
                   for (let index = 0; index < this.state.sensorDataArray.length; index++) {
                     arrR.push(this.state.sensorDataArray[index].r);
                     arrG.push(this.state.sensorDataArray[index].g);
                     arrB.push(this.state.sensorDataArray[index].b);
+                    arrC.push(this.state.sensorDataArray[index].c);
                   }
 
                   sum = arrR.reduce((a, b) => a + b, 0);
@@ -217,11 +232,34 @@ export default class DeviceList extends Component<{ navigation: any }, {
                   sum = arrB.reduce((a, b) => a + b, 0);
                   avgB = (sum / arrB.length) || 0;
 
+                  sum = arrC.reduce((a, b) => a + b, 0);
+                  avgC = (sum / arrC.length) || 0;
+
+                  
+
+                  const maxRGB = 25000;
+                  const minRGB = 0;
+                  const calcRGB = maxRGB - minRGB;
+
+                  fixR = (avgR / calcRGB) * 255;
+                  fixG = (avgG / calcRGB) * 255;
+                  fixB = (avgB / calcRGB) * 255;
+
+                  // saturatie berekenen
+
+
                   this.setState({
-                    data: `R: ${avgR} G: ${avgG} B: ${avgB}`
+                    data: {
+                      r: fixR,
+                      g: fixG,
+                      b: fixB,
+                      c: avgC
+                    },
+                    currentColor: `rgb(${fixR},${fixG},${fixB})`,
+                    status: 4
                   });
 
-                  console.log('AVG', `${avgR}\t${avgG}\t${avgB}`);
+                  console.log(`${avgR}\t${avgG}\t${avgB}\t${avgC}`);
 
                   break;
                 default:
@@ -235,6 +273,7 @@ export default class DeviceList extends Component<{ navigation: any }, {
                       r: Number(splittedValue[0]),
                       g: Number(splittedValue[1]),
                       b: Number(splittedValue[2]),
+                      c: Number(splittedValue[3]),
                     }
 
                     stateSensorData.push(currentValue);
@@ -265,7 +304,7 @@ export default class DeviceList extends Component<{ navigation: any }, {
     if(this.state.connectedDevice?.id){
       this.manager.writeCharacteristicWithResponseForDevice(this.state.connectedDevice?.id, SERVICE_UUID, characteristicUUID, 
         base64.encode(data)).then(characteristic => {
-          console.log(`data sended: ${base64.decode(characteristic.value ?? "Undefined")}`);
+          //console.log(`data sended: ${base64.decode(characteristic.value ?? "Undefined")}`);
         });
     }
   }
@@ -299,12 +338,40 @@ export default class DeviceList extends Component<{ navigation: any }, {
   }
 
 
-  changeStatus(status: Number){
+  /**
+   * Start measurement
+   */
+  measure(){
     this.setState({
-      status: status
+      status: 2
     });
-    this.sendData(`status ${status}`, SENSOR_UUID);
+    this.sendData('status 2', SENSOR_UUID);
   }
+
+  /**
+   * start calibration
+   */
+  calibrate(){
+
+    let calibrate = false;
+
+    while(!calibrate){
+
+      
+
+
+
+    }
+
+    this.setState({
+      status: 5
+    });
+    this.sendData('status 5', SENSOR_UUID);
+
+  }
+
+
+
 
   statusToString(status: Number){
     switch(status){
@@ -322,6 +389,9 @@ export default class DeviceList extends Component<{ navigation: any }, {
         break;
       case 4:
         return "Ready";
+        break;
+      case 5:
+        return "Calibrating";
         break;
       default:
         return `Error (${status})`;
@@ -390,13 +460,23 @@ export default class DeviceList extends Component<{ navigation: any }, {
         <View style={[mainStyle.center, mainStyle.bottom]}>
 
           <Text style={deviceStyle.statusText}>{ this.statusToString(this.state.status) }</Text>
-          <Text style={deviceStyle.statusText}>Value: { this.state.data }</Text>
+          <Text style={deviceStyle.statusText}>Value: { this.state.currentColor }</Text>
+          <Animated.View 
+      		style={[deviceStyle.box, {backgroundColor: this.state.currentColor}]}
+      	  />
 
           <Pressable
             style={deviceStyle.button}
-            onPress={()=> {this.changeStatus(2)}}
+            onPress={()=> {this.measure()}}
           >
             <Text style={deviceStyle.buttonText}>Measure sample</Text>
+          </Pressable>
+
+          <Pressable
+            style={deviceStyle.button}
+            onPress={()=> {this.calibrate()}}
+          >
+            <Text style={deviceStyle.buttonText}>Calibrate</Text>
           </Pressable>
           
         </View>

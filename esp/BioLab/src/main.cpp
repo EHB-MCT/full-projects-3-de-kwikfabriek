@@ -17,7 +17,6 @@ BLECharacteristic *status_characteristic = NULL;
 #define SENSOR_CHARACTERISTIC_UUID "6d68efe5-04b6-4a85-abc4-c2670b7bf7fd"
 
 // ESP/SENSOR
-int status = 0;
 Sensor sensor(A0, 32);
 
 
@@ -56,15 +55,11 @@ class CharacteristicsCallbacks : public BLECharacteristicCallbacks{
 
     if(splittedStatusValue[0] == "status"){
 
-      if(splittedStatusValue[1] == "2"){
+      if(splittedStatusValue[1] == "2"){ // measure
 
-        // send status 2 to app
-
-        // start analysing
-        status = 2;
         sensor.enableLed();
         
-        delay(1000);
+        delay(2500);
 
         sensor_characteristic->setValue("BEGIN");
         sensor_characteristic->notify();
@@ -83,14 +78,25 @@ class CharacteristicsCallbacks : public BLECharacteristicCallbacks{
         sensor_characteristic->setValue("END");
         sensor_characteristic->notify();
         
-
-        // stop analysing
         sensor.disableLed();
-        status = 3;
 
-        // send status 3 to App
-        // sensor_characteristic->setValue("status:3");
-        // sensor_characteristic->notify();
+      }else if(splittedStatusValue[1] == "5"){ // calibrate
+
+        sensor.enableLed();
+
+        sensor_characteristic->setValue("BEGIN");
+        sensor_characteristic->notify();
+
+        delay(2500);
+
+        string sensorData = sensor.sensorData();
+        sensor_characteristic->setValue(sensorData);
+        sensor_characteristic->notify();
+
+        sensor_characteristic->setValue("END");
+        sensor_characteristic->notify();
+
+        sensor.disableLed();
 
       }
 

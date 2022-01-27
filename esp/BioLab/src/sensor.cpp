@@ -46,16 +46,18 @@ string Sensor::sensorData(){
   uint16_t r, g, b, c, colorTemp, lux;
   tcs.getRawData(&r, &g, &b, &c);
   // colorTemp = tcs.calculateColorTemperature(r, g, b);
-  colorTemp = tcs.calculateColorTemperature_dn40(r, g, b, c);
+  //colorTemp = tcs.calculateColorTemperature_dn40(r, g, b, c);
   lux = tcs.calculateLux(r, g, b);
 
   Serial.print(r);
   Serial.print("-");
   Serial.print(g);
   Serial.print("-");
-  Serial.println(b);
+  Serial.print(b);
+  Serial.print("-");
+  Serial.println(c);
 
-  if(r > 99999 || g > 99999 || b > 99999){
+  if((r > 99999 || g > 99999 || b > 99999) || (r == 0 || g == 0 || b == 0)){
 
     Serial.println("Bad value");
 
@@ -69,8 +71,10 @@ string Sensor::sensorData(){
     sprintf(gValue, "%u", g);
     char bValue [6];
     sprintf(bValue, "%u", b);
+    char cValue [6];
+    sprintf(cValue, "%u", c);
 
-    string sensorValue = std::string(rValue) + "," + std::string(gValue) + "," + std::string(bValue);
+    string sensorValue = std::string(rValue) + "," + std::string(gValue) + "," + std::string(bValue) + "," + std::string(cValue);
     char charSensorValue[sensorValue.length() + 1];
     strcpy(charSensorValue, sensorValue.c_str());
 
