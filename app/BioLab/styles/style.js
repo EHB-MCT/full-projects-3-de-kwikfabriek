@@ -66,6 +66,10 @@ export const deviceStyle = StyleSheet.create({
     color: '#000',
     fontSize: 22,
     alignSelf: 'center'
+  },
+  box: {
+    width: 200,
+    height: 200,
   }
 });
 

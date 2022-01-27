@@ -2,7 +2,7 @@
 import React, { Component, useState, useEffect } from 'react';
 
 // react native
-import { PermissionsAndroid, LogBox, Touchable } from 'react-native';
+import { PermissionsAndroid, LogBox, Animated } from 'react-native';
 import { Text, View, ScrollView, Pressable } from 'react-native';
 
 // dependency
@@ -12,14 +12,25 @@ import base64 from 'react-native-base64';
 // deviceStyle
 import { mainStyle, deviceStyle } from '../../styles/style';
 
+// andere
+import {formatNumber} from '../../functions/formatNumber';
+
+
 // verberg warning logs in console
 LogBox.ignoreLogs(['new NativeEventEmitter']);
 LogBox.ignoreAllLogs();
 
 
 const SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
+
 const SENSOR_UUID = '6d68efe5-04b6-4a85-abc4-c2670b7bf7fd';
-const STATUS_UUID = '88ec1bb2-9dda-4c0c-a1ad-9605c432beef';
+
+interface RGB {
+  r: number,
+  g: number,
+  b: number,
+  c: number // clear
+}
 
 
 export default class DeviceList extends Component<{ navigation: any }, {
@@ -29,8 +40,10 @@ export default class DeviceList extends Component<{ navigation: any }, {
   scanning: Boolean,
   connected: Boolean,
   error: String | null,
-  data: String,
+  data: RGB | null,
+  sensorDataArray: RGB[],
   status: Number,
+  currentColor: string,
 }> {
 
   manager: BleManager;
@@ -47,8 +60,10 @@ export default class DeviceList extends Component<{ navigation: any }, {
       scanning: false,
       connected: false,
       error: null,
-      data: "",
-      status: 1
+      data: {r: 0, g: 0, b: 0, c: 0},
+      sensorDataArray: [],
+      status: 1,
+      currentColor: "rgb(0, 0, 0)",
     }
 
     this.scanDevices();
@@ -170,31 +185,109 @@ export default class DeviceList extends Component<{ navigation: any }, {
 
         device.monitorCharacteristicForService(SERVICE_UUID, SENSOR_UUID, (error, characteristic) => {
             if (characteristic?.value != null) {
-              this.setState({
-                data: base64.decode(characteristic?.value ?? "")
-              });
-              console.log(
-                'Message update received: ',
-                base64.decode(characteristic?.value),
-              );
+
+              let value: string = base64.decode(characteristic?.value ?? null);
+
+              switch(value){
+                case 'BEGIN':
+                  this.setState({
+                    sensorDataArray: []
+                  });
+                  break;
+                case 'END':
+
+                  this.setState({
+                    status: 3
+                  })
+
+                  let sum: number = 0;
+
+                  let avgR: number;
+                  let avgG: number;
+                  let avgB: number;
+                  let avgC: number;
+
+                  let fixR: number;
+                  let fixG: number;
+                  let fixB: number;
+
+                  let arrR: number[] = [];
+                  let arrG: number[] = [];
+                  let arrB: number[] = [];
+                  let arrC: number[] = [];
+
+                  for (let index = 0; index < this.state.sensorDataArray.length; index++) {
+                    arrR.push(this.state.sensorDataArray[index].r);
+                    arrG.push(this.state.sensorDataArray[index].g);
+                    arrB.push(this.state.sensorDataArray[index].b);
+                    arrC.push(this.state.sensorDataArray[index].c);
+                  }
+
+                  sum = arrR.reduce((a, b) => a + b, 0);
+                  avgR = (sum / arrR.length) || 0;
+
+                  sum = arrG.reduce((a, b) => a + b, 0);
+                  avgG = (sum / arrG.length) || 0;
+
+                  sum = arrB.reduce((a, b) => a + b, 0);
+                  avgB = (sum / arrB.length) || 0;
+
+                  sum = arrC.reduce((a, b) => a + b, 0);
+                  avgC = (sum / arrC.length) || 0;
+
+                  
+
+                  const maxRGB = 25000;
+                  const minRGB = 0;
+                  const calcRGB = maxRGB - minRGB;
+
+                  fixR = (avgR / calcRGB) * 255;
+                  fixG = (avgG / calcRGB) * 255;
+                  fixB = (avgB / calcRGB) * 255;
+
+                  // saturatie berekenen
+
+
+                  this.setState({
+                    data: {
+                      r: fixR,
+                      g: fixG,
+                      b: fixB,
+                      c: avgC
+                    },
+                    currentColor: `rgb(${fixR},${fixG},${fixB})`,
+                    status: 4
+                  });
+
+                  console.log(`${avgR}\t${avgG}\t${avgB}\t${avgC}`);
+
+                  break;
+                default:
+                  if(value && value !== "BAD"){
+
+                    let stateSensorData: RGB[]  = this.state.sensorDataArray;
+
+                    let splittedValue = value.split(',');
+
+                    let currentValue: RGB = {
+                      r: Number(splittedValue[0]),
+                      g: Number(splittedValue[1]),
+                      b: Number(splittedValue[2]),
+                      c: Number(splittedValue[3]),
+                    }
+
+                    stateSensorData.push(currentValue);
+                    this.setState({
+                      sensorDataArray: stateSensorData
+                    })
+                  }
+                  break;
+              }
+
             }
         },
           'messagetransaction',
         );
-
-        device.monitorCharacteristicForService(SERVICE_UUID, STATUS_UUID, (error, characteristic) => {
-          if (characteristic?.value != null) {
-            this.setState({
-              status: Number(base64.decode(characteristic?.value ?? ""))
-            });
-            console.log(
-              'Message update received: ',
-              base64.decode(characteristic?.value),
-            );
-          }
-      },
-        'messagetransaction',
-      );
 
 
       });
@@ -211,7 +304,7 @@ export default class DeviceList extends Component<{ navigation: any }, {
     if(this.state.connectedDevice?.id){
       this.manager.writeCharacteristicWithResponseForDevice(this.state.connectedDevice?.id, SERVICE_UUID, characteristicUUID, 
         base64.encode(data)).then(characteristic => {
-          console.log(`data sended: ${base64.decode(characteristic.value ?? "Undefined")}`);
+          //console.log(`data sended: ${base64.decode(characteristic.value ?? "Undefined")}`);
         });
     }
   }
@@ -245,6 +338,41 @@ export default class DeviceList extends Component<{ navigation: any }, {
   }
 
 
+  /**
+   * Start measurement
+   */
+  measure(){
+    this.setState({
+      status: 2
+    });
+    this.sendData('status 2', SENSOR_UUID);
+  }
+
+  /**
+   * start calibration
+   */
+  calibrate(){
+
+    let calibrate = false;
+
+    while(!calibrate){
+
+      
+
+
+
+    }
+
+    this.setState({
+      status: 5
+    });
+    this.sendData('status 5', SENSOR_UUID);
+
+  }
+
+
+
+
   statusToString(status: Number){
     switch(status){
       case 0:
@@ -261,6 +389,9 @@ export default class DeviceList extends Component<{ navigation: any }, {
         break;
       case 4:
         return "Ready";
+        break;
+      case 5:
+        return "Calibrating";
         break;
       default:
         return `Error (${status})`;
@@ -329,7 +460,24 @@ export default class DeviceList extends Component<{ navigation: any }, {
         <View style={[mainStyle.center, mainStyle.bottom]}>
 
           <Text style={deviceStyle.statusText}>{ this.statusToString(this.state.status) }</Text>
-          <Text style={deviceStyle.statusText}>Value: { this.state.data }</Text>
+          <Text style={deviceStyle.statusText}>Value: { this.state.currentColor }</Text>
+          <Animated.View 
+      		style={[deviceStyle.box, {backgroundColor: this.state.currentColor}]}
+      	  />
+
+          <Pressable
+            style={deviceStyle.button}
+            onPress={()=> {this.measure()}}
+          >
+            <Text style={deviceStyle.buttonText}>Measure sample</Text>
+          </Pressable>
+
+          <Pressable
+            style={deviceStyle.button}
+            onPress={()=> {this.calibrate()}}
+          >
+            <Text style={deviceStyle.buttonText}>Calibrate</Text>
+          </Pressable>
           
         </View>
       </View>
