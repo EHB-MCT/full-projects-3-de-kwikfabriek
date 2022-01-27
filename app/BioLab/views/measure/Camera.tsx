@@ -35,6 +35,15 @@ export default function Camera() {
     }${new Date().getDate()}_`,
   );
   const [nameInUse, setNameInUse] = useState(false);
+  let newImagePath: any;
+
+  RNFetchBlob.fs.ls(`${RNFS.ExternalDirectoryPath}/Pictures/`).then(files => {
+    if (files.indexOf(`${text}.jpg`) > -1) {
+      setNameInUse(true);
+    } else {
+      setNameInUse(false);
+    }
+  });
 
   const captureHandle = async () => {
     try {
@@ -78,7 +87,7 @@ export default function Camera() {
 
         const result = await ImageColors.getColors(`${image.path}`, {});
         console.log(result);
-        console.log(hexToRgb(result.average));
+        console.log(hexToRgb(result.dominant));
 
         let assignName = text;
         RNFS.moveFile(
@@ -88,15 +97,18 @@ export default function Camera() {
             image.path.lastIndexOf('/'),
           )}/${assignName}.jpg`,
         );
-        console.log('succesfully saved image');
         setShouldShow(true);
         setConfirmationShow(true);
-        setTimeout(() => setConfirmationShow(false), 3500);
       });
     } catch (error) {
       console.log(error, 'haha');
     }
   };
+
+  async function deleteImage(imagePath: string) {
+    await RNFS.unlink(imagePath);
+    setConfirmationShow(false);
+  }
 
   return (
     <View style={cameraStyle.body}>
@@ -166,6 +178,16 @@ export default function Camera() {
           <Text style={cameraStyle.ImageSavedText}>
             Image saved succesfully
           </Text>
+          <Text>Rgb values:</Text>
+          <TouchableHighlight
+            onPress={async () => {
+              deleteImage(`${RNFS.ExternalDirectoryPath}/Pictures/${text}.jpg`);
+            }}>
+            <Text>Delete</Text>
+          </TouchableHighlight>
+          <TouchableHighlight onPress={() => setConfirmationShow(false)}>
+            <Text>Save</Text>
+          </TouchableHighlight>
         </View>
       ) : null}
     </View>
