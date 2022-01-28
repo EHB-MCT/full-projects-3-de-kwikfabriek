@@ -1,48 +1,51 @@
-import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, Text, View, TouchableHighlight, Image} from 'react-native';
 
-import { mainStyle, measureStyle } from '../styles/style';
+import {mainStyle, measureStyle} from '../styles/style';
 
-export default class Measure extends Component<{ navigation: any }> {
-
+export default class Measure extends Component<{navigation: any}> {
   constructor(props: any) {
     super(props);
   }
 
   render() {
     return (
-      <View style={mainStyle.container}>
-        <View style={mainStyle.toolbar}>
-          {/* Hier kunnen er knoppen komen */}
-        </View>
-
-        <View style={measureStyle.menuContainer}>
-          {/* Hier komt de body van de pagina */}
-
-          <View style={measureStyle.row}>
-            <Text style={measureStyle.subTitle}>Measure with</Text>
+      <View style={measureStyle.menuContainer}>
+        {/* Hier komt de body van de pagina */}
+        <Image
+          style={measureStyle.backgroundLogo}
+          source={require('../assets/Analyze_backgroundLogo.png')}
+        />
+        <View style={measureStyle.contentContainer}>
+          <View style={measureStyle.measureRow}>
+            <Text style={measureStyle.subTitle}>Measure with:</Text>
           </View>
 
           <View style={measureStyle.row}>
-            <TouchableHighlight onPress={() =>
-              this.props.navigation.navigate('Device', {})
-            } underlayColor="white">
-              <View style={measureStyle.menuButton}>
-                <Text style={measureStyle.menuButtonText}>Device</Text>
-              </View>
+            <TouchableHighlight
+              activeOpacity={0.5}
+              onPress={() => this.props.navigation.navigate('Device', {})}
+              underlayColor="rgba(255,255,255,0)">
+              <Image
+                source={require('../assets/incubatorChoice.png')}
+                style={measureStyle.images}
+              />
             </TouchableHighlight>
-            <TouchableHighlight onPress={() =>
-              this.props.navigation.navigate('Camera', {})
-            } underlayColor="white">
-              <View style={measureStyle.menuButton}>
-                <Text style={measureStyle.menuButtonText}>Camera</Text>
-              </View>
+            <TouchableHighlight
+              activeOpacity={0.5}
+              onPress={() => this.props.navigation.navigate('Camera', {})}
+              underlayColor="rgba(255,255,255,0)">
+              <Image
+                source={require('../assets/cameraChoice.png')}
+                style={measureStyle.images}></Image>
             </TouchableHighlight>
           </View>
-
+          <View style={measureStyle.row}>
+            <Text style={measureStyle.choiceText}>External</Text>
+            <Text style={measureStyle.choiceText}>Internal</Text>
+          </View>
         </View>
       </View>
-    )
+    );
   }
-
 }

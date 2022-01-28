@@ -245,6 +245,8 @@ export default class DeviceList extends Component<{ navigation: any }, {
                   fixG = (avgG / calcRGB) * 255;
                   fixB = (avgB / calcRGB) * 255;
 
+                  let test: number = fixB - ((fixG + fixR));
+
                   // saturatie berekenen
 
 
@@ -259,8 +261,9 @@ export default class DeviceList extends Component<{ navigation: any }, {
                     status: 4
                   });
 
-                  console.log(`${avgR}\t${avgG}\t${avgB}\t${avgC}`);
-
+                  // console.log(`${avgR}\t${avgG}\t${avgB}\t${avgC}`);
+                  console.log(`${test}`);
+                  
                   break;
                 default:
                   if(value && value !== "BAD"){
