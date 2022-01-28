@@ -15,6 +15,7 @@ import {
 import RNFetchBlob from 'rn-fetch-blob';
 import RNFS from 'react-native-fs';
 import {dataStyle} from '../styles/style';
+import {template} from '@babel/core';
 
 export default class Data extends Component<
   {},
@@ -36,10 +37,11 @@ export default class Data extends Component<
           .then(data => {
             tempFiles.push(`data:image/png;base64,${data}`);
           });
-        this.setState({
-          files: tempFiles,
-        });
       });
+      this.setState({
+        files: tempFiles,
+      });
+      console.log(tempFiles);
     });
   }
 

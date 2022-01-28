@@ -4,10 +4,12 @@ import React, {useEffect, useState} from 'react';
 import {
   Animated,
   Image,
+  ImageBackground,
   StyleSheet,
   Text,
   TextInput,
   TouchableHighlight,
+  TouchableOpacity,
   View,
 } from 'react-native';
 
@@ -35,7 +37,7 @@ export default function Camera() {
     }${new Date().getDate()}_`,
   );
   const [nameInUse, setNameInUse] = useState(false);
-  let newImagePath: any;
+  let [rgbValues, setRgbValues] = useState();
 
   RNFetchBlob.fs.ls(`${RNFS.ExternalDirectoryPath}/Pictures/`).then(files => {
     if (files.indexOf(`${text}.jpg`) > -1) {
@@ -57,6 +59,7 @@ export default function Camera() {
         cropperRotateButtonsHidden: true,
         hideBottomControls: true,
       }).then(async image => {
+        setCameraShow(false);
         // HexToRgb source: https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
         const hexToRgb = (hex: {
           replace: (
@@ -86,6 +89,7 @@ export default function Camera() {
             .map((x: string) => parseInt(x, 16));
 
         const result = await ImageColors.getColors(`${image.path}`, {});
+        setRgbValues(hexToRgb(result.dominant));
         console.log(result);
         console.log(hexToRgb(result.dominant));
 
@@ -107,6 +111,7 @@ export default function Camera() {
 
   async function deleteImage(imagePath: string) {
     await RNFS.unlink(imagePath);
+    setCameraShow(true);
     setConfirmationShow(false);
   }
 
@@ -175,19 +180,48 @@ export default function Camera() {
       ) : null}
       {confirmationShow ? (
         <View style={cameraStyle.imageSavedCont}>
-          <Text style={cameraStyle.ImageSavedText}>
-            Image saved succesfully
-          </Text>
-          <Text>Rgb values:</Text>
-          <TouchableHighlight
-            onPress={async () => {
-              deleteImage(`${RNFS.ExternalDirectoryPath}/Pictures/${text}.jpg`);
-            }}>
-            <Text>Delete</Text>
-          </TouchableHighlight>
-          <TouchableHighlight onPress={() => setConfirmationShow(false)}>
-            <Text>Save</Text>
-          </TouchableHighlight>
+          <ImageBackground
+            style={cameraStyle.backgroundSaved}
+            source={require('../../assets/WavyBg_imageSaved.png')}>
+            <View style={cameraStyle.logoSavedCont}>
+              <Image
+                source={require('../../assets/Analyze_backgroundLogo.png')}
+                style={cameraStyle.logoSaved}
+              />
+              <Text style={cameraStyle.logoText}>Qty Hg:</Text>
+              <Text style={cameraStyle.logoText}>2 nM Hg2+</Text>
+              <Text style={cameraStyle.logoTextWater}>Color water</Text>
+              <View style={cameraStyle.colorSaved}>
+                <Text style={cameraStyle.rgbvalues}>
+                  {rgbValues[0]}, {rgbValues[1]}, {rgbValues[2]}
+                </Text>
+              </View>
+            </View>
+            <Text style={cameraStyle.waterResultDesc}>
+              Overall clear and healthy water. It’s not dangerous to drink from
+              this water and it’s good for cooking.
+            </Text>
+
+            <View style={cameraStyle.imageSavedButtonsCont}>
+              <TouchableOpacity
+                style={cameraStyle.imageSavedButtons}
+                onPress={async () => {
+                  deleteImage(
+                    `${RNFS.ExternalDirectoryPath}/Pictures/${text}.jpg`,
+                  );
+                }}>
+                <Text style={cameraStyle.imageSavedButtonsText}>Delete</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={cameraStyle.imageSavedButtons}
+                onPress={() => {
+                  setCameraShow(true);
+                  setConfirmationShow(false);
+                }}>
+                <Text style={cameraStyle.imageSavedButtonsText}>Save</Text>
+              </TouchableOpacity>
+            </View>
+          </ImageBackground>
         </View>
       ) : null}
     </View>

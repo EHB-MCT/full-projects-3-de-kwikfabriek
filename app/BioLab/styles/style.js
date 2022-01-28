@@ -196,16 +196,84 @@ export const cameraStyle = StyleSheet.create({
     textAlign: "center",
   },
   imageSavedCont: {
-    flex: 1,
-    position: 'absolute',
-    width: "100%",
-    height: "100%",
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgb(120,120,170)",
+    justifyContent: "space-evenly",
   },
   ImageSavedText: {
     fontSize: 24,
+  },
+  rgbvalues: {
+    fontSize: 9,
+    fontWeight: "bold",
+    position: "relative",
+    textAlign: "center",
+  },
+  waterResultDesc: {
+    position: "absolute",
+    bottom: 220,
+    width: '75%',
+    fontSize: 18,
+    color: 'white'
+  },
+  backgroundSaved: {
+    alignItems: "center",
+    width: '100%',
+    height: '100%',
+  },
+  logoSaved: {
+    width: 300,
+    height: 300,
+    resizeMode: 'contain',
+  },
+  logoSavedCont: {
+    position: 'absolute',
+    top: -125,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  imageSavedButtons: {
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: 20,
+    paddingRight: 20,
+    borderRadius: 16,
+    backgroundColor: "rgb(50,50,200)",
+  },
+  colorSaved: {
+    width: 60,
+    height: 60,
+    borderRadius: 60 / 2,
+    backgroundColor: 'rgb(50,50,200)',
+    top: -175,
+    borderColor: 'rgb(0,0,0)',
+    borderWidth: 4,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  logoText: {
+    top: -195,
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  logoTextWater: {
+    top: -180,
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  imageSavedButtonsText: {
+    fontSize: 24,
+    color: '#0145A0',
+  },
+  imageSavedButtonsCont: {
+    position: "absolute",
+    display: "flex",
+    flexDirection: "row",
+    width: '75%',
+    justifyContent: "space-between",
+    bottom: 70,
   },
   inUse: {
     backgroundColor: 'rgba(160,65,65,1)',
@@ -221,7 +289,6 @@ export const dataStyle = StyleSheet.create({
   dataContainer: {
     flex: 1,
     width: '100%',
-    backgroundColor: 'blue',
     height: '100%',
   },
   imageContainer: {
