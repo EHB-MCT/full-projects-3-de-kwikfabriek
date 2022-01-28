@@ -66,6 +66,10 @@ export const deviceStyle = StyleSheet.create({
     color: '#000',
     fontSize: 22,
     alignSelf: 'center'
+  },
+  box: {
+    width: 200,
+    height: 200,
   }
 });
 
@@ -153,12 +157,150 @@ export const cameraStyle = StyleSheet.create({
   capturebutton: {
     padding: 10,
     marginBottom: 50
-  }
+  },
+  assignName: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0,0,0,0.8)",
+  },
+  assignNameSubmitContainer: {
+    backgroundColor: "rgb(100,100,150)",
+    padding: 30,
+    width: '80%',
+    borderRadius: 10,
+  },
+  assignNameBox: {
+    backgroundColor: "rgb(120,120,170)",
+    fontSize: 22,
+    paddingTop: 6,
+    paddingBottom: 6,
+    paddingLeft: 12,
+    paddingRight: 12,
+    borderRadius: 10,
+    marginBottom: 20
+  },
+  assignNameText: {
+    fontSize: 18,
+    marginBottom: 20,
+  },
+  assignNameSubmitHighlight: {
+    borderRadius: 20,
+  },
+  assignNameSubmit: {
+    fontSize: 24,
+    padding: 15,
+    textAlign: "center",
+  },
+  imageSavedCont: {
+    alignItems: "center",
+    justifyContent: "space-evenly",
+  },
+  ImageSavedText: {
+    fontSize: 24,
+  },
+  rgbvalues: {
+    fontSize: 9,
+    fontWeight: "bold",
+    position: "relative",
+    textAlign: "center",
+  },
+  waterResultDesc: {
+    position: "absolute",
+    bottom: 220,
+    width: '75%',
+    fontSize: 18,
+    color: 'white'
+  },
+  backgroundSaved: {
+    alignItems: "center",
+    width: '100%',
+    height: '100%',
+  },
+  logoSaved: {
+    width: 300,
+    height: 300,
+    resizeMode: 'contain',
+  },
+  logoSavedCont: {
+    position: 'absolute',
+    top: -125,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  imageSavedButtons: {
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: 20,
+    paddingRight: 20,
+    borderRadius: 16,
+    backgroundColor: "rgb(50,50,200)",
+  },
+  colorSaved: {
+    width: 60,
+    height: 60,
+    borderRadius: 60 / 2,
+    backgroundColor: 'rgb(50,50,200)',
+    top: -175,
+    borderColor: 'rgb(0,0,0)',
+    borderWidth: 4,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  logoText: {
+    top: -195,
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  logoTextWater: {
+    top: -180,
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  imageSavedButtonsText: {
+    fontSize: 24,
+    color: '#0145A0',
+  },
+  imageSavedButtonsCont: {
+    position: "absolute",
+    display: "flex",
+    flexDirection: "row",
+    width: '75%',
+    justifyContent: "space-between",
+    bottom: 70,
+  },
+  inUse: {
+    backgroundColor: 'rgba(160,65,65,1)',
+  },
+  notInUse: {
+    backgroundColor: 'rgba(70,70,100,1)',
+  },
 })
 
 
 export const dataStyle = StyleSheet.create({
 
+  dataContainer: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+  imageContainer: {
+    flex: 1,
+    width: 50,
+    height: 50,
+  },
+  images: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  }
 })
 
 
