@@ -249,12 +249,13 @@ export const mapViewStyle = StyleSheet.create({
 
 export const measureStyle = StyleSheet.create({
   menuContainer: {
-    padding: 20,
+    flex: 1,
+    alignItems: "center",
+    backgroundColor: "rgb(60,100,180)"
   },
   menuButton: {
     width: 175,
     alignItems: 'center',
-    backgroundColor: '#2196F3',
     padding: 15,
     alignContent: 'center'
   },
@@ -263,17 +264,48 @@ export const measureStyle = StyleSheet.create({
     fontSize: 18,
   },
   row: {
+    flex: 1,
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-between",
+    justifyContent: "space-evenly",
+    alignItems: "center",
   },
   toolbarButton: {
     width: 50,
   },
   subTitle: {
-    fontSize: 24,
+    fontSize: 28,
     color: "#000",
-    marginBottom: 20,
-    fontWeight: '600'
-  }
+    fontWeight: '600',
+  },
+  backgroundLogo: {
+    position: "absolute",
+    width: "100%",
+    height: '100%',
+    flex: 1,
+    justifyContent: "center",
+    resizeMode: "contain",
+    bottom: 125,
+  },
+  contentContainer: {
+    position: "absolute",
+    backgroundColor: 'rgba(50,50,50,.6)',
+    width: "100%",
+    height: "100%",
+  },
+  measureRow: {
+    marginTop: 220,
+    textAlign: 'center',
+    flex: 1,
+    alignItems: "center",
+  },
+  images: {
+    width: 100,
+    height: 100,
+  },
+  choiceText: {
+    fontWeight: "500",
+    fontSize: 20,
+    color: "white",
+  },
 })
