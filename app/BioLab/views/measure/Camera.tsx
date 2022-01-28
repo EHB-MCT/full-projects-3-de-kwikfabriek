@@ -1,39 +1,31 @@
-import React, {useEffect, useState} from 'react';
+// react-native
+import React, { useState } from 'react';
 
 // react-native
-import {
-  Animated,
-  Image,
-  ImageBackground,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableHighlight,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Image, ImageBackground, SafeAreaView, Text, TextInput, TextInputProps, TouchableHighlight, TouchableOpacity, View } from "react-native";
 
 // dependency
-import {RNCamera} from 'react-native-camera';
-import {useCamera} from 'react-native-camera-hooks';
+import { RNCamera } from "react-native-camera";
+import { useCamera } from 'react-native-camera-hooks';
+
+
 
 // file managers
 import RNFS from 'react-native-fs';
 import RNFetchBlob from 'rn-fetch-blob';
 
 // cameraStyle
-import {cameraStyle} from '../../styles/style';
+import { cameraStyle } from '../../styles/style';
 import ImageColors from 'react-native-image-colors';
 import ImagePicker from 'react-native-image-crop-picker';
 
 export default function Camera() {
   let [shouldShow, setShouldShow] = useState(true);
   const [cameraShow, setCameraShow] = useState(true);
-  const [{cameraRef}, {takePicture}] = useCamera(undefined);
+  const [{ cameraRef }, { takePicture }] = useCamera(undefined);
   let [confirmationShow, setConfirmationShow] = useState(false);
   const [text, onChangeText] = useState(
-    `${new Date().getFullYear()}${
-      new Date().getMonth() + 1
+    `${new Date().getFullYear()}${new Date().getMonth() + 1
     }${new Date().getDate()}_`,
   );
   const [nameInUse, setNameInUse] = useState(false);
@@ -58,7 +50,7 @@ export default function Camera() {
         mediaType: 'photo',
         cropperRotateButtonsHidden: true,
         hideBottomControls: true,
-      }).then(async image => {
+      }).then(async (image: { path: string; }) => {
         setCameraShow(false);
         // HexToRgb source: https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
         const hexToRgb = (hex: {
@@ -67,14 +59,14 @@ export default function Camera() {
             arg1: (m: any, r: any, g: any, b: any) => string,
           ) => {
             (): any;
-            new (): any;
+            new(): any;
             substring: {
               (arg0: number): {
                 (): any;
-                new (): any;
-                match: {(arg0: RegExp): any[]; new (): any};
+                new(): any;
+                match: { (arg0: RegExp): any[]; new(): any };
               };
-              new (): any;
+              new(): any;
             };
           };
         }) =>
@@ -158,7 +150,7 @@ export default function Camera() {
             <TouchableHighlight
               style={
                 (cameraStyle.assignNameSubmitHighlight,
-                nameInUse ? cameraStyle.inUse : cameraStyle.notInUse)
+                  nameInUse ? cameraStyle.inUse : cameraStyle.notInUse)
               }
               onPress={() => {
                 RNFetchBlob.fs

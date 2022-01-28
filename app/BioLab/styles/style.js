@@ -86,6 +86,10 @@ export const homeStyle = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
   },
+  backgroundGradient: {
+    height: "100%",
+    width: "100%",
+  },
 
   menuContainer: {
     padding: 20,
@@ -119,7 +123,7 @@ export const homeStyle = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "nowrap",
     justifyContent: "center",
-    marginTop: -60,
+    marginTop: -10,
   },
   logoSVG: {
     width: 50,
@@ -129,8 +133,8 @@ export const homeStyle = StyleSheet.create({
     alignItems: "center"
   },
   logo: {
-    width: 300,
-    height: 300,
+    width: 380,
+    height: 380,
     resizeMode: 'contain',
   },
   logocontainer: {
@@ -139,10 +143,19 @@ export const homeStyle = StyleSheet.create({
     alignItems: 'center',
   },
   logobuttons: {
-    width: 125,
-    height: 125,
+    width: 80,
+    height: 80,
     resizeMode: 'contain',
   },
+  hamburgercontainer: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  hamburgerbutton: {
+    marginRight: 15,
+    height: 40,
+    width: 40
+  }
 })
 
 export const cameraStyle = StyleSheet.create({
@@ -342,5 +355,86 @@ export const measureStyle = StyleSheet.create({
     color: "#000",
     marginBottom: 20,
     fontWeight: '600'
+  }
+})
+
+export const userStyle = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: "space-around"
+  },
+  txtinput: {
+    flex: 1,
+    flexDirection: 'column',
+    borderBottomWidth: 1,
+    borderColor: 'gray',
+    color: "black",
+    marginLeft: 15,
+    marginRight: 15,
+  },
+  registerbutton: {
+    backgroundColor: 'rgb(255,255,255)',
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 10,
+    padding: 24,
+    margin: 10,
+    textAlign: 'center',
+    alignItems: 'center',
+    paddingBottom: 10,
+    paddingTop: 10,
+  },
+
+  loginbutton: {
+    backgroundColor: 'rgb(255,255,255)',
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 10,
+    padding: 24,
+    paddingBottom: 10,
+    paddingTop: 10,
+    margin: 10,
+    textAlign: 'center',
+    alignItems: 'center',
+  },
+  loginbuttontxt: {
+    color: '#0145A0',
+    fontWeight: '500'
+  },
+  registerbuttontxt: {
+    color: '#0145A0',
+    fontWeight: '500'
+  },
+  submitbuttons: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+  },
+  textinput: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: "center",
+    height: 10
+
+  },
+  logo: {
+    width: 180,
+    height: 180,
+    resizeMode: 'contain',
+    marginTop: 50
+  },
+  backgroundGradient: {
+    height: "100%",
+    width: "100%",
+    flex: 1,
+    alignItems: 'center',
+  },
+  placeholder: {
+    padding: 10,
   }
 })
