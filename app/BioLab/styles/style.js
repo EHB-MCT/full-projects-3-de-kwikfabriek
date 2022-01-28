@@ -86,6 +86,10 @@ export const homeStyle = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
   },
+  backgroundGradient: {
+    height: "100%",
+    width: "100%",
+  },
 
   menuContainer: {
     padding: 20,
@@ -119,7 +123,7 @@ export const homeStyle = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "nowrap",
     justifyContent: "center",
-    marginTop: -60,
+    marginTop: -10,
   },
   logoSVG: {
     width: 50,
@@ -129,8 +133,8 @@ export const homeStyle = StyleSheet.create({
     alignItems: "center"
   },
   logo: {
-    width: 300,
-    height: 300,
+    width: 380,
+    height: 380,
     resizeMode: 'contain',
   },
   logocontainer: {
@@ -139,10 +143,19 @@ export const homeStyle = StyleSheet.create({
     alignItems: 'center',
   },
   logobuttons: {
-    width: 125,
-    height: 125,
+    width: 80,
+    height: 80,
     resizeMode: 'contain',
   },
+  hamburgercontainer: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  hamburgerbutton: {
+    marginRight: 15,
+    height: 40,
+    width: 40
+  }
 })
 
 export const cameraStyle = StyleSheet.create({
@@ -196,16 +209,84 @@ export const cameraStyle = StyleSheet.create({
     textAlign: "center",
   },
   imageSavedCont: {
-    flex: 1,
-    position: 'absolute',
-    width: "100%",
-    height: "100%",
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgb(120,120,170)",
+    justifyContent: "space-evenly",
   },
   ImageSavedText: {
     fontSize: 24,
+  },
+  rgbvalues: {
+    fontSize: 9,
+    fontWeight: "bold",
+    position: "relative",
+    textAlign: "center",
+  },
+  waterResultDesc: {
+    position: "absolute",
+    bottom: 220,
+    width: '75%',
+    fontSize: 18,
+    color: 'white'
+  },
+  backgroundSaved: {
+    alignItems: "center",
+    width: '100%',
+    height: '100%',
+  },
+  logoSaved: {
+    width: 300,
+    height: 300,
+    resizeMode: 'contain',
+  },
+  logoSavedCont: {
+    position: 'absolute',
+    top: -125,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  imageSavedButtons: {
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: 20,
+    paddingRight: 20,
+    borderRadius: 16,
+    backgroundColor: "rgb(50,50,200)",
+  },
+  colorSaved: {
+    width: 60,
+    height: 60,
+    borderRadius: 60 / 2,
+    backgroundColor: 'rgb(50,50,200)',
+    top: -175,
+    borderColor: 'rgb(0,0,0)',
+    borderWidth: 4,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  logoText: {
+    top: -195,
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  logoTextWater: {
+    top: -180,
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  imageSavedButtonsText: {
+    fontSize: 24,
+    color: '#0145A0',
+  },
+  imageSavedButtonsCont: {
+    position: "absolute",
+    display: "flex",
+    flexDirection: "row",
+    width: '75%',
+    justifyContent: "space-between",
+    bottom: 70,
   },
   inUse: {
     backgroundColor: 'rgba(160,65,65,1)',
@@ -221,7 +302,6 @@ export const dataStyle = StyleSheet.create({
   dataContainer: {
     flex: 1,
     width: '100%',
-    backgroundColor: 'blue',
     height: '100%',
   },
   imageContainer: {
@@ -308,4 +388,85 @@ export const measureStyle = StyleSheet.create({
     fontSize: 20,
     color: "white",
   },
+})
+
+export const userStyle = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: "space-around"
+  },
+  txtinput: {
+    flex: 1,
+    flexDirection: 'column',
+    borderBottomWidth: 1,
+    borderColor: 'gray',
+    color: "black",
+    marginLeft: 15,
+    marginRight: 15,
+  },
+  registerbutton: {
+    backgroundColor: 'rgb(255,255,255)',
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 10,
+    padding: 24,
+    margin: 10,
+    textAlign: 'center',
+    alignItems: 'center',
+    paddingBottom: 10,
+    paddingTop: 10,
+  },
+
+  loginbutton: {
+    backgroundColor: 'rgb(255,255,255)',
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 10,
+    padding: 24,
+    paddingBottom: 10,
+    paddingTop: 10,
+    margin: 10,
+    textAlign: 'center',
+    alignItems: 'center',
+  },
+  loginbuttontxt: {
+    color: '#0145A0',
+    fontWeight: '500'
+  },
+  registerbuttontxt: {
+    color: '#0145A0',
+    fontWeight: '500'
+  },
+  submitbuttons: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+  },
+  textinput: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: "center",
+    height: 10
+
+  },
+  logo: {
+    width: 180,
+    height: 180,
+    resizeMode: 'contain',
+    marginTop: 50
+  },
+  backgroundGradient: {
+    height: "100%",
+    width: "100%",
+    flex: 1,
+    alignItems: 'center',
+  },
+  placeholder: {
+    padding: 10,
+  }
 })
