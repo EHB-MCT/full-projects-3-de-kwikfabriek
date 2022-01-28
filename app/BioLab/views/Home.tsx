@@ -5,7 +5,8 @@ import { LinearGradient } from 'react-native-linear-gradient';
 
 const svgThing = require("../assets/Logo_waterdruppel.svg");
 
-
+// homeStyle
+import { mainStyle, homeStyle } from '../styles/style';
 
 
 export default class Home extends Component<{ navigation: any }> {
@@ -17,24 +18,21 @@ export default class Home extends Component<{ navigation: any }> {
   render(): React.ReactNode {
     return (
 
-      <View style={styles.container}>
-        <ImageBackground style={styles.backgroundGradient}
+      <View style={homeStyle.container}>
+        <ImageBackground style={homeStyle.backgroundGradient}
           source={require("../assets/gradient.png")}>
 
-          {/* <LinearGradient colors={['#7F7FD5', '#86A8E7', '#91eae4']}> */}
 
           <Text style={{ opacity: 0 }}></Text>
 
 
-
-
           <View>
-            <View>
+            <View style={homeStyle.hamburgercontainer}>
               <TouchableHighlight onPress={() =>
                 this.props.navigation.navigate('User', {})
               } underlayColor="rgba(0,0,0,0)">
 
-                <Text>Account</Text>
+                <Image style={homeStyle.hamburgerbutton} source={require('../assets/Hamburger.png')} />
 
               </TouchableHighlight>
 
@@ -42,30 +40,30 @@ export default class Home extends Component<{ navigation: any }> {
 
           </View>
 
-          <View style={styles.logocontainer}>
+          <View style={homeStyle.logocontainer}>
             <TouchableHighlight onPress={() =>
               this.props.navigation.navigate('Measure', {})
             } underlayColor="rgba(0,0,0,0)">
 
-              <Image style={styles.logo} source={require('../assets/Logo_waterdruppel.png')} />
+              <Image style={homeStyle.logo} source={require('../assets/Logo_waterdruppel.png')} />
 
             </TouchableHighlight>
           </View>
 
-          <View style={styles.menuContainer}>
+          <View style={homeStyle.menuContainer}>
             {/* Hier komt de body van de pagina */}
 
             {/* <View style={styles.row}>
             <Text style={styles.subTitle}>Measure with</Text>
           </View> */}
 
-            <View style={styles.row}>
+            <View style={homeStyle.row}>
 
               <TouchableHighlight onPress={() =>
                 this.props.navigation.navigate('InfoView', {})
               } underlayColor="rgba(0,0,0,0)">
 
-                <Image style={styles.logobuttons} source={require('../assets/Info-01.png')} />
+                <Image style={homeStyle.logobuttons} source={require('../assets/Info.png')} />
 
               </TouchableHighlight>
 
@@ -75,7 +73,7 @@ export default class Home extends Component<{ navigation: any }> {
                 this.props.navigation.navigate('Data', {})
               } underlayColor="rgba(0,0,0,0)">
 
-                <Image style={styles.logobuttons} source={require('../assets/Data.png')} />
+                <Image style={homeStyle.logobuttons} source={require('../assets/Data.png')} />
 
               </TouchableHighlight>
 
@@ -84,12 +82,12 @@ export default class Home extends Component<{ navigation: any }> {
 
             </View>
 
-            <View style={styles.bottomMiddleButt}>
+            <View style={homeStyle.bottomMiddleButt}>
               <TouchableHighlight onPress={() =>
                 this.props.navigation.navigate('Map', {})
               } underlayColor="rgba(0,0,0,0)">
 
-                <Image style={styles.logobuttons} source={require('../assets/Map.png')} />
+                <Image style={homeStyle.logobuttons} source={require('../assets/Map.png')} />
 
               </TouchableHighlight>
 
@@ -99,7 +97,6 @@ export default class Home extends Component<{ navigation: any }> {
 
 
           </View>
-          {/* </LinearGradient> */}
 
         </ImageBackground >
       </View >
@@ -107,78 +104,3 @@ export default class Home extends Component<{ navigation: any }> {
   }
 
 }
-
-// voorlopige stijlen
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "space-between",
-
-  },
-  backgroundGradient: {
-    height: "100%",
-    width: "100%"
-  },
-  menuContainer: {
-    padding: 20,
-  },
-  menuButton: {
-    alignItems: 'center',
-    backgroundColor: 'green',
-    padding: 15,
-    alignContent: 'center'
-  },
-  menuButtonText: {
-    textAlign: "center",
-    fontSize: 18,
-  },
-  row: {
-    flexDirection: "row",
-    flexWrap: "nowrap",
-    justifyContent: "space-between",
-    alignItems: "center"
-  },
-  toolbar: {
-    paddingTop: 30,
-    paddingBottom: 10,
-    flexDirection: 'row',
-  },
-  toolbarButton: {
-    width: 50,
-  },
-  subTitle: {
-    fontSize: 24,
-    color: "#000",
-    marginBottom: 20,
-    fontWeight: '600'
-  },
-  bottomMiddleButt: {
-    flexDirection: "row",
-    flexWrap: "nowrap",
-    justifyContent: "center",
-    marginTop: -60,
-  },
-  logoSVG: {
-    width: 50,
-    height: 50,
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: "center"
-  },
-  logo: {
-    width: 300,
-    height: 300,
-    resizeMode: 'contain',
-  },
-  logocontainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  logobuttons: {
-    width: 125,
-    height: 125,
-    resizeMode: 'contain',
-  },
-});

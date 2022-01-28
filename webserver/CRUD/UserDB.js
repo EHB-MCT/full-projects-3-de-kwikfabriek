@@ -10,7 +10,7 @@ const {
 
 const {
     Image
-} = require('./image.js');
+} = require('./data.js');
 
 
 class UserDB {
@@ -25,19 +25,6 @@ class UserDB {
                 let resultatenArray = [];
                 resultaat.map((value) => {
                     resultatenArray.push(this.converteerQueryNaarObject(value));
-                });
-                resolve(resultatenArray);
-                console.log(resultatenArray);
-            });
-        });
-    }
-
-    getAllImageData(mijnSqlQuery) {
-        return new Promise((resolve, reject) => {
-            this.getVerbinding().voerSqlQueryUit(mijnSqlQuery).then((resultaat) => {
-                let resultatenArray = [];
-                resultaat.map((value) => {
-                    resultatenArray.push(this.converteerQueryNaarObjectImages(value));
                 });
                 resolve(resultatenArray);
                 console.log(resultatenArray);
@@ -72,7 +59,7 @@ class UserDB {
         return new Promise((resolve, reject) => {
             this.getVerbinding().voerSqlQueryUit("SELECT * FROM users WHERE username = ?", [username]).then((resultaat) => {
                 resultaat = this.converteerQueryNaarObjectPassword(resultaat);
-                console.log(resultaat);
+                console.log(resultaat, "check duplicates");
                 resolve(resultaat);
             });
         });
@@ -86,6 +73,25 @@ class UserDB {
                         resolve(value);
                     });
                 });
+            });
+        });
+    }
+
+    sendData(sampleID, link) {
+        return new Promise((resolve, reject) => {
+            this.getVerbinding().voerSqlQueryUit("INSERT INTO data (sampleID, fileURL) VALUES (?,?)", [sampleID, link]).then((resultaat) => {
+                resolve(resultaat);
+            })
+
+        })
+    }
+
+    getData(sampleID) {
+        return new Promise((resolve, reject) => {
+            this.getVerbinding().voerSqlQueryUit("SELECT * FROM data WHERE sampleID = ?", [sampleID]).then((resultaat) => {
+                resultaat = this.converteerQueryNaarObjectData(resultaat);
+                resolve(resultaat);
+                console.log(resultaat);
             });
         });
     }
@@ -106,8 +112,8 @@ class UserDB {
         return new User(query.username, query.password);
     }
 
-    converteerQueryNaarObjectImages(query) {
-        return new Image(query.sampleID, query.time);
+    converteerQueryNaarObjectData(query) {
+        return new Image(query.sampleID, query.fileURL);
     }
 }
 

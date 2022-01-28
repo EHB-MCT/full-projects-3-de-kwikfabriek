@@ -24,10 +24,9 @@ app.use(cors());
 
 
 app.get('/', async (req, res) => {
-    console.log("Mainpage")
-    res.status(200).send({
-        message: "Server Biolab",
-    });
+    // res.status(300).redirect('../info.html')
+    res.status(200).send("Welcome to the BioLab server.")
+    console.log("Documentation page")
 })
 
 app.get('/users', async (req, res) => {
@@ -37,22 +36,42 @@ app.get('/users', async (req, res) => {
     })
 })
 
+app.get('/user', async (req, res) => {
+    console.log("One user")
+    userDB.getUserFromUserID("1").then((user) => {
+        res.send(user)
+    })
+})
+
+
 app.post('/login', async (req, res) => {
     console.log("Login route called");
     try {
         if (!req.body.username || !req.body.password) {
             res.status(400).send('Bad login: Missing email or password! Try again.');
+            console.log('Bad login: Missing email or password! Try again.');
             return;
         }
-        userDB.checkPassword(req.body.username, req.body.password).then((verifyPass) => {
-            if (verifyPass) {
-                console.log("You are logged in, have fun!")
-                res.status(200).send("You are logged in, have fun!");
-            } else if (!verifyPass) {
-                console.log("Fool, wrong password or username!")
-                res.status(500).send("Fool, wrong password or username!");
+
+        userDB.getUserFromUserName(req.body.username).then((result) => {
+            if (result.userName) {
+                userDB.checkPassword(req.body.username, req.body.password).then((verifyPass) => {
+                    if (verifyPass) {
+                        console.log("You are logged in, have fun!")
+                        res.status(200).send("You are logged in, have fun!");
+                    } else if (!verifyPass) {
+                        console.log("Fool, wrong password or username!")
+                        res.status(500).send("Fool, wrong password or username!");
+                    }
+                })
+
+            } else if (result.userName == undefined) {
+                console.log("User doesn't exicsts!")
+                res.status(501).send("Fool, now user found in database!");
+                return;
             }
         })
+
     } catch (error) {
         console.log(error)
         res.status(500).send({
@@ -68,23 +87,29 @@ app.post('/register', async (req, res) => {
     try {
         if (!req.body.username || !req.body.password) {
             res.status(400).send('Bad login: Missing email or password! Try again.');
+            console.log('Bad login: Missing email or password! Try again.');
             return;
         }
 
-        userDB.checkDuplicates(req.body.name).then((result) => {
-            if (result) {
+        userDB.checkDuplicates(req.body.username, req.body.password).then((duplicat) => {
+            if (duplicat.userName == undefined) {
+                console.log(duplicat.userName, "check status");
+                console.log("New account detected!")
+                userDB.createUser(req.body.username, req.body.password).then((result) => {
+                    console.log(result, "this is result");
+                    if (result) {
+                        console.log("Acount created!")
+                        res.status(200).send("Acount created!");
+                    } else if (!result) {
+                        console.log("Fool, wrong password or username!")
+                        res.status(500).send("Fool, wrong password or username!");
+                    }
+                })
+            } else {
+                console.log(duplicat.userName, "check status");
+                console.log("Account already excists!")
+                res.status(500).send("Account already excists!");
                 return;
-            }
-        })
-
-        userDB.createUser(req.body.username, req.body.password).then((result) => {
-            console.log(result, "this is result");
-            if (result) {
-                console.log("You are logged in, have fun!")
-                res.status(200).send("Acount created!");
-            } else if (!result) {
-                console.log("Fool, wrong password or username!")
-                res.status(500).send("Fool, wrong password or username!");
             }
         })
 
@@ -106,39 +131,70 @@ app.get('/imageData', async (req, res) => {
     })
 })
 
-app.get('/user', async (req, res) => {
-    console.log("One user")
-    userDB.getUserFromUserID("1").then((user) => {
-        res.send(user)
-    })
-})
-
-
-
 app.get('/connection', async (req, res) => {
     dataBase.maakVerbindingMetDatabase();
-    res.status(200).send("Succesfull connection.")
+    res.status(200).send("Succesfull connection.");
 })
 
 
-app.post('/addUser', async (req, res) => {
-    console.log("Add user path")
+app.post('/data', async (req, res) => {
+    console.log("Data route called");
     try {
-        if (!req.body.username || !req.body.password) {
-            res.status(400).send('Bad Register: Missing username or password! Try again.');
+        if (!req.body.sampleID || !req.body.link) {
+            res.status(400).send('Bad request: Missing sampleID or link to image file.');
+            console.log('Bad request: Missing sampleID or link to image file.');
             return;
         }
-        var QUERY = `INSERT INTO users(username, password) VALUES ("${req.body.username}", "${req.body.password}" )`
-        dataBase.voerSqlQueryUit(QUERY).then((data) => {
-            res.status(201).send(data)
-        })
-    } catch (error) {
-        console.log(error, "Sending doesn't work")
 
+        userDB.sendData("20222701", "../assets/Settings.png").then((response) => {
+            res.send(response);
+            console.log("Data transmitted and confirmation.")
+        })
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            error: 'Something went wrong',
+            value: error
+        })
     } finally {
-        console.log("User added to BioLab server.")
+        console.log("Query succesfull!")
     }
-});
+
+})
+
+app.get('/data', async (req, res) => {
+    console.log("Data route called")
+    try {
+        // if (!req.body.sampleID) {
+        //     res.status(400).send('Bad request: Missing sampleID.');
+        //     console.log('Bad request: Missing sampleID.');
+        //     return;
+        // }
+
+        userDB.getData("20222701").then((data) => {
+            console.log("data collected")
+            res.status(200).send(data);
+        })
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            error: 'Something went wrong',
+            value: error
+        })
+    } finally {
+        console.log("Query succesfull!")
+    }
+
+
+
+})
+
+
+
+
+
 
 
 app.listen(port, () => {
