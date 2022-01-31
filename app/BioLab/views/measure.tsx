@@ -1,9 +1,9 @@
-import React, {Component} from 'react';
-import {StyleSheet, Text, View, TouchableHighlight, Image} from 'react-native';
+import React, { Component } from 'react';
+import { StyleSheet, Text, View, TouchableHighlight, Image } from 'react-native';
 
-import {mainStyle, measureStyle} from '../styles/style';
+import { mainStyle, measureStyle, settingsStyle } from '../styles/style';
 
-export default class Measure extends Component<{navigation: any}> {
+export default class Measure extends Component<{ navigation: any }> {
   constructor(props: any) {
     super(props);
   }
@@ -44,8 +44,20 @@ export default class Measure extends Component<{navigation: any}> {
             <Text style={measureStyle.choiceText}>External</Text>
             <Text style={measureStyle.choiceText}>Internal</Text>
           </View>
+
+          <View style={settingsStyle.settingsBox}>
+            <Text style={settingsStyle.info}>Change your preferences in:</Text>
+            <TouchableHighlight
+              activeOpacity={0.5}
+              onPress={() => this.props.navigation.navigate('SettingsUser', {})}
+              underlayColor="rgba(255,255,255,0)">
+              <Text style={settingsStyle.info}>Settings: Preferences</Text>
+          </TouchableHighlight>
         </View>
+
+
       </View>
+      </View >
     );
   }
 }

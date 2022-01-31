@@ -13,6 +13,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
   SafeAreaView,
   ScrollView,
+  Settings,
   StatusBar,
   StyleSheet,
   Text,
@@ -36,6 +37,7 @@ import Data from './views/Data';
 import InfoView from './views/InfoView';
 import DeviceList from './views/measure/DeviceList';
 import User from './views/user';
+import SettingsUser from './views/SettingsUser';
 
 const Stack = createNativeStackNavigator();
 
@@ -94,6 +96,12 @@ export default class App extends Component {
             name="User"
             component={User}
             options={{ title: 'User' }}
+          />
+
+          <Stack.Screen
+            name="SettingsUser"
+            component={SettingsUser}
+            options={{ title: 'Settings' }}
           />
 
         </Stack.Navigator>

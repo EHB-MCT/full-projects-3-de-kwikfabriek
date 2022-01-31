@@ -1,4 +1,4 @@
-import React, {Component, useEffect, useState} from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -11,11 +11,11 @@ import {
   Image,
   TouchableHighlight,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 import RNFS from 'react-native-fs';
-import {template} from '@babel/core';
-
+import { template } from '@babel/core';
 
 
 // userStyle
@@ -23,10 +23,10 @@ import { mainStyle, dataStyle, userStyle } from '../styles/style';
 
 export default class Data extends Component {
   state = {
-    username: '',
+    userName: '',
     password: '',
     sampleID: '',
-    link: ''
+    link: '',
   }
 
   constructor(props: any) {
@@ -52,11 +52,13 @@ export default class Data extends Component {
   }
 
 
+
+
   async sendData() {
-    RNFetchBlob.fetch('POST', 'http://10.3.208.87:8100/data', { 'Content-Type': 'application/json' },
+    RNFetchBlob.fetch('POST', 'http://10.3.208.99:8100/data', { 'Content-Type': 'application/json' },
       JSON.stringify({
         sampleID: "20222701",
-        link: "../assets/Logo_waterdruppel.png"
+        link: "Logo_waterdruppel.png"
       })
     ).then((res) => {
       let status = res.info().status;
@@ -74,7 +76,7 @@ export default class Data extends Component {
   }
 
   async getData() {
-    RNFetchBlob.fetch('GET', 'http://10.3.208.87:8100/data', { 'Content-Type': 'application/json' },
+    return RNFetchBlob.fetch('GET', 'http://10.3.208.99:8100/data', { 'Content-Type': 'application/json' },
       JSON.stringify({
         sampleID: "20222701",
       })
@@ -96,6 +98,7 @@ export default class Data extends Component {
   }
 
   render() {
+
     return (
       <View style={mainStyle.container}>
         <View style={mainStyle.toolbar}>
@@ -107,13 +110,15 @@ export default class Data extends Component {
               <TouchableHighlight style={userStyle.registerbutton} onPress={() => this.getData()}>
                 <Text >Get data</Text>
               </TouchableHighlight>
+              <View>
+                <Image source={require('../assets/Info.png')} />
+              </View>
 
             </View>
           </View >
         </View>
       </View>
-
-    );
+    )
   }
 }
 

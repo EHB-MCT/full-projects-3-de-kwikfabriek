@@ -50,7 +50,6 @@ export default class Home extends Component<{ navigation: any }> {
               </TouchableHighlight>
 
             </View>
-
           </View>
 
           <View style={homeStyle.logocontainer}>

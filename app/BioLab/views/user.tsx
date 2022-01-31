@@ -5,9 +5,13 @@ import RNFetchBlob from 'rn-fetch-blob';
 // react-native
 import { SafeAreaView, StyleSheet, Text, TextInput, TextInputProps, TouchableHighlight, View, Alert, Image, ImageBackground } from "react-native";
 
+
 // dependency
 import RNFS from 'react-native-fs';
 
+import { MMKV } from 'react-native-mmkv'
+
+const storage = new MMKV()
 
 
 // userStyle
@@ -16,7 +20,7 @@ import { homeStyle, mainStyle, userStyle } from '../styles/style';
 
 export default class User extends Component<{ navigation: any }> {
     state = {
-        username: '',
+        userName: '',
         password: ''
     }
 
@@ -27,8 +31,7 @@ export default class User extends Component<{ navigation: any }> {
     async duplicateUser() {
         Alert.alert(
             "Warning",
-            `Account with username:${this.state.username} already excists!
-            Use different username.`,
+            `Account with username:${this.state.userName} already excists! Use different username.`,
             [
                 {
                     text: "Cancel",
@@ -58,7 +61,7 @@ export default class User extends Component<{ navigation: any }> {
 
     async welcomeMessage() {
         Alert.alert(
-            `Welcome to the BioLab app ${this.state.username}.`,
+            `Welcome to the BioLab app ${this.state.userName}.`,
             `You have now unlimited acces to the app.`,
             [
                 { text: "OK", onPress: () => this.props.navigation.navigate('Home', {}) }
@@ -68,7 +71,7 @@ export default class User extends Component<{ navigation: any }> {
 
     async falseUser() {
         Alert.alert(
-            `No account found with ${this.state.username}.`,
+            `No account found with ${this.state.userName}.`,
             `Try again with different name or create account.`,
             [
                 {
@@ -81,13 +84,19 @@ export default class User extends Component<{ navigation: any }> {
         );
     }
 
+    async saveUser() {
+        storage.set('user.name', 'Marc')
+        const username = storage.getString('user.name')
+        console.log(username);
+    }
+
 
 
 
     async createUser() {
-        RNFetchBlob.fetch('POST', 'http://10.3.208.87:8100/register', { 'Content-Type': 'application/json' },
+        RNFetchBlob.fetch('POST', 'http://10.3.208.99:8100/register', { 'Content-Type': 'application/json' },
             JSON.stringify({
-                username: this.state.username,
+                userName: this.state.userName,
                 password: this.state.password
             })
         ).then((res) => {
@@ -115,9 +124,9 @@ export default class User extends Component<{ navigation: any }> {
 
 
     async login() {
-        RNFetchBlob.fetch('POST', 'http://10.3.208.87:8100/login', { 'Content-Type': 'application/json' },
+        RNFetchBlob.fetch('POST', 'http://10.3.208.99:8100/login', { 'Content-Type': 'application/json' },
             JSON.stringify({
-                username: this.state.username,
+                userName: this.state.userName,
                 password: this.state.password
             })
         ).then((res) => {
@@ -127,6 +136,7 @@ export default class User extends Component<{ navigation: any }> {
                 console.log("You are logged in!")
                 let text = res.text()
                 console.log(text);
+                this.saveUser();
                 this.welcomeMessage();
             } else if (status == 500) {
                 let text = res.text()
@@ -164,7 +174,7 @@ export default class User extends Component<{ navigation: any }> {
                         <View style={userStyle.txtinput}>
                             <TextInput style={userStyle.placeholder}
                                 placeholder="EMAIL"
-                                onChangeText={(text) => this.setState({ username: text })}
+                                onChangeText={(text) => this.setState({ userName: text })}
                             />
                         </View>
                         <View style={userStyle.txtinput}>

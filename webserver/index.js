@@ -1,5 +1,4 @@
 //CRUD setup van Miguel
-var mysql = require('mysql');
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -18,13 +17,11 @@ const {
 let userDB = new UserDB;
 let dataBase = new Database;
 
-
 app.use(bodyParser.json());
 app.use(cors());
 
-
 app.get('/', async (req, res) => {
-    // res.status(300).redirect('../info.html')
+    // res.status(300).redirect('../webserver/info.html')
     res.status(200).send("Welcome to the BioLab server.")
     console.log("Documentation page")
 })
@@ -38,24 +35,24 @@ app.get('/users', async (req, res) => {
 
 app.get('/user', async (req, res) => {
     console.log("One user")
-    userDB.getUserFromUserID("1").then((user) => {
+    userDB.getUserFromUserName("Sam").then((user) => {
         res.send(user)
     })
 })
 
-
 app.post('/login', async (req, res) => {
     console.log("Login route called");
+    console.log(req.body.userName, req.body.password)
     try {
-        if (!req.body.username || !req.body.password) {
-            res.status(400).send('Bad login: Missing email or password! Try again.');
-            console.log('Bad login: Missing email or password! Try again.');
+        if (!req.body.userName || !req.body.password) {
+            res.status(400).send('Bad login: Missing username or password! Try again.');
+            console.log('Bad login: Missing userName or password! Try again.');
             return;
         }
 
-        userDB.getUserFromUserName(req.body.username).then((result) => {
+        userDB.getUserFromUserName(req.body.userName).then((result) => {
             if (result.userName) {
-                userDB.checkPassword(req.body.username, req.body.password).then((verifyPass) => {
+                userDB.checkPassword(req.body.userName, req.body.password).then((verifyPass) => {
                     if (verifyPass) {
                         console.log("You are logged in, have fun!")
                         res.status(200).send("You are logged in, have fun!");
@@ -107,8 +104,8 @@ app.post('/register', async (req, res) => {
                 })
             } else {
                 console.log(duplicat.userName, "check status");
-                console.log("Account already excists!")
-                res.status(500).send("Account already excists!");
+                console.log(`Account: ${req.body.username} already exists!`)
+                res.status(500).send(`Account: ${req.body.username} already exists!`);
                 return;
             }
         })
@@ -126,7 +123,7 @@ app.post('/register', async (req, res) => {
 
 app.get('/imageData', async (req, res) => {
     console.log("All images")
-    userDB.getAllImageData("SELECT * FROM images").then((data) => {
+    userDB.getData("SELECT * FROM images").then((data) => {
         res.send(data)
     })
 })
@@ -135,7 +132,6 @@ app.get('/connection', async (req, res) => {
     dataBase.maakVerbindingMetDatabase();
     res.status(200).send("Succesfull connection.");
 })
-
 
 app.post('/data', async (req, res) => {
     console.log("Data route called");
@@ -146,7 +142,7 @@ app.post('/data', async (req, res) => {
             return;
         }
 
-        userDB.sendData("20222701", "../assets/Settings.png").then((response) => {
+        userDB.sendData("20222701", "Settings.png").then((response) => {
             res.send(response);
             console.log("Data transmitted and confirmation.")
         })
@@ -163,18 +159,24 @@ app.post('/data', async (req, res) => {
 
 })
 
-app.get('/data', async (req, res) => {
+app.get('/data/:userName', async (req, res) => {
     console.log("Data route called")
+    console.log("userName", req.params.userName);
     try {
-        // if (!req.body.sampleID) {
-        //     res.status(400).send('Bad request: Missing sampleID.');
-        //     console.log('Bad request: Missing sampleID.');
-        //     return;
-        // }
+        if (!req.params.userName) {
+            res.status(400).send('Bad request: Missing userName.');
+            console.log('Bad request: Missing userName.');
+            return;
+        }
 
-        userDB.getData("20222701").then((data) => {
+        userDB.getData(req.params.userName).then((data) => {
             console.log("data collected")
-            res.status(200).send(data);
+            if (data.userName == undefined) {
+                res.status(300).send(`No data found for user: ${req.params.userName}`);
+            } else if (data.userName) {
+                res.status(500).send(data);
+            }
+
         })
 
     } catch (error) {
@@ -191,9 +193,59 @@ app.get('/data', async (req, res) => {
 
 })
 
+app.get('/location/:userName', async (req, res) => {
+    console.log("Retrieving location");
+    console.log(req.params.userName);
+    userDB.getLocation(req.params.userName).then((data) => {
+        console.log("Retrieved location.")
+        res.status(200).send(data)
+    })
+})
 
+app.post('/location', async (req, res) => {
+    console.log("Location route called");
+    try {
+        if (!req.body.userName || !req.body.location || !req.body.locationName) {
+            res.status(400).send('Bad request: Missing username, location or locationName.');
+            console.log('Bad request: Missing username, location or locationName.');
+            return;
+        }
 
+        userDB.checkDuplicateLocations(req.body.userName, req.body.locationName).then((duplicat) => {
+            if ((duplicat.userName == undefined) && (duplicat.locationName == undefined)) {
+                console.log(duplicat.userName, "check status");
+                console.log("New location detected!")
 
+                userDB.sendLocation(`${req.body.userName}`, `${req.body.location}`, `${req.body.locationName}`).then((response) => {
+                    console.log(response)
+                    if (response) {
+                        console.log(response, `Location marker created for ${req.body.locationName}!`)
+                        res.status(200).send(`Location ${req.body.locationName} added to database.`);
+                    } else if (!response) {
+                        console.log("Fool, something went wrong!")
+                        res.status(500).send("Fool, something went wrong!");
+                    }
+                })
+
+            } else {
+                console.log(duplicat.userName, "check status");
+                console.log("Location already exists")
+                res.status(500).send(`Location: ${req.body.locationName} already exists!`);
+                return;
+            }
+        })
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            error: 'Something went wrong',
+            value: error
+        })
+    } finally {
+        console.log("Query succesfull!")
+    }
+
+})
 
 
 
