@@ -28,10 +28,9 @@ class UserDB {
             this.getVerbinding().voerSqlQueryUit(mijnSqlQuery).then((resultaat) => {
                 let resultatenArray = [];
                 resultaat.map((value) => {
-                    resultatenArray.push(this.converteerQueryNaarObject(value));
+                    resultatenArray.push(this.converteerQueryNaarObjectPassword(value));
                 });
                 resolve(resultatenArray);
-                console.log(resultatenArray);
             });
         });
     }
@@ -41,7 +40,6 @@ class UserDB {
             this.getVerbinding().voerSqlQueryUit("SELECT * FROM users WHERE userName = ?", [userName]).then((resultaat) => {
                 resultaat = this.converteerQueryNaarObjectPassword(resultaat)
                 resolve(resultaat);
-                console.log(resultaat);
             });
         });
     }
@@ -50,9 +48,7 @@ class UserDB {
         return new Promise((resolve, reject) => {
             this.getVerbinding().voerSqlQueryUit("SELECT * FROM users WHERE username = ?", [userName]).then((resultaat) => {
                 resultaat = this.converteerQueryNaarObjectPassword(resultaat);
-                console.log(resultaat);
                 const verifyPass = bcrypt.compareSync(password, resultaat.password);
-                console.log(verifyPass);
                 resolve(verifyPass);
 
             });
@@ -63,7 +59,6 @@ class UserDB {
         return new Promise((resolve, reject) => {
             this.getVerbinding().voerSqlQueryUit("SELECT * FROM users WHERE username = ?", [username]).then((resultaat) => {
                 resultaat = this.converteerQueryNaarObjectPassword(resultaat);
-                console.log(resultaat, "check duplicates");
                 resolve(resultaat);
             });
         });
@@ -72,10 +67,7 @@ class UserDB {
     checkDuplicateLocations(userName, locationName) {
         return new Promise((resolve, reject) => {
             this.getVerbinding().voerSqlQueryUit("SELECT * FROM locations WHERE userName = ? and locationName = ?", [userName, locationName]).then((resultaat) => {
-                console.log('Username:', userName);
-                console.log('LocationName:', locationName)
                 resultaat = this.converteerQueryNaarObjectLocation(resultaat);
-                console.log(resultaat, "Checking for duplicates.");
                 resolve(resultaat);
             });
         });

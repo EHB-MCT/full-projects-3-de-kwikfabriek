@@ -21,7 +21,8 @@ import { homeStyle, mainStyle, userStyle } from '../styles/style';
 export default class User extends Component<{ navigation: any }> {
     state = {
         userName: '',
-        password: ''
+        password: '',
+        connection: '10.1.233.97'
     }
 
     constructor(props: any) {
@@ -101,27 +102,17 @@ export default class User extends Component<{ navigation: any }> {
             })
         ).then((res) => {
             let status = res.info().status;
-            if (status == 200) {
+            if (status == 201) {
                 console.log("Account created!")
-                let text = res.text()
-                console.log(text)
                 this.welcomeMessage();
-
             } else if (status == 500) {
-                let text = res.text()
                 console.log("Fool, account already excists");
-                console.log(status)
-                console.log(text)
                 this.duplicateUser();
             } else if (status == 400) {
                 console.log("Fetch didn't work");
-                console.log(status)
-                let text = res.text()
-                console.log(text)
             }
         })
     }
-
 
     async login() {
         RNFetchBlob.fetch('POST', 'http://10.3.208.99:8100/login', { 'Content-Type': 'application/json' },
@@ -131,31 +122,19 @@ export default class User extends Component<{ navigation: any }> {
             })
         ).then((res) => {
             let status = res.info().status;
-            console.log("status:", status);
             if (status == 200) {
                 console.log("You are logged in!")
-                let text = res.text()
-                console.log(text);
                 this.saveUser();
                 this.welcomeMessage();
             } else if (status == 500) {
-                let text = res.text()
                 console.log("Fool, wrong password or username");
                 this.wrongPassword();
-                console.log(status)
-                console.log(text)
             } else if (status == 501) {
-                let text = res.text()
                 console.log("Account doesn't excist");
                 this.falseUser();
-                console.log(status)
-                console.log(text)
             }
             else if (status == 400) {
                 console.log("Fetch didn't work");
-                console.log(status)
-                let text = res.text()
-                console.log(text)
             }
         })
     }
