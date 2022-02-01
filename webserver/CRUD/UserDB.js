@@ -106,7 +106,7 @@ class UserDB {
     getData(userName) {
         return new Promise((resolve, reject) => {
             this.getVerbinding().voerSqlQueryUit("SELECT * FROM data WHERE userName = ?", [userName]).then((resultaat) => {
-                // resultaat = this.converteerQueryNaarObjectData(resultaat);
+                resultaat = this.converteerQueryNaarObjectData(resultaat);
                 resolve(resultaat);
                 console.log(resultaat);
             });
@@ -122,6 +122,15 @@ class UserDB {
         });
     }
 
+    getSpecificLocation(userName, locationName) {
+        return new Promise((resolve, reject) => {
+            this.getVerbinding().voerSqlQueryUit("SELECT * FROM locations WHERE userName = ? and locationName = ?", [userName, locationName]).then((resultaat) => {
+                resolve(resultaat);
+                console.log("resultaat", resultaat);
+            });
+        });
+    }
+
     hashPass(password) {
         return new Promise((resolve, reject) => {
             const hashedPassword = bcrypt.hash(password, 10);
@@ -129,8 +138,18 @@ class UserDB {
         })
     }
 
+    deleteLocation(userName, locationName) {
+        return new Promise((resolve, reject) => {
+            this.getVerbinding().voerSqlQueryUit("DELETE FROM locations WHERE userName = ? and locationName = ?", [userName, locationName]).then((resultaat) => {
+                // resultaat = this.converteerQueryNaarObjectData(resultaat);
+                resolve(resultaat);
+                console.log(resultaat);
+            });
+        });
+    }
+
     converteerQueryNaarObject(query) {
-        return new User(query.id, query.userName, query.password);
+            return new User(query.id, query.userName, query.password);
     }
 
     converteerQueryNaarObjectPassword(query) {
@@ -138,7 +157,10 @@ class UserDB {
     }
 
     converteerQueryNaarObjectData(query) {
-        return new Image(query.sampleID, query.fileURL);
+        for (let i = 0; i < query.lenght; i++){
+            return new Image(query.sampleID[i], query.fileURL[i]);
+        }
+
     }
 
     converteerQueryNaarObjectLocation(query) {

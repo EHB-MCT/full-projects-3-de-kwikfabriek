@@ -138,9 +138,8 @@ app.get('/data/:userName', async (req, res) => {
             if (data.userName == undefined) {
                 res.status(300).send(`No data found for user: ${req.params.userName}`);
             } else if (data.userName) {
-                res.status(500).send(data);
+                res.status(200).send(data);
             }
-
         })
 
     } catch (error) {
@@ -220,6 +219,39 @@ app.post('/location', async (req, res) => {
             }
         })
 
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            error: 'Something went wrong',
+            value: error
+        })
+    } finally {
+        console.log("Query succesfull!")
+    }
+
+})
+
+app.delete('/delete', async (req, res) => {
+    console.log("Location delete route called");
+    try {
+        if (!req.body.userName || !req.body.locationName) {
+            res.status(400).send('Bad request: Missing username or locationName.');
+            console.log('Bad request: Missing username or locationName.');
+            return;
+        }
+
+        userDB.getSpecificLocation(req.body.userName, req.body.locationName).then((data) => {
+            if (data.length === 0) {
+                res.status(400).send(`No location found with name:${req.body.locationName}`);
+                console.log(`No location found with name:${req.body.locationName}`)
+                return;
+            } else if (!(data.length === 0)) {
+                userDB.deleteLocation(req.body.userName, req.body.locationName).then((data) => {
+                    res.status(201).send(`Location: ${req.body.locationName} removed from data base`);
+                    console.log(`Location: ${req.body.locationName} removed from data base`, data);
+                })
+            }
+        });
     } catch (error) {
         console.log(error)
         res.status(500).send({

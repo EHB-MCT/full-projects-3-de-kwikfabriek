@@ -22,7 +22,7 @@ export default class User extends Component<{ navigation: any }> {
     state = {
         userName: '',
         password: '',
-        connection: '10.1.233.97'
+        connection: '10.3.208.95'
     }
 
     constructor(props: any) {
@@ -86,16 +86,16 @@ export default class User extends Component<{ navigation: any }> {
     }
 
     async saveUser() {
-        storage.set('user.name', 'Marc')
+        storage.set("user.name", `${this.state.userName}`)
         const username = storage.getString('user.name')
-        console.log(username);
+        console.log("Username:", username);
     }
 
 
 
 
     async createUser() {
-        RNFetchBlob.fetch('POST', 'http://10.3.208.99:8100/register', { 'Content-Type': 'application/json' },
+        RNFetchBlob.fetch('POST', `http://${this.state.connection}:8100/register`, { 'Content-Type': 'application/json' },
             JSON.stringify({
                 userName: this.state.userName,
                 password: this.state.password
@@ -115,7 +115,7 @@ export default class User extends Component<{ navigation: any }> {
     }
 
     async login() {
-        RNFetchBlob.fetch('POST', 'http://10.3.208.99:8100/login', { 'Content-Type': 'application/json' },
+        RNFetchBlob.fetch('POST', `http://${this.state.connection}:8100/login`, { 'Content-Type': 'application/json' },
             JSON.stringify({
                 userName: this.state.userName,
                 password: this.state.password
