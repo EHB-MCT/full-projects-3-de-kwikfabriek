@@ -13,6 +13,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {
   SafeAreaView,
   ScrollView,
+  Settings,
   StatusBar,
   StyleSheet,
   Text,
@@ -102,6 +103,7 @@ export default class App extends Component {
             component={User}
             options={{title: 'User'}}
           />
+
         </Stack.Navigator>
       </NavigationContainer>
     );

@@ -538,3 +538,17 @@ export const userStyle = StyleSheet.create({
     padding: 10,
   }
 })
+
+export const settingsStyle = StyleSheet.create({
+  settingsBox: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: 10,
+    paddingBottom: 50,
+
+  },
+  info: {
+    textDecorationStyle: 'solid',
+    color: 'white',
+  },
+});

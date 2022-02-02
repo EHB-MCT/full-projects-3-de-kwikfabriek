@@ -1,4 +1,4 @@
-import React, {Component, useEffect, useState} from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -11,6 +11,7 @@ import {
   Image,
   TouchableHighlight,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 import RNFS from 'react-native-fs';
@@ -50,6 +51,11 @@ export default class Data extends Component<
 
   constructor(props: any) {
     super(props);
+    this.state = {
+      files: [],
+      sampleID: '20220201',
+      link: require('../assets/Logo_noText.png')
+    };
 
     // RNFetchBlob.fs.ls(`${RNFS.ExternalDirectoryPath}/Pictures/`).then(files => {
     //   let tempFiles: String[] = [];
@@ -100,6 +106,7 @@ export default class Data extends Component<
         // RGB_values: newRes[count].RGB_values,
         // timestamp: newRes[count].timestamp,
         // userName: loggedInUser,
+
       }
       this.addData();
     });
@@ -127,6 +134,7 @@ export default class Data extends Component<
   }
 
   render() {
+
     return (
       <ScrollView style={mainStyle.container}>
         <View>
