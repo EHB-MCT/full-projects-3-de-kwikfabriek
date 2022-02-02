@@ -40,7 +40,7 @@ export default class LocationPin extends Component<
     };
   }
   test() {
-    RNFetchBlob.fetch('GET', 'http://10.3.208.95:8100/location/Matthias', {
+    RNFetchBlob.fetch('GET', 'http://10.2.213.15:8100/location/Matthias', {
       'Content-Type': 'application/json',
     }).then(res => {
       this.setState({locationArray: []});
@@ -75,7 +75,7 @@ export default class LocationPin extends Component<
           console.log('Matthias', this.state.pinName, pinPosition);
           RNFetchBlob.fetch(
             'POST',
-            'http://10.3.208.95:8100/location',
+            'http://10.2.213.15:8100/location',
             {'Content-Type': 'application/json'},
             JSON.stringify({
               userName: 'Matthias',
@@ -109,7 +109,7 @@ export default class LocationPin extends Component<
         body: JSON.stringify(testingsomething),
       };
       console.log(testingsomething);
-      fetch('http://10.3.208.95:8100/location/delete', params).then(e => {
+      fetch('http://10.2.213.15:8100/location/delete', params).then(e => {
         console.log(e);
         this.setState({deleteOverlay: false});
       });

@@ -16,104 +16,124 @@ import RNFetchBlob from 'rn-fetch-blob';
 import RNFS from 'react-native-fs';
 import {template} from '@babel/core';
 
-
-
 // userStyle
-import { mainStyle, dataStyle, userStyle } from '../styles/style';
+import {mainStyle, dataStyle, userStyle} from '../styles/style';
+import {thisExpression} from '@babel/types';
 
-export default class Data extends Component {
-  state = {
-    username: '',
-    password: '',
-    sampleID: '',
-    link: ''
+const loggedInUser = 'Matthias';
+
+export default class Data extends Component<
+  {navigation: any},
+  {
+    id: Number[];
+    sampleID: String[];
+    RGB_values: String[];
+    timestamp: String[];
+    userName: String;
+    dataContainer: any[];
+    images: String[];
+    imageViews: any[];
   }
+> {
+  state = {
+    id: [],
+    sampleID: [],
+    RGB_values: [],
+    timestamp: [],
+    userName: loggedInUser,
+    dataContainer: [] as any,
+    images: [],
+    imageViews: [],
+  };
+
+  tempFiles = [];
 
   constructor(props: any) {
     super(props);
-    this.state = {
-      files: [],
-    };
 
-    RNFetchBlob.fs.ls(`${RNFS.ExternalDirectoryPath}/Pictures/`).then(files => {
-      let tempFiles: String[] = [];
-      files.forEach(e => {
-        RNFetchBlob.fs
-          .readFile(`${RNFS.ExternalDirectoryPath}/Pictures/${e}`, 'base64')
-          .then(data => {
-            tempFiles.push(`data:image/png;base64,${data}`);
-          });
-      });
-      this.setState({
-        files: tempFiles,
-      });
-      console.log(tempFiles);
+    // RNFetchBlob.fs.ls(`${RNFS.ExternalDirectoryPath}/Pictures/`).then(files => {
+    //   let tempFiles: String[] = [];
+    //   files.forEach(e => {
+    //     console.log(e);
+    //     RNFetchBlob.fs
+    //       .readFile(`${RNFS.ExternalDirectoryPath}/Pictures/${e}`, 'base64')
+    //       .then(data => {
+    //         // let image = new Image();
+    //         tempFiles.push(`data:image/jpg;base64,${data[0]}`);
+    //         // console.log(data[0]);
+
+    //         let something = (
+    //           <View>
+    //             <Image source={require(`data:image/png;base64,${data[0]}`)} />
+    //           </View>
+    //         );
+
+    //         this.setState(prevState => ({
+    //           imageViews: [...prevState.images, something],
+    //         }));
+    //       });
+    //   });
+
+    //   this.setState({
+    //     images: tempFiles,
+    //   });
+    // });
+    this.getData();
+  }
+
+  getData() {
+    RNFetchBlob.fetch('GET', `http://10.2.213.15:8100/data/${loggedInUser}`, {
+      'Content-Type': 'application/json',
+    }).then(res => {
+      let newRes = JSON.parse(res.text());
+      for (let count in newRes) {
+        console.log(newRes[count]);
+        // https://stackoverflow.com/questions/26253351/correct-modification-of-state-arrays-in-react-js
+        this.setState(prevState => ({
+          id: [...prevState.id, newRes[count].id],
+          sampleID: [...prevState.sampleID, newRes[count].sampleID],
+          RGB_values: [...prevState.RGB_values, newRes[count].RGB_values],
+          timestamp: [...prevState.timestamp, newRes[count].timestamp],
+        }));
+
+        // sampleID: newRes[count].sampleID,
+        // RGB_values: newRes[count].RGB_values,
+        // timestamp: newRes[count].timestamp,
+        // userName: loggedInUser,
+      }
+      this.addData();
     });
+    // console.log(typeof res.data);
+    // for (const sample of res.data) {
+    //   console.log(sample.id);
+    // }
   }
 
-
-  async sendData() {
-    RNFetchBlob.fetch('POST', 'http://10.3.208.87:8100/data', { 'Content-Type': 'application/json' },
-      JSON.stringify({
-        sampleID: "20222701",
-        link: "../assets/Logo_waterdruppel.png"
-      })
-    ).then((res) => {
-      let status = res.info().status;
-      console.log("status:", status);
-      if (status == 200) {
-        let text = res.text()
-        console.log(text);
-        console.log(res)
-      }
-      else if (status == 400) {
-        let text = res.text()
-        console.log(text)
-      }
-    })
-  }
-
-  async getData() {
-    RNFetchBlob.fetch('GET', 'http://10.3.208.87:8100/data', { 'Content-Type': 'application/json' },
-      JSON.stringify({
-        sampleID: "20222701",
-      })
-    ).then((res) => {
-      let status = res.info().status;
-      console.log("status:", res);
-      if (status == 200) {
-        let text = res.text()
-        console.log(text);
-        console.log("this is data");
-        this.render();
-      }
-      else if (status == 400) {
-        let text = res.text()
-        console.log(text)
-        console.log("no data recieved")
-      }
-    })
+  addData() {
+    this.setState({
+      dataContainer: [],
+    });
+    for (let a = 0; a < this.state.id.length; a++) {
+      this.state.dataContainer.push(
+        <View style={dataStyle.dataContainer} key={a}>
+          <Text>{this.state.sampleID[a]}</Text>
+          <Text>{this.state.RGB_values[a]}</Text>
+          <Text>{this.state.timestamp[a]}</Text>
+          {this.state.imageViews}
+        </View>,
+      );
+    }
+    this.setState({});
   }
 
   render() {
     return (
-      <View style={mainStyle.container}>
-        <View style={mainStyle.toolbar}>
-          <View style={userStyle.container}>
-            <View>
-              <TouchableHighlight style={userStyle.loginbutton} onPress={() => this.sendData()}>
-                <Text>Send data</Text>
-              </TouchableHighlight>
-              <TouchableHighlight style={userStyle.registerbutton} onPress={() => this.getData()}>
-                <Text >Get data</Text>
-              </TouchableHighlight>
-
-            </View>
-          </View >
+      <ScrollView style={mainStyle.container}>
+        <View>
+          <Text>Your samples:</Text>
         </View>
-      </View>
-
+        <View>{this.state.dataContainer}</View>
+      </ScrollView>
     );
   }
 }
-

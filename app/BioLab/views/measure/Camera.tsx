@@ -110,15 +110,33 @@ export default function Camera() {
     }
   };
 
-  // http://10.3.208.95:8100/data
-  // sampleID
-  // userName
-  // RGB_values
-
   async function deleteImage(imagePath: string) {
     await RNFS.unlink(imagePath);
     setCameraShow(true);
     setConfirmationShow(false);
+  }
+
+  function sendData() {
+    //http://10.2.213.15:8100/data
+    // sampleID
+    // userName
+    // RGB_values
+    const timeElapsed = Date.now();
+    const today = new Date(timeElapsed);
+    console.log(today.toUTCString());
+    RNFetchBlob.fetch(
+      'POST',
+      'http://10.2.213.15:8100/data',
+      {'Content-Type': 'application/json'},
+      JSON.stringify({
+        userName: 'Matthias',
+        timestamp: `${today.toUTCString()}`,
+        sampleID: text,
+        RGB_values: `${rgbValues![0]}, ${rgbValues![1]}, ${rgbValues![2]}`,
+      }),
+    ).then(e => {
+      console.log(e);
+    });
   }
 
   return (
@@ -221,6 +239,7 @@ export default function Camera() {
               <TouchableOpacity
                 style={cameraStyle.imageSavedButtons}
                 onPress={() => {
+                  sendData();
                   setCameraShow(true);
                   setConfirmationShow(false);
                 }}>

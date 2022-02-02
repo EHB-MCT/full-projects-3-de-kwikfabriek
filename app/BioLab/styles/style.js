@@ -368,11 +368,9 @@ export const cameraStyle = StyleSheet.create({
 
 
 export const dataStyle = StyleSheet.create({
-
   dataContainer: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
+    display: "flex",
+    flexDirection: "row",
   },
   imageContainer: {
     flex: 1,
