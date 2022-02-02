@@ -90,7 +90,6 @@ export const homeStyle = StyleSheet.create({
     height: "100%",
     width: "100%",
   },
-
   menuContainer: {
     padding: 20,
   },
@@ -151,10 +150,81 @@ export const homeStyle = StyleSheet.create({
     flex: 1,
     alignItems: 'flex-end',
   },
+  locationpincontainer: {
+    flex: 1,
+    alignItems: "center",
+    height: 40,
+    width: 40,
+  },
+  locationpinbutton: {
+    marginLeft: 15,
+    height: 40,
+    width: 40,
+  },
   hamburgerbutton: {
     marginRight: 15,
     height: 40,
     width: 40
+  },
+  locationpincontainer: {
+    flex: 1,
+  },
+})
+
+
+export const locationPinStyle = StyleSheet.create({
+  contentcontainer: {
+    display: "flex",
+    alignItems: "center",
+  },
+  plusbutton: {
+    width: 40,
+    height: 40,
+  },
+  addlocationbutton: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "rgb(50,50,200)",
+    padding: 10,
+    paddingLeft: 15,
+    paddingRight: 15,
+    width: '70%',
+  },
+  locationbuttontext: {
+    fontSize: 20,
+    textAlign: "center",
+  },
+  maincontainer: {
+    width: "100%",
+    height: "100%",
+    flex: 1,
+    alignItems: "center",
+  },
+  deleteCancelContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  deleteCancelButton: {
+    backgroundColor: "rgba(0, 0, 0, 0.15)",
+    fontSize: 24,
+    padding: 15,
+    paddingLeft: 20,
+    paddingRight: 20,
+    textAlign: "center",
+    borderRadius: 20,
+  },
+  deleteButton: {
+    backgroundColor: "rgba(200, 0, 0, 1)",
+    fontSize: 24,
+    padding: 15,
+    paddingLeft: 20,
+    paddingRight: 20,
+    textAlign: "center",
+    borderRadius: 20,
   }
 })
 

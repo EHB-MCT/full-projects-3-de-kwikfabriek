@@ -24,7 +24,7 @@ app.use(cors());
 
 
 app.get('/', async (req, res) => {
-    // res.status(300).redirect('../info.html')
+    // res.status(300).redirect("./public/info.html")
     res.status(200).send("Welcome to the BioLab server.")
     console.log("Documentation page")
 })

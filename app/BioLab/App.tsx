@@ -6,9 +6,9 @@
  * @flow strict-local
  */
 
-import React, { Component } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React, {Component} from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import {
   SafeAreaView,
@@ -36,6 +36,7 @@ import Data from './views/Data';
 import InfoView from './views/InfoView';
 import DeviceList from './views/measure/DeviceList';
 import User from './views/user';
+import LocationPin from './views/LocationPin';
 
 const Stack = createNativeStackNavigator();
 
@@ -51,51 +52,56 @@ export default class App extends Component {
           <Stack.Screen
             name="Home"
             component={Home}
-            options={{ title: 'Home', headerShown: false }}
+            options={{title: 'Home', headerShown: false}}
           />
 
           <Stack.Screen
             name="InfoView"
             component={InfoView}
-            options={{ title: 'Info' }}
+            options={{title: 'Info'}}
+          />
+
+          <Stack.Screen
+            name="LocationPin"
+            component={LocationPin}
+            options={{title: 'LocationPin'}}
           />
 
           <Stack.Screen
             name="Map"
             component={MapView}
-            options={{ title: 'Map' }}
+            options={{title: 'Map'}}
           />
 
           <Stack.Screen
             name="Data"
             component={Data}
-            options={{ title: 'Data' }}
+            options={{title: 'Data'}}
           />
 
           <Stack.Screen
             name="Measure"
             component={Measure}
-            options={{ title: 'Measure' }}
+            options={{title: 'Measure'}}
           />
 
           <Stack.Screen
             name="Device"
             component={DeviceList}
-            options={{ title: 'Incubators' }}
+            options={{title: 'Incubators'}}
           />
 
           <Stack.Screen
             name="Camera"
             component={Camera}
-            options={{ title: 'Camera' }}
+            options={{title: 'Camera'}}
           />
 
           <Stack.Screen
             name="User"
             component={User}
-            options={{ title: 'User' }}
+            options={{title: 'User'}}
           />
-
         </Stack.Navigator>
       </NavigationContainer>
     );
@@ -110,6 +116,6 @@ const styles = StyleSheet.create({
   toolbar: {
     paddingTop: 30,
     paddingBottom: 10,
-    flexDirection: 'row'
-  }
+    flexDirection: 'row',
+  },
 });
