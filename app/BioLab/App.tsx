@@ -6,28 +6,9 @@
  * @flow strict-local
  */
 
-import React, { Component } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
-import {
-  SafeAreaView,
-  ScrollView,
-  Settings,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
-
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import React, {Component} from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import Home from './views/Home';
 import Camera from './views/measure/Camera';
@@ -37,13 +18,19 @@ import Data from './views/Data';
 import InfoView from './views/InfoView';
 import DeviceList from './views/measure/DeviceList';
 import User from './views/user';
-import SettingsUser from './views/SettingsUser';
+import LocationPin from './views/LocationPin';
+
+import Server from './functions/Server';
 
 const Stack = createNativeStackNavigator();
 
 export default class App extends Component {
+
+  server: Server;
+
   constructor(props: any) {
     super(props);
+    this.server = new Server('http://10.3.208.131:8100/');
   }
 
   render() {
@@ -53,55 +40,56 @@ export default class App extends Component {
           <Stack.Screen
             name="Home"
             component={Home}
-            options={{ title: 'Home', headerShown: false }}
+            options={{title: 'Home', headerShown: false}}
           />
 
           <Stack.Screen
             name="InfoView"
             component={InfoView}
-            options={{ title: 'Info' }}
+            options={{title: 'Info'}}
+          />
+
+          <Stack.Screen
+            name="LocationPin"
+            component={LocationPin}
+            options={{title: 'LocationPin'}}
           />
 
           <Stack.Screen
             name="Map"
             component={MapView}
-            options={{ title: 'Map' }}
+            options={{title: 'Map'}}
           />
 
           <Stack.Screen
             name="Data"
             component={Data}
-            options={{ title: 'Data' }}
+            options={{title: 'Data'}}
           />
 
           <Stack.Screen
             name="Measure"
             component={Measure}
-            options={{ title: 'Measure' }}
+            options={{title: 'Measure'}}
           />
 
           <Stack.Screen
             name="Device"
             component={DeviceList}
-            options={{ title: 'Incubators' }}
+            options={{title: 'Incubators'}}
           />
 
           <Stack.Screen
             name="Camera"
             component={Camera}
-            options={{ title: 'Camera' }}
+            options={{title: 'Camera'}}
           />
 
           <Stack.Screen
             name="User"
             component={User}
-            options={{ title: 'User' }}
-          />
-
-          <Stack.Screen
-            name="SettingsUser"
-            component={SettingsUser}
-            options={{ title: 'Settings' }}
+            options={{title: 'User'}}
+            initialParams={{server: this.server}}
           />
 
         </Stack.Navigator>
@@ -109,15 +97,3 @@ export default class App extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5FCFF',
-  },
-  toolbar: {
-    paddingTop: 30,
-    paddingBottom: 10,
-    flexDirection: 'row'
-  }
-});
