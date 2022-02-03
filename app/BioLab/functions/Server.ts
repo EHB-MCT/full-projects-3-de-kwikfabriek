@@ -96,15 +96,32 @@ class Server{
 
   }
 
-  fetchData(url: string, data: any){
-    let fullData: Data = {
-      user: {
-        email: this.userEmail,
-        password: this.userPassword
-      },
-      data: data
+  fetchData(url: string, data: any, loggedIn: boolean = true){
+    if(loggedIn){
+      if(this.loggedIn){
+        let fullData: Data = {
+          user: {
+            email: this.userEmail,
+            password: this.userPassword
+          },
+          data: data
+        }
+        return this.executeFetchData(url, fullData);
+      }else{
+        return new Promise((resolve, reject) => {
+          reject('Not logged in.');
+        });
+      }
+    }else{
+      let fullData: Data = {
+        user: {
+          email: null,
+          password: null
+        },
+        data: data
+      }
+      return this.executeFetchData(url, fullData);
     }
-    return this.executeFetchData(url, fullData);
   }
 
   private executeFetchData(url: string, fullData: Data){
