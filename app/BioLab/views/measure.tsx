@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
   TextInput,
+  ImageBackground,
 } from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 
@@ -28,22 +29,22 @@ export default class Measure extends Component<
 > {
   constructor(props: any) {
     super(props);
+    this.state = {
+      locationArray: [] as any,
+      locationChosen: false,
+      chosenLocation: [],
+      setLocationName: '',
+      pinName: '',
+      sendingLocationData: [] as any,
+    };
     this.displayLocationPins();
   }
 
-  state = {
-    locationArray: [] as any,
-    locationChosen: false,
-    chosenLocation: [],
-    setLocationName: '',
-    pinName: '',
-    sendingLocationData: [],
-  };
-
   displayLocationPins() {
-    RNFetchBlob.fetch('GET', `http://10.3.208.84:8100/location/${userName}`, {
+    RNFetchBlob.fetch('GET', `http://10.3.208.131:8100/location/${userName}`, {
       'Content-Type': 'application/json',
     }).then(res => {
+      console.log(res);
       this.setState({locationArray: []});
       JSON.parse(res.data).forEach((el: any) => {
         console.log(el);
@@ -52,13 +53,24 @@ export default class Measure extends Component<
           //   id: el.id,
           //   locationName: el.locationName
           // }
-          <View key={el.id}>
+          <View style={measureStyle.singleLocationContainer} key={el.id}>
             <TouchableOpacity
               onPress={() => {
-                this.chooseLocationPin();
                 this.setState({setLocationName: el.locationName});
-              }}>
-              <Text>{el.locationName}</Text>
+                this.chooseLocationPin();
+                this.setState({
+                  sendingLocationData: [
+                    el.id,
+                    el.userName,
+                    el.locationName,
+                    el.location,
+                  ],
+                });
+              }}
+              style={measureStyle.singleLocationButton}>
+              <Text style={measureStyle.singleLocationText}>
+                {el.locationName}
+              </Text>
             </TouchableOpacity>
           </View>,
         );
@@ -74,31 +86,56 @@ export default class Measure extends Component<
 
   render() {
     return (
-      <View style={measureStyle.menuContainer}>
+      <View style={measureStyle.mainContainer}>
         {!this.state.locationChosen ? (
-          <>
-            <View>
-              <Text>
-                Choose your sample location or type in a custom location:
-              </Text>
-            </View>
-            <View>{this.state.locationArray}</View>
-            <View>
-              <Text>Choose your own location:</Text>
-              <TextInput
-                onChangeText={e => {
-                  this.setState({pinName: e});
-                }}
-                value={this.state.pinName}></TextInput>
-              <TouchableOpacity
-                onPress={() => {
-                  this.setState({setLocationName: this.state.pinName});
-                  this.chooseLocationPin();
-                }}>
-                <Text>Submit custom location</Text>
-              </TouchableOpacity>
-            </View>
-          </>
+          <ImageBackground source={require('../assets/backgroundWavy.png')}>
+            <ScrollView
+              contentContainerStyle={
+                (measureStyle.menuContainer, {flexGrow: 1})
+              }>
+              <View style={measureStyle.topTextLocation}>
+                <Text style={measureStyle.topTextLocationText}>
+                  Choose your sample location or type in a custom location:
+                </Text>
+              </View>
+              <View style={measureStyle.newLocationCont}>
+                <TouchableOpacity
+                  style={measureStyle.newLocationButton}
+                  onPress={() =>
+                    this.props.navigation.navigate('LocationPin', {})
+                  }>
+                  <Text style={measureStyle.newLocationText}>
+                    Add new location
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={measureStyle.locationContainer}>
+                {this.state.locationArray}
+              </View>
+              <View style={measureStyle.chooseLocationCont}>
+                <Text style={measureStyle.chooseLocationText}>
+                  Choose your own location:
+                </Text>
+                <TextInput
+                  onChangeText={e => {
+                    this.setState({pinName: e});
+                  }}
+                  value={this.state.pinName}
+                  style={measureStyle.chooseLocationTextInput}></TextInput>
+                <TouchableOpacity
+                  onPress={() => {
+                    console.log(this.state.pinName);
+                    this.setState({setLocationName: this.state.pinName});
+                    this.chooseLocationPin();
+                  }}
+                  style={measureStyle.chooseLocationButton}>
+                  <Text style={measureStyle.chooseLocationText}>
+                    Submit custom location
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </ImageBackground>
         ) : (
           <>
             <Image
@@ -113,11 +150,12 @@ export default class Measure extends Component<
               <View style={measureStyle.row}>
                 <TouchableHighlight
                   activeOpacity={0.5}
-                  onPress={() =>
+                  onPress={() => {
+                    console.log(this.state.sendingLocationData);
                     this.props.navigation.navigate('Device', {
-                      sendingLocationData: this.state.setLocationName,
-                    })
-                  }
+                      sendingLocationData: this.state.sendingLocationData,
+                    });
+                  }}
                   underlayColor="rgba(255,255,255,0)">
                   <Image
                     source={require('../assets/incubatorChoice.png')}
@@ -126,11 +164,12 @@ export default class Measure extends Component<
                 </TouchableHighlight>
                 <TouchableHighlight
                   activeOpacity={0.5}
-                  onPress={() =>
+                  onPress={() => {
+                    console.log(this.state.sendingLocationData);
                     this.props.navigation.navigate('Camera', {
-                      sendingLocationData: this.state.setLocationName,
-                    })
-                  }
+                      sendingLocationData: this.state.sendingLocationData,
+                    });
+                  }}
                   underlayColor="rgba(255,255,255,0)">
                   <Image
                     source={require('../assets/cameraChoice.png')}
@@ -142,16 +181,15 @@ export default class Measure extends Component<
                 <Text style={measureStyle.choiceText}>Internal</Text>
               </View>
 
-              <View>
-                <Text>
+              <View style={measureStyle.currentLocationContainer}>
+                <Text style={measureStyle.currentLocationText}>
                   Your current location is: {this.state.setLocationName}
                 </Text>
-              </View>
-
-              <View>
                 <TouchableOpacity
-                  onPress={() => this.setState({locationChosen: false})}>
-                  <Text>Change location</Text>
+                  onPress={() => this.setState({locationChosen: false})} style={measureStyle.currentLocationChangeButton}>
+                  <Text style={measureStyle.currentLocationText}>
+                    Change location
+                  </Text>
                 </TouchableOpacity>
               </View>
 

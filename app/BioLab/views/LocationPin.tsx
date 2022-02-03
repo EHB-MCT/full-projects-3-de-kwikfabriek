@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {
   Alert,
   Image,
+  ImageBackground,
   ScrollView,
   Text,
   TextInput,
@@ -40,7 +41,7 @@ export default class LocationPin extends Component<
     };
   }
   test() {
-    RNFetchBlob.fetch('GET', 'http://10.2.213.15:8100/location/Matthias', {
+    RNFetchBlob.fetch('GET', 'http://10.3.208.131:8100/location/Matthias', {
       'Content-Type': 'application/json',
     }).then(res => {
       this.setState({locationArray: []});
@@ -51,15 +52,23 @@ export default class LocationPin extends Component<
           //   id: el.id,
           //   locationName: el.locationName
           // }
-          <View key={el.id}>
-            <Text>{el.locationName}</Text>
-            <TouchableOpacity
-              onPress={() => {
-                this.setState({deleteName: el.locationName});
-                this.setState({deleteOverlay: true});
-              }}>
-              <Image source={require('../assets/deleteLocation.png')} />
-            </TouchableOpacity>
+          <View key={el.id} style={locationPinStyle.locationContainer}>
+            <View style={locationPinStyle.locationContainerText}>
+              <Text style={locationPinStyle.locationText}>{el.locationName}</Text>
+            </View>
+            <View style={locationPinStyle.locationContainerImage}>
+              <TouchableOpacity
+                style={locationPinStyle.imageButton}
+                onPress={() => {
+                  this.setState({deleteName: el.locationName});
+                  this.setState({deleteOverlay: true});
+                }}>
+                <Image
+                  style={locationPinStyle.imageStyle}
+                  source={require('../assets/trashIcon.png')}
+                />
+              </TouchableOpacity>
+            </View>
           </View>,
         );
       });
@@ -75,7 +84,7 @@ export default class LocationPin extends Component<
           console.log('Matthias', this.state.pinName, pinPosition);
           RNFetchBlob.fetch(
             'POST',
-            'http://10.2.213.15:8100/location',
+            'http://10.3.208.131:8100/location',
             {'Content-Type': 'application/json'},
             JSON.stringify({
               userName: 'Matthias',
@@ -109,7 +118,7 @@ export default class LocationPin extends Component<
         body: JSON.stringify(testingsomething),
       };
       console.log(testingsomething);
-      fetch('http://10.2.213.15:8100/location/delete', params).then(e => {
+      fetch('http://10.3.208.131:8100/location/delete', params).then(e => {
         console.log(e);
         this.setState({deleteOverlay: false});
       });
@@ -135,23 +144,25 @@ export default class LocationPin extends Component<
     return (
       <>
         <View style={locationPinStyle.maincontainer}>
-          <View style={locationPinStyle.contentcontainer}>
-            <TouchableOpacity
-              onPress={() => {
-                this.setState({overlayBool: true});
-              }}
-              style={locationPinStyle.addlocationbutton}>
-              <Image
-                style={locationPinStyle.plusbutton}
-                source={require('../assets/pluslocation.png')}></Image>
-              <Text style={locationPinStyle.locationbuttontext}>
-                Pin current location
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <ScrollView>
-            <View>{this.state.locationArray}</View>
-          </ScrollView>
+          <ImageBackground source={require('../assets/backgroundWavy.png')}>
+            <View style={locationPinStyle.contentContainer}>
+              <TouchableOpacity
+                onPress={() => {
+                  this.setState({overlayBool: true});
+                }}
+                style={locationPinStyle.addlocationbutton}>
+                <Image
+                  source={require('../assets/pluslocation.png')}
+                  style={locationPinStyle.plusbutton}></Image>
+                <Text style={locationPinStyle.locationbuttontext}>
+                  Pin current location
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <ScrollView style={locationPinStyle.scrollview}>
+              <View>{this.state.locationArray}</View>
+            </ScrollView>
+          </ImageBackground>
         </View>
         {this.state.overlayBool ? (
           <View style={cameraStyle.assignName}>
