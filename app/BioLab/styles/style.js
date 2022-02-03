@@ -166,10 +166,7 @@ export const homeStyle = StyleSheet.create({
     marginRight: 15,
     height: 40,
     width: 40
-  },
-  locationpincontainer: {
-    flex: 1,
-  },
+  }
 })
 
 
@@ -252,9 +249,9 @@ export const locationPinStyle = StyleSheet.create({
   },
   imageStyle: {
     flex: 1,
-    width: null,
+    width: "100%",
     height: null,
-    resizeMode: 'contain',
+    resizeMode: "cover",
   },
   locationContainerText: {
     width: "55%",
@@ -415,11 +412,9 @@ export const cameraStyle = StyleSheet.create({
 })
 
 export const dataStyle = StyleSheet.create({
-  dataContainer: {
-    backgroundColor: "red",
-    display: "flex",
-    flexDirection: "row",
-    color: "red"
+  container: {
+    flex: 1,
+    backgroundColor: 'rgb(0,0,0)',
   },
   imageContainer: {
     flex: 1,
@@ -430,7 +425,58 @@ export const dataStyle = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '100%',
-  }
+  },
+  titleContainer: {
+    flex: 1,
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: 30,
+    paddingBottom: 20,
+    marginBottom: 40,
+  },
+  titleText: {
+    fontSize: 28,
+  },
+  dataBody: {
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  dataContainer: {
+    width: "75%",
+    display: "flex",
+    flexDirection: "row",
+    marginBottom: 25,
+    marginTop: 25,
+    flexWrap: "wrap",
+    borderRadius: 20,
+    padding: 15,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  dataSampleID: {
+    textAlign: "center",
+    width: "100%",
+    paddingBottom: 15,
+    fontSize: 20,
+  },
+  timestamp: {
+    width: "100%",
+    textAlign: "center",
+    fontSize: 16,
+    margin: 10,
+  },
+  rgbText: {
+    textAlign: "center",
+    fontSize: 16,
+    backgroundColor: "rgb(255,255,255)",
+    padding: 10,
+    paddingLeft: 20,
+    paddingRight: 20,
+    borderRadius: 15,
+    marginTop: 20,
+  },
 })
 
 

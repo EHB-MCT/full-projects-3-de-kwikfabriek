@@ -56,7 +56,9 @@ export default class LocationPin extends Component<
         this.state.locationArray.push(
           <View key={el.id} style={locationPinStyle.locationContainer}>
             <View style={locationPinStyle.locationContainerText}>
-              <Text style={locationPinStyle.locationText}>{el.locationName}</Text>
+              <Text style={locationPinStyle.locationText}>
+                {el.locationName}
+              </Text>
             </View>
             <View style={locationPinStyle.locationContainerImage}>
               <TouchableOpacity

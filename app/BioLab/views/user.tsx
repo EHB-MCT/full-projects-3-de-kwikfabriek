@@ -1,5 +1,5 @@
 // react-native
-import React, { Component, useState } from 'react';
+import React, {Component, useState} from 'react';
 import RNFetchBlob from 'rn-fetch-blob';
 
 // react-native
@@ -15,6 +15,8 @@ import {
   Image,
   ImageBackground,
 } from 'react-native';
+
+import login from '../functions/Server';
 
 // dependency
 import RNFS from 'react-native-fs';

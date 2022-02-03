@@ -6,9 +6,9 @@
  * @flow strict-local
  */
 
-import React, { Component } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React, {Component} from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import Home from './views/Home';
 import Camera from './views/measure/Camera';
@@ -24,7 +24,6 @@ import Server from './functions/Server';
 const Stack = createNativeStackNavigator();
 
 export default class App extends Component {
-
   server: Server;
 
   constructor(props: any) {
@@ -39,13 +38,13 @@ export default class App extends Component {
           <Stack.Screen
             name="Home"
             component={Home}
-            options={{ title: 'Home', headerShown: false }}
+            options={{title: 'Home', headerShown: false}}
           />
 
           <Stack.Screen
             name="InfoView"
             component={InfoView}
-            options={{ title: 'Info' }}
+            options={{title: 'Info'}}
           />
 
           <Stack.Screen
@@ -58,26 +57,26 @@ export default class App extends Component {
           <Stack.Screen
             name="Map"
             component={MapView}
-            options={{ title: 'Map' }}
+            options={{title: 'Map'}}
           />
 
           <Stack.Screen
             name="Data"
             component={Data}
-            options={{ title: 'Data' }}
-            initialParams={{ server: this.server }}
+            options={{title: 'Data'}}
+            initialParams={{server: this.server}}
           />
 
           <Stack.Screen
             name="Measure"
             component={Measure}
-            options={{ title: 'Measure' }}
+            options={{title: 'Measure'}}
           />
 
           <Stack.Screen
             name="Device"
             component={DeviceList}
-            options={{ title: 'Incubators' }}
+            options={{title: 'Incubators'}}
           />
 
           <Stack.Screen
@@ -90,10 +89,9 @@ export default class App extends Component {
           <Stack.Screen
             name="User"
             component={User}
-            options={{ title: 'User' }}
-            initialParams={{ server: this.server }}
+            options={{title: 'User'}}
+            initialParams={{server: this.server}}
           />
-
         </Stack.Navigator>
       </NavigationContainer>
     );
