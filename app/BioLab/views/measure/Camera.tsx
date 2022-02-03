@@ -1,5 +1,5 @@
 // react-native
-import React, {useState} from 'react';
+import React, {Component, useState} from 'react';
 
 // react-native
 import {
@@ -27,7 +27,8 @@ import {cameraStyle} from '../../styles/style';
 import ImageColors from 'react-native-image-colors';
 import ImagePicker from 'react-native-image-crop-picker';
 
-export default function Camera() {
+
+export default function Camera(props: any) {
   let [shouldShow, setShouldShow] = useState(true);
   const [cameraShow, setCameraShow] = useState(true);
   const [{cameraRef}, {takePicture}] = useCamera(undefined);
@@ -91,8 +92,6 @@ export default function Camera() {
 
         const result = await ImageColors.getColors(`${image.path}`, {});
         setRgbValues(hexToRgb(result.dominant));
-        console.log(result);
-        console.log(hexToRgb(result.dominant));
 
         let assignName = text;
         RNFS.moveFile(
@@ -123,16 +122,18 @@ export default function Camera() {
     // RGB_values
     const timeElapsed = Date.now();
     const today = new Date(timeElapsed);
-    console.log(today.toUTCString());
+    console.log(props.route.params.sendingLocationData);
     RNFetchBlob.fetch(
       'POST',
-      'http://10.2.213.15:8100/data',
+      'http://10.3.208.131:8100/data',
       {'Content-Type': 'application/json'},
       JSON.stringify({
         userName: 'Matthias',
         timestamp: `${today.toUTCString()}`,
         sampleID: text,
         RGB_values: `${rgbValues![0]}, ${rgbValues![1]}, ${rgbValues![2]}`,
+        location: props.route.params.sendingLocationData[3],
+        locationName: props.route.params.sendingLocationData[2],
       }),
     ).then(e => {
       console.log(e);

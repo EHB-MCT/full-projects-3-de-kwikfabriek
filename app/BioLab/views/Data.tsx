@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, {Component, useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -35,25 +35,18 @@ export default class Data extends Component<{ route: any, navigation: any },
     dataContainer: any[];
     images: String[];
     imageViews: any[];
-    connection: string;
-    files: String[];
-    link: String;
-    locationName: string;
-  }>
+  }
+> {
 
-{
   tempFiles = [];
   server: Server;
   constructor(props: any) {
     super(props);
+
     this.server = this.props.route.params.server;
     this.state = {
-      locationName: "",
       password: "",
-      files: [],
       sampleID: [],
-      link: require('../assets/Logo_noText.png'),
-      connection: '10.3.208.131',
       id: [],
       RGB_values: [],
       timestamp: [],
@@ -62,86 +55,69 @@ export default class Data extends Component<{ route: any, navigation: any },
       images: [],
       imageViews: [],
     };
-    // this.getData();
+    this.getData();
   }
 
-
   async getData() {
-    console.log("Getting data..");
-    this.server.fetchData("data", "Sam").then((response: any) => {
-      console.log("response:", response);
-    }, (res) => {
-      console.log(res);
-      let newRes = JSON.parse(res.text());
-      for (let count in newRes) {
-        console.log(newRes[count]);
+    this.server.fetchData("data", "POST", "data", true).then((response: any) => {
+      let newRes = JSON.parse(response);
+      console.log(newRes);
+      for (var data in newRes) {
+        console.log(newRes[data]);
         // https://stackoverflow.com/questions/26253351/correct-modification-of-state-arrays-in-react-js
         this.setState(prevState => ({
-          id: [...prevState.id, newRes[count].id],
-          sampleID: [...prevState.sampleID, newRes[count].sampleID],
-          RGB_values: [...prevState.RGB_values, newRes[count].RGB_values],
-          timestamp: [...prevState.timestamp, newRes[count].timestamp],
+          id: [...prevState.id, newRes[data].count],
+          sampleID: [...prevState.sampleID, newRes[data].count],
+          RGB_values: [...prevState.RGB_values, newRes[data].count],
+          timestamp: [...prevState.timestamp, newRes[data].count],
         }));
-
-        // sampleID: newRes[count].sampleID,
-        // RGB_values: newRes[count].RGB_values,
-        // timestamp: newRes[count].timestamp,
-        // userName: loggedInUser,
-
+        this.addData();
       }
-      this.addData();
+    }, (res) => {
+      console.log("Could not retrieve data");
+      console.log(res);
     });
   }
 
   addData() {
     this.setState({
       dataContainer: [],
+
     });
     for (let a = 0; a < this.state.id.length; a++) {
       this.state.dataContainer.push(
         <View style={dataStyle.dataContainer} key={a}>
           <Text>{this.state.sampleID[a]}</Text>
+          <Text>Test</Text>
           <Text>{this.state.RGB_values[a]}</Text>
           <Text>{this.state.timestamp[a]}</Text>
           {this.state.imageViews}
         </View>,
       );
     }
-    this.setState({});
-  }
+    this.setState({
 
-  deleteUser() {
-    console.log("deleting...")
-    console.log("Credentials:", this.state.userName, this.state.password);
-    fetch(`http://${this.state.connection}:8100/location/delete`,
-      {
-        method: "DELETE",
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          userName: this.state.userName,
-          locationName: this.state.locationName,
-        })
-      }
-    ).then(res => {
-      console.log("Response:", res);
     });
   }
 
-  render() {
+  deleteUser() {
+    console.log("Credentials:", this.state.userName, this.state.password);
+    this.server.fetchData("delete", "DELETE", "Sam", true).then((response: any) => {
 
+    }, (res) => {
+      console.log("Could not retrieve data");
+      console.log(res);
+    });
+  }
+
+
+  render() {
     return (
       <ScrollView style={mainStyle.container}>
         <View>
           <Text>Your samples:</Text>
         </View>
         <View>{this.state.dataContainer}</View>
-        <View>
-          <TouchableHighlight style={userStyle.registerbutton} onPress={() => this.getData()}>
-            <Text style={userStyle.registerbuttontxt} >Delete</Text>
-          </TouchableHighlight>
-        </View>
       </ScrollView>
 
     );

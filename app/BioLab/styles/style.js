@@ -1,5 +1,6 @@
 import {
-  StyleSheet
+  StyleSheet,
+  Dimensions
 } from "react-native";
 
 
@@ -231,13 +232,19 @@ export const homeStyle = StyleSheet.create({
 
 
 export const locationPinStyle = StyleSheet.create({
-  contentcontainer: {
+  contentContainer: {
     display: "flex",
+    padding: 20,
     alignItems: "center",
+    justifyContent: "center",
   },
   plusbutton: {
     width: 40,
     height: 40,
+  },
+  scrollview: {
+    flex: 1,
+    width: "100%",
   },
   addlocationbutton: {
     display: "flex",
@@ -248,7 +255,6 @@ export const locationPinStyle = StyleSheet.create({
     padding: 10,
     paddingLeft: 15,
     paddingRight: 15,
-    width: '70%',
   },
   locationbuttontext: {
     fontSize: 20,
@@ -256,7 +262,6 @@ export const locationPinStyle = StyleSheet.create({
   },
   maincontainer: {
     width: "100%",
-    height: "100%",
     flex: 1,
     alignItems: "center",
   },
@@ -283,7 +288,50 @@ export const locationPinStyle = StyleSheet.create({
     paddingRight: 20,
     textAlign: "center",
     borderRadius: 20,
-  }
+  },
+  locationContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 25,
+    marginBottom: 25,
+    width: "100%",
+  },
+  imageButton: {
+    width: 50,
+    height: 50,
+    backgroundColor: "rgb(255,100,100)",
+    borderRadius: 10,
+    padding: 10,
+  },
+  locationText: {
+    fontSize: 18,
+  },
+  imageStyle: {
+    flex: 1,
+    width: null,
+    height: null,
+    resizeMode: 'contain',
+  },
+  locationContainerText: {
+    width: "55%",
+    justifyContent: "center",
+    paddingLeft: 30,
+    backgroundColor: "rgb(250,250,250)",
+    height: 80,
+    borderTopLeftRadius: 15,
+    borderBottomLeftRadius: 15,
+  },
+  locationContainerImage: {
+    width: "30%",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgb(250,250,250)",
+    height: 80,
+    borderTopRightRadius: 15,
+    borderBottomRightRadius: 15,
+  },
 })
 
 export const cameraStyle = StyleSheet.create({
@@ -424,11 +472,12 @@ export const cameraStyle = StyleSheet.create({
   },
 })
 
-
 export const dataStyle = StyleSheet.create({
   dataContainer: {
+    backgroundColor: "red",
     display: "flex",
     flexDirection: "row",
+    color: "red"
   },
   imageContainer: {
     flex: 1,
@@ -454,10 +503,19 @@ export const mapViewStyle = StyleSheet.create({
 
 
 export const measureStyle = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    backgroundColor: "rgba(80,80,200,1)",
+    display: 'flex',
+    width: Dimensions.get("window").width,
+    flexDirection: 'column',
+    justifyContent: "center",
+    alignSelf: "center",
+  },
   menuContainer: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: "rgb(60,100,180)"
+    width: "100%",
   },
   menuButton: {
     width: 175,
@@ -513,6 +571,110 @@ export const measureStyle = StyleSheet.create({
     fontWeight: "500",
     fontSize: 20,
     color: "white",
+  },
+  locationContainer: {
+    flex: 1,
+    alignItems: "center",
+    padding: 20,
+    width: Dimensions.get("window").width,
+  },
+  singleLocationContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
+    marginBottom: 20,
+    width: "90%",
+  },
+  singleLocationButton: {
+    backgroundColor: "rgb(0,0,0)",
+    padding: 20,
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 20,
+  },
+  singleLocationText: {
+    fontSize: 20,
+  },
+  topTextLocation: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 30,
+    marginBottom: 50,
+    fontSize: 20,
+  },
+  topTextLocationText: {
+    width: "80%",
+    fontSize: 24,
+  },
+  newLocationCont: {
+    width: "100%",
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 50,
+  },
+  newLocationButton: {
+    backgroundColor: "rgb(120,120,250)",
+    padding: 20,
+    paddingLeft: 30,
+    paddingRight: 30,
+    borderRadius: 20,
+  },
+  newLocationText: {
+    fontSize: 20,
+  },
+  chooseLocationCont: {
+    width: "100%",
+    flex: 1,
+    marginTop: 20,
+    marginBottom: 60,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  chooseLocationText: {
+    fontSize: 22,
+  },
+  chooseLocationTextInput: {
+    fontSize: 20,
+    paddingTop: 15,
+    paddingBottom: 15,
+    paddingLeft: 25,
+    paddingRight: 25,
+    backgroundColor: "rgb(100,100,250)",
+    width: "80%",
+    borderRadius: 20,
+    marginTop: 25,
+  },
+  chooseLocationButton: {
+    backgroundColor: "rgb(150,150,250)",
+    paddingTop: 15,
+    paddingBottom: 15,
+    paddingLeft: 25,
+    paddingRight: 25,
+    marginTop: 25,
+    borderRadius: 20,
+  },
+  currentLocationContainer: {
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  currentLocationText: {
+    fontSize: 18,
+    color: "white",
+  },
+  currentLocationChangeButton: {
+    paddingTop: 15,
+    paddingBottom: 15,
+    paddingLeft: 25,
+    paddingRight: 25,
+    marginTop: 25,
+    marginBottom: 25,
+    borderRadius: 20,
+    backgroundColor: "rgb(50,50,150)"
   },
 })
 
