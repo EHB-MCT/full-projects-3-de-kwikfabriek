@@ -52,6 +52,7 @@ export default class App extends Component {
             name="LocationPin"
             component={LocationPin}
             options={{ title: 'LocationPin' }}
+            initialParams={{ server: this.server }}
           />
 
           <Stack.Screen
@@ -83,6 +84,7 @@ export default class App extends Component {
             name="Camera"
             component={Camera}
             options={{ title: 'Camera' }}
+            initialParams={{ server: this.server }}
           />
 
           <Stack.Screen

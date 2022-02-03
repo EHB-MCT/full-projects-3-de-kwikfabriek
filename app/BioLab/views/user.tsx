@@ -4,36 +4,38 @@ import RNFetchBlob from 'rn-fetch-blob';
 
 // react-native
 import {
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TextInputProps,
-    TouchableHighlight,
-    View,
-    Alert,
-    Image,
-    ImageBackground,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TextInputProps,
+  TouchableHighlight,
+  View,
+  Alert,
+  Image,
+  ImageBackground,
 } from 'react-native';
 
 // dependency
 import RNFS from 'react-native-fs';
-// import { MMKV } from 'react-native-mmkv'
-
-// const storage = new MMKV()
 
 // userStyle
-import {homeStyle, mainStyle, userStyle} from '../styles/style';
+import { homeStyle, mainStyle, userStyle } from '../styles/style';
 
-export default class User extends Component<{navigation: any}> {
+import Server from '../functions/Server';
+
+export default class User extends Component<{ route: any, navigation: any }> {
   state = {
     userName: '',
     password: '',
     connection: '10.3.208.95',
   };
 
+  server: Server;
+
   constructor(props: any) {
     super(props);
+    this.server = this.props.route.params.server;
   }
 
   async duplicateUser() {
@@ -46,7 +48,7 @@ export default class User extends Component<{navigation: any}> {
           onPress: () => console.log('Cancel Pressed'),
           style: 'cancel',
         },
-        {text: 'OK', onPress: () => console.log('OK Pressed')},
+        { text: 'OK', onPress: () => console.log('OK Pressed') },
       ],
     );
   }
@@ -58,7 +60,7 @@ export default class User extends Component<{navigation: any}> {
         onPress: () => console.log('Cancel Pressed'),
         style: 'cancel',
       },
-      {text: 'OK', onPress: () => console.log('OK Pressed')},
+      { text: 'OK', onPress: () => console.log('OK Pressed') },
     ]);
   }
 
@@ -66,7 +68,7 @@ export default class User extends Component<{navigation: any}> {
     Alert.alert(
       `Welcome to the BioLab app ${this.state.userName}.`,
       `You have now unlimited acces to the app.`,
-      [{text: 'OK', onPress: () => this.props.navigation.navigate('Home', {})}],
+      [{ text: 'OK', onPress: () => this.props.navigation.navigate('Home', {}) }],
     );
   }
 
@@ -80,66 +82,50 @@ export default class User extends Component<{navigation: any}> {
           onPress: () => console.log('Cancel Pressed'),
           style: 'cancel',
         },
-        {text: 'OK', onPress: () => console.log('OK Pressed')},
+        { text: 'OK', onPress: () => console.log('OK Pressed') },
       ],
     );
   }
 
-  //   async saveUser() {
-  //     // storage.set('user.name', `${this.state.userName}`);
-  //     // const username = storage.getString('user.name');
-  //     // console.log('Username:', username);
-  //   }
-
   async createUser() {
-    RNFetchBlob.fetch(
-      'POST',
-      `http://${this.state.connection}:8100/register`,
-      {'Content-Type': 'application/json'},
-      JSON.stringify({
-        userName: this.state.userName,
-        password: this.state.password,
-      }),
-    ).then(res => {
-      let status = res.info().status;
-      if (status == 201) {
-        console.log('Account created!');
-        this.welcomeMessage();
-      } else if (status == 500) {
+    let user = {
+      userName: "Bob",
+      password: "1234",
+    };
+
+    this.server.register(user.userName, user.password).then((response: any) => {
+      console.log(response)
+      console.log('Account created!');
+      this.welcomeMessage();
+    }, (res) => {
+      if (res == "Account") {
         console.log('Fool, account already excists');
         this.duplicateUser();
-      } else if (status == 400) {
-        console.log("Fetch didn't work");
+      } else if (res == "Error") {
+        console.log("Fetch didn't work.")
       }
-    });
+    })
   }
 
+
   async login() {
-    RNFetchBlob.fetch(
-      'POST',
-      `http://${this.state.connection}:8100/login`,
-      {'Content-Type': 'application/json'},
-      JSON.stringify({
-        userName: this.state.userName,
-        password: this.state.password,
-      }),
-    ).then(res => {
-      let status = res.info().status;
-      if (status == 200) {
-        console.log('You are logged in!');
-        // this.saveUser();
-        this.welcomeMessage();
-      } else if (status == 500) {
+    this.server.login(this.state.userName, this.state.password).then((response: any) => {
+      console.log(response);
+      console.log('You are logged in!');
+      this.welcomeMessage();
+    }, (res) => {
+      if (res == "Password") {
         console.log('Fool, wrong password or username');
         this.wrongPassword();
-      } else if (status == 501) {
+      } else if (res == "Account") {
         console.log("Account doesn't excist");
         this.falseUser();
-      } else if (status == 400) {
+      } else if (res == "Error") {
         console.log("Fetch didn't work");
       }
-    });
+    })
   }
+
 
   render(): React.ReactNode {
     return (
@@ -159,14 +145,14 @@ export default class User extends Component<{navigation: any}> {
               <TextInput
                 style={userStyle.placeholder}
                 placeholder="EMAIL"
-                onChangeText={text => this.setState({userName: text})}
+                onChangeText={text => this.setState({ userName: text })}
               />
             </View>
             <View style={userStyle.txtinput}>
               <TextInput
                 placeholder="PASSWORD"
                 secureTextEntry={true}
-                onChangeText={text => this.setState({password: text})}
+                onChangeText={text => this.setState({ password: text })}
               />
             </View>
           </View>
