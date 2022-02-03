@@ -36,23 +36,28 @@ function verifyUser(req, res, next) {
         }
 
         userDB.getUserFromUserName(req.body.user.email).then((result) => {
-            if (result.userName) {
-                userDB.checkPassword(req.body.user.email, req.body.user.password).then((verifyPass) => {
-                    if (verifyPass) {
-                        console.log(`You are logged in ${req.body.user.email}, have fun!`)
-                        res.status(200).send(`You are logged in ${req.body.user.email}, have fun!`);
-                    } else if (!verifyPass) {
-                        console.log("Fool, wrong password or username!")
-                        res.status(500).send("Fool, wrong password or username!");
-                    }
-                })
-            } else if (result.userName == undefined) {
-                console.log(`User ${req.body.user.email} doesn't exists!`)
-                res.status(501).send(`Fool, now user found with name: ${req.body.user.email} in database!`);
-                return;
-            }
-        })
+                if (result.userName) {
+                    userDB.checkPassword(req.body.user.email, req.body.user.password).then((verifyPass) => {
+                        if (verifyPass) {
+                            console.log(`You are logged in ${req.body.user.email}, have fun!`)
+                            res.status(200).send(`You are logged in ${req.body.user.email}, have fun!`);
+                        } else if (!verifyPass) {
+                            console.log("Fool, wrong password or username!")
+                            res.status(500).send("Fool, wrong password or username!");
+                        }
+                    })
+                } else if (result.userName == undefined) {
+                    console.log(`User ${req.body.user.email} doesn't exists!`)
+                    res.status(501).send(`Fool, now user found with name: ${req.body.user.email} in database!`);
+                    return;
+                }
+            })
 
+            <<
+            <<
+            <<
+            <
+            HEAD
     } catch (error) {
         console.log(error)
         res.status(500).send({
@@ -65,9 +70,10 @@ function verifyUser(req, res, next) {
 
 
 // Functions without verification middleware
-app.get('/', async (req, res, next) => {
+
+app.get('/', async (req, res) => {
+    res.status(200).send("Welcome to the BioLab server.")
     console.log("Documentation page called.")
-    res.status(200).send('Welcome to the BioLab server');
 })
 
 app.get('/users', async (req, res) => {

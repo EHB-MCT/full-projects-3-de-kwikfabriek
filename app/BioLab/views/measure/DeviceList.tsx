@@ -261,8 +261,8 @@ export default class DeviceList extends Component<{ navigation: any }, {
                     status: 4
                   });
 
-                  // console.log(`${avgR}\t${avgG}\t${avgB}\t${avgC}`);
-                  console.log(`${test}`);
+                  console.log(`${avgR}\t${avgG}\t${avgB}\t${test}`);
+                  //console.log(`${test}`);
                   
                   break;
                 default:

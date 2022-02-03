@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 import RNFS from 'react-native-fs';
-import { template } from '@babel/core';
+import {template} from '@babel/core';
 
 // userStyle
 import { mainStyle, dataStyle, userStyle } from '../styles/style';
@@ -62,7 +62,6 @@ export default class Data extends Component<
       imageViews: [],
     };
 
-
     // RNFetchBlob.fs.ls(`${RNFS.ExternalDirectoryPath}/Pictures/`).then(files => {
     //   let tempFiles: String[] = [];
     //   files.forEach(e => {
@@ -94,7 +93,7 @@ export default class Data extends Component<
   }
 
   getData() {
-    RNFetchBlob.fetch('GET', `http://${this.state.connection}:8100/data/${loggedInUser}`, {
+    RNFetchBlob.fetch('GET', `http://10.2.213.15:8100/data/${loggedInUser}`, {
       'Content-Type': 'application/json',
     }).then(res => {
       let newRes = JSON.parse(res.text());
