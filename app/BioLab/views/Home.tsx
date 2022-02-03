@@ -13,9 +13,6 @@ import {
   ImageBackground,
 } from 'react-native';
 import RNFS from 'react-native-fs';
-import { LinearGradient } from 'react-native-linear-gradient';
-import Server from '../functions/Server';
-// import { SvgXml, SvgUri } from "react-native-svg"
 
 const svgThing = require('../assets/Logo_waterdruppel.svg');
 
