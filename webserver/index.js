@@ -19,11 +19,12 @@ let dataBase = new Database;
 
 app.use(bodyParser.json());
 app.use(cors());
+app.use(express.static('public'))
 
-app.get('/', async (req, res) => {
-    res.status(200).send("Welcome to the BioLab server.")
-    console.log("Documentation page called.")
-})
+// app.get('/', async (req, res) => {
+//     res.status(200).send("Welcome to the BioLab server.")
+//     console.log("Documentation page called.")
+// })
 
 app.get('/users', async (req, res) => {
     console.log("All users called.");
