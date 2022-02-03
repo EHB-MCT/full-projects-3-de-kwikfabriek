@@ -63,7 +63,6 @@ function verifyUser(req, res, next) {
     next();
 }
 
-
 // app.get('/', async (req, res) => {
 //     res.status(200).send("Welcome to the BioLab server.")
 //     console.log("Documentation page called.")

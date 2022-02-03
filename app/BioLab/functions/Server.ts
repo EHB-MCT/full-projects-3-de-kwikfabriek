@@ -85,6 +85,7 @@ export default class Server {
         },
         data: null
       }).then((res) => {
+
         // success
         this.userEmail = email;
         this.userPassword = password;
