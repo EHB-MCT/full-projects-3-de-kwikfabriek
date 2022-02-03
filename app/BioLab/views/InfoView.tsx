@@ -1,37 +1,39 @@
-import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, FlatList, Switch, NativeModules, NativeEventEmitter, Image, } from 'react-native';
+import React, {Component} from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  FlatList,
+  Switch,
+  NativeModules,
+  NativeEventEmitter,
+  Image,
+  Dimensions,
+  ScrollView,
+} from 'react-native';
 
 export default class InfoView extends Component {
-
   constructor(props: any) {
     super(props);
   }
 
   render() {
     return (
-      <View style={styles.container}>
-        <View style={styles.toolbar}>
-          {/* Hier kunnen er knoppen komen */}
-        </View>
+      <ScrollView
+        contentContainerStyle={{
+          width: '100%',
+          height: Dimensions.get('window').height,
+        }}>
         <Image
-          source={require('../assets/Info_page.png')} />
-
-      </View>
-    )
+          style={{
+            resizeMode: 'contain',
+            maxHeight: '100%',
+            maxWidth: '100%',
+          }}
+          source={require('../assets/InfoPage.png')}
+        />
+      </ScrollView>
+    );
   }
-
 }
-
-// voorlopige stijlen
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5FCFF',
-  },
-  toolbar: {
-    paddingTop: 30,
-    paddingBottom: 10,
-    flexDirection: 'row'
-  }
-});
