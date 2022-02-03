@@ -24,7 +24,6 @@ import Server from './functions/Server';
 const Stack = createNativeStackNavigator();
 
 export default class App extends Component {
-
   server: Server;
 
   constructor(props: any) {
@@ -52,6 +51,7 @@ export default class App extends Component {
             name="LocationPin"
             component={LocationPin}
             options={{ title: 'LocationPin' }}
+            initialParams={{ server: this.server }}
           />
 
           <Stack.Screen
@@ -71,6 +71,7 @@ export default class App extends Component {
             name="Measure"
             component={Measure}
             options={{ title: 'Measure' }}
+            initialParams={{ server: this.server }}
           />
 
           <Stack.Screen
@@ -83,6 +84,7 @@ export default class App extends Component {
             name="Camera"
             component={Camera}
             options={{ title: 'Camera' }}
+            initialParams={{ server: this.server }}
           />
 
           <Stack.Screen
@@ -91,7 +93,6 @@ export default class App extends Component {
             options={{ title: 'User' }}
             initialParams={{ server: this.server }}
           />
-
         </Stack.Navigator>
       </NavigationContainer>
     );

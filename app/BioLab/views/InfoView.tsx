@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, FlatList, Switch, NativeModules, NativeEventEmitter, } from 'react-native';
+import { StyleSheet, Text, View, Button, FlatList, Switch, NativeModules, NativeEventEmitter, Image, } from 'react-native';
 
 export default class InfoView extends Component {
 
-  constructor(props: any){
+  constructor(props: any) {
     super(props);
   }
 
@@ -13,8 +13,8 @@ export default class InfoView extends Component {
         <View style={styles.toolbar}>
           {/* Hier kunnen er knoppen komen */}
         </View>
-
-          {/* Hier komt de body van de pagina */}
+        <Image
+          source={require('../assets/Info_page.png')} />
 
       </View>
     )
@@ -29,9 +29,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5FCFF',
   },
-  toolbar:{
-    paddingTop:30,
-    paddingBottom:10,
-    flexDirection:'row'
+  toolbar: {
+    paddingTop: 30,
+    paddingBottom: 10,
+    flexDirection: 'row'
   }
 });

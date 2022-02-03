@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
@@ -13,18 +13,17 @@ import {
   ImageBackground,
 } from 'react-native';
 import RNFS from 'react-native-fs';
-// import { SvgXml, SvgUri } from "react-native-svg"
 
 const svgThing = require('../assets/Logo_waterdruppel.svg');
 
 // homeStyle
-import {mainStyle, homeStyle} from '../styles/style';
+import { mainStyle, homeStyle } from '../styles/style';
 
-export default class Home extends Component<{navigation: any}> {
+export default class Home extends Component<{ navigation: any }> {
 
   constructor(props: any) {
     super(props);
-    
+
   }
 
   render(): React.ReactNode {
@@ -33,7 +32,7 @@ export default class Home extends Component<{navigation: any}> {
         <ImageBackground
           style={homeStyle.backgroundGradient}
           source={require('../assets/gradient.png')}>
-          <Text style={{opacity: 0}}></Text>
+          <Text style={{ opacity: 0 }}></Text>
 
           <View>
             <View style={homeStyle.locationpincontainer}>
@@ -54,7 +53,7 @@ export default class Home extends Component<{navigation: any}> {
                 underlayColor="rgba(0,0,0,0)">
                 <Image
                   style={homeStyle.hamburgerbutton}
-                  source={require('../assets/Hamburger.png')}
+                  source={require('../assets/Icon_user.png')}
                 />
               </TouchableHighlight>
             </View>

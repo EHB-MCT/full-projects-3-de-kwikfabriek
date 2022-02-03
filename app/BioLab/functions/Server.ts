@@ -45,7 +45,7 @@ export default class Server {
 
   constructor(serverUrl: string) {
     this.serverUrl = serverUrl;
-    this.loggedIn = false;
+    this.loggedIn = true;
     console.log('server:', this.serverUrl);
   }
 
@@ -85,6 +85,7 @@ export default class Server {
         },
         data: null
       }).then((res) => {
+
         // success
         this.userEmail = email;
         this.userPassword = password;

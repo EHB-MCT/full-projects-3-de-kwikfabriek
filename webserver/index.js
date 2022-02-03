@@ -63,7 +63,6 @@ function verifyUser(req, res, next) {
     next();
 }
 
-
 // app.get('/', async (req, res) => {
 //     res.status(200).send("Welcome to the BioLab server.")
 //     console.log("Documentation page called.")
@@ -89,10 +88,10 @@ app.get('/connection', async (req, res) => {
     res.status(200).send("Succesfull connection.");
 })
 
-app.get('/location/:userName', async (req, res) => {
-    console.log(`Retrieving locations from user:${req.params.userName}`);
-    userDB.getLocation(req.params.userName).then((data) => {
-        console.log(`Retrieved locations for user: ${req.params.userName}`)
+app.get('/location', async (req, res) => {
+    console.log(`Retrieving locations from user:${req.body.userName}`);
+    userDB.getLocation(req.body.userName).then((data) => {
+        console.log(`Retrieved locations for user: ${req.body.userName}`)
         res.status(200).send(data)
     })
 })
@@ -202,8 +201,6 @@ app.post('/register', async (req, res) => {
         console.log("Query succesfull!")
     }
 })
-
-
 
 
 //Functions with verification middleware (/verification adding in route)
