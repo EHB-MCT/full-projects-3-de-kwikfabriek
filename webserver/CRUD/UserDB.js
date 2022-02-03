@@ -9,7 +9,7 @@ const {
 } = require('./user.js');
 
 const {
-    Image
+    Data
 } = require('./data.js');
 
 const {
@@ -85,9 +85,9 @@ class UserDB {
         });
     }
 
-    sendData(sampleID, link) {
+    sendData(sampleID, userName, RGB_values, timestamp, locationName, location) {
         return new Promise((resolve, reject) => {
-            this.getVerbinding().voerSqlQueryUit("INSERT INTO data (sampleID, fileURL) VALUES (?,?)", [sampleID, link]).then((resultaat) => {
+            this.getVerbinding().voerSqlQueryUit("INSERT INTO data (sampleID, userName, RGB_values, timestamp, locationName, location) VALUES (?,?,?,?,?,?)", [sampleID, userName, RGB_values, timestamp, locationName, location]).then((resultaat) => {
                 resolve(resultaat);
             })
 
@@ -106,9 +106,8 @@ class UserDB {
     getData(userName) {
         return new Promise((resolve, reject) => {
             this.getVerbinding().voerSqlQueryUit("SELECT * FROM data WHERE userName = ?", [userName]).then((resultaat) => {
-                resultaat = this.converteerQueryNaarObjectData(resultaat);
+                // resultaat = this.converteerQueryNaarObject(resultaat);
                 resolve(resultaat);
-                console.log(resultaat);
             });
         });
     }
@@ -149,7 +148,7 @@ class UserDB {
     }
 
     converteerQueryNaarObject(query) {
-            return new User(query.id, query.userName, query.password);
+        return new User(query.id, query.userName, query.password);
     }
 
     converteerQueryNaarObjectPassword(query) {
@@ -157,10 +156,7 @@ class UserDB {
     }
 
     converteerQueryNaarObjectData(query) {
-        for (let i = 0; i < query.lenght; i++){
-            return new Image(query.sampleID[i], query.fileURL[i]);
-        }
-
+        return new Data(query.userName, query.sampleID, query.RGB_values);
     }
 
     converteerQueryNaarObjectLocation(query) {

@@ -6,6 +6,9 @@ const app = express();
 const port = 8100;
 const cors = require('cors');
 
+app.use(bodyParser.json());
+app.use(cors());
+
 const {
     Database
 } = require('./CRUD/database.js');
@@ -17,13 +20,54 @@ const {
 let userDB = new UserDB;
 let dataBase = new Database;
 
-app.use(bodyParser.json());
-app.use(cors());
+app.use((req, res, next) => {
+    console.log("Running without middleware")
+    next();
+});
 
-app.get('/', async (req, res) => {
-    // res.status(300).redirect('../webserver/info.html')
-    res.status(200).send("Welcome to the BioLab server.")
+function verifyUser(req, res, next) {
+    console.log("Running verfication")
+    console.log("Verification route called");
+    try {
+        if (!req.body.user.email || !req.body.user.password) {
+            res.status(400).send('Bad login: Missing username or password! Try again.');
+            console.log('Bad login: Missing userName or password! Try again.');
+            return;
+        }
+
+        userDB.getUserFromUserName(req.body.user.email).then((result) => {
+            if (result.userName) {
+                userDB.checkPassword(req.body.user.email, req.body.user.password).then((verifyPass) => {
+                    if (verifyPass) {
+                        console.log(`You are logged in ${req.body.user.email}, have fun!`)
+                        res.status(200).send(`You are logged in ${req.body.user.email}, have fun!`);
+                    } else if (!verifyPass) {
+                        console.log("Fool, wrong password or username!")
+                        res.status(500).send("Fool, wrong password or username!");
+                    }
+                })
+            } else if (result.userName == undefined) {
+                console.log(`User ${req.body.user.email} doesn't exists!`)
+                res.status(501).send(`Fool, now user found with name: ${req.body.user.email} in database!`);
+                return;
+            }
+        })
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            error: 'Something went wrong with the query.',
+            value: error
+        })
+    }
+    next();
+}
+
+
+// Functions without verification middleware
+app.get('/', async (req, res, next) => {
     console.log("Documentation page called.")
+    res.status(200).send('Welcome to the BioLab server');
 })
 
 app.get('/users', async (req, res) => {
@@ -46,30 +90,67 @@ app.get('/connection', async (req, res) => {
     res.status(200).send("Succesfull connection.");
 })
 
+app.get('/location/:userName', async (req, res) => {
+    console.log(`Retrieving locations from user:${req.params.userName}`);
+    userDB.getLocation(req.params.userName).then((data) => {
+        console.log(`Retrieved locations for user: ${req.params.userName}`)
+        res.status(200).send(data)
+    })
+})
+
+app.get('/data/:userName', async (req, res) => {
+    console.log("Data route called");
+    try {
+        if (!req.params.userName) {
+            res.status(400).send('Bad request: Missing userName.');
+            console.log('Bad request: Missing userName.');
+            return;
+        }
+
+        userDB.getData(req.params.userName).then((data) => {
+            if (data.length == 0) {
+                res.status(300).send(`No data found for user: ${req.params.userName}`);
+            } else if (data.length > 0) {
+                res.status(200).send(data);
+                console.log(data);
+            }
+        })
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            error: 'Something went wrong',
+            value: error
+        })
+    } finally {
+        console.log("Query succesfull!")
+    }
+})
+
 app.post('/login', async (req, res) => {
+    console.log("credentials:", req.body.user.email, req.body.user.password);
     console.log("Login route called");
     try {
-        if (!req.body.userName || !req.body.password) {
+        if (!req.body.user.email || !req.body.user.password) {
             res.status(400).send('Bad login: Missing username or password! Try again.');
             console.log('Bad login: Missing userName or password! Try again.');
             return;
         }
 
-        userDB.getUserFromUserName(req.body.userName).then((result) => {
+        userDB.getUserFromUserName(req.body.user.email).then((result) => {
             if (result.userName) {
-                userDB.checkPassword(req.body.userName, req.body.password).then((verifyPass) => {
+                userDB.checkPassword(req.body.user.email, req.body.user.password).then((verifyPass) => {
                     if (verifyPass) {
-                        console.log(`You are logged in ${req.body.userName}, have fun!`)
-                        res.status(200).send(`You are logged in ${req.body.userName}, have fun!`);
+                        console.log(`You are logged in ${req.body.user.email}, have fun!`)
+                        res.status(200).send(`You are logged in ${req.body.user.email}, have fun!`);
                     } else if (!verifyPass) {
                         console.log("Fool, wrong password or username!")
                         res.status(500).send("Fool, wrong password or username!");
                     }
                 })
-
             } else if (result.userName == undefined) {
-                console.log(`User ${req.body.userName} doesn't exists!`)
-                res.status(501).send(`Fool, now user found with name: ${req.body.userName} in database!`);
+                console.log(`User ${req.body.user.email} doesn't exists!`)
+                res.status(501).send(`Fool, now user found with name: ${req.body.user.email} in database!`);
                 return;
             }
         })
@@ -87,27 +168,27 @@ app.post('/login', async (req, res) => {
 app.post('/register', async (req, res) => {
     console.log("Register route called");
     try {
-        if (!req.body.userName || !req.body.password) {
+        if (!req.body.user.email || !req.body.user.password) {
             res.status(400).send('Bad registration: Missing username or password! Try again.');
             console.log('Bad registration: Missing username or password! Try again.');
             return;
         }
 
-        userDB.checkDuplicates(req.body.userName, req.body.password).then((duplicat) => {
+        userDB.checkDuplicates(req.body.user.email, req.body.user.password).then((duplicat) => {
             if (duplicat.userName == undefined) {
                 console.log("New account detected!")
-                userDB.createUser(req.body.userName, req.body.password).then((result) => {
+                userDB.createUser(req.body.user.email, req.body.user.password).then((result) => {
                     if (result) {
-                        console.log(`Account created with name: ${req.body.userName} !`)
-                        res.status(201).send(`Account created with name:${req.body.userName}!`);
+                        console.log(`Account created with name: ${req.body.user.email} !`)
+                        res.status(200).send(`Account created with name:${req.body.user.email}!`);
                     } else if (!result) {
                         console.log("Fool, wrong password or username!")
                         res.status(500).send("Fool, wrong password or username!");
                     }
                 })
             } else {
-                console.log(`Account: ${req.body.userName} already exists!`)
-                res.status(500).send(`Account: ${req.body.userName} already exists!`);
+                console.log(`Account: ${req.body.user.email} already exists!`)
+                res.status(500).send(`Account: ${req.body.user.email} already exists!`);
                 return;
             }
         })
@@ -123,71 +204,35 @@ app.post('/register', async (req, res) => {
     }
 })
 
-app.get('/data/:userName', async (req, res) => {
-    console.log("Data route called")
-    console.log("userName", req.params.userName);
-    try {
-        if (!req.params.userName) {
-            res.status(400).send('Bad request: Missing userName.');
-            console.log('Bad request: Missing userName.');
-            return;
-        }
-
-        userDB.getData(req.params.userName).then((data) => {
-            console.log("data collected")
-            if (data.userName == undefined) {
-                res.status(300).send(`No data found for user: ${req.params.userName}`);
-            } else if (data.userName) {
-                res.status(200).send(data);
-            }
-        })
-
-    } catch (error) {
-        console.log(error)
-        res.status(500).send({
-            error: 'Something went wrong',
-            value: error
-        })
-    } finally {
-        console.log("Query succesfull!")
-    }
 
 
 
-})
-
+//Functions with verification middleware (/verification adding in route)
 app.post('/data', async (req, res) => {
     console.log("Data route called");
     try {
-        if (!req.body.sampleID || !req.body.link) {
-            res.status(400).send('Bad request: Missing sampleID or link to image file.');
-            console.log('Bad request: Missing sampleID or link to image file.');
+        if (!req.body.sampleID || !req.body.userName || !req.body.RGB_values || !req.body.locationName || !req.body.location) {
+            res.status(400).send('Bad request: Missing sampleID, userName, RGB_values, missing locationName or location!');
+            console.log('Bad request: Missing sampleID, userName or RGB_values of image file.');
             return;
         }
 
-        userDB.sendData("20222701", "Settings.png").then((response) => {
+        userDB.sendData(req.body.sampleID, req.body.userName, req.body.RGB_values, req.body.timestamp, req.body.locationName, req.body.location).then((response) => {
             res.send(response);
+            console.log(response);
             console.log("Data transmitted and confirmation.")
         })
 
     } catch (error) {
         console.log(error)
         res.status(500).send({
-            error: 'Something went wrong',
-            value: error
+            error: error,
+            value: 'Something went wrong'
         })
     } finally {
         console.log("Query succesfull!")
     }
 
-})
-
-app.get('/location/:userName', async (req, res) => {
-    console.log(`Retrieving locations from user:${req.params.userName}`);
-    userDB.getLocation(req.params.userName).then((data) => {
-        console.log(`Retrieved locations for user: ${req.params.userName}`)
-        res.status(200).send(data)
-    })
 })
 
 app.post('/location', async (req, res) => {
@@ -231,7 +276,7 @@ app.post('/location', async (req, res) => {
 
 })
 
-app.delete('/delete', async (req, res) => {
+app.delete('/location/delete', async (req, res) => {
     console.log("Location delete route called");
     try {
         if (!req.body.userName || !req.body.locationName) {

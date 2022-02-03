@@ -1,8 +1,9 @@
 class Data {
-    constructor(sampleID, fileURL) {
+    constructor(userName, sampleID, RGB_values) {
+        this.userName = userName;
         this.sampleID = sampleID;
-        this.fileURL = fileURL;
+        this.RGB_values = RGB_values;
     }
 }
 
-exports.Image = Data;
+exports.Data = Data;

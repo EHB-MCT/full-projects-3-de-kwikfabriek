@@ -8,8 +8,8 @@ import { SafeAreaView, StyleSheet, Text, TextInput, TextInputProps, TouchableHig
 
 // dependency
 import RNFS from 'react-native-fs';
-
 import { MMKV } from 'react-native-mmkv'
+
 
 const storage = new MMKV()
 
@@ -18,18 +18,23 @@ const storage = new MMKV()
 import { homeStyle, mainStyle, userStyle } from '../styles/style';
 
 
-export default class User extends Component<{ navigation: any }> {
-    state = {
-        userName: '',
-        password: '',
-        connection: '10.3.208.95'
-    }
+export default class User extends Component<{ navigation: any }, {
+    userName: string;
+    password: string;
+    connection: string;
+}>
 
+{
     constructor(props: any) {
         super(props);
+        this.state = {
+            userName: '',
+            password: '',
+            connection: '10.3.208.131',
+        }
     }
 
-    async duplicateUser() {
+    duplicateUser() {
         Alert.alert(
             "Warning",
             `Account with username:${this.state.userName} already excists! Use different username.`,
@@ -44,7 +49,7 @@ export default class User extends Component<{ navigation: any }> {
         );
     }
 
-    async wrongPassword() {
+    wrongPassword() {
         Alert.alert(
             "Warning",
             `Wrong password, try again!`,
@@ -60,7 +65,7 @@ export default class User extends Component<{ navigation: any }> {
     }
 
 
-    async welcomeMessage() {
+    welcomeMessage() {
         Alert.alert(
             `Welcome to the BioLab app ${this.state.userName}.`,
             `You have now unlimited acces to the app.`,
@@ -70,7 +75,7 @@ export default class User extends Component<{ navigation: any }> {
         );
     }
 
-    async falseUser() {
+    falseUser() {
         Alert.alert(
             `No account found with ${this.state.userName}.`,
             `Try again with different name or create account.`,
@@ -85,19 +90,17 @@ export default class User extends Component<{ navigation: any }> {
         );
     }
 
-    async saveUser() {
+    saveUser() {
         storage.set("user.name", `${this.state.userName}`)
         const username = storage.getString('user.name')
         console.log("Username:", username);
     }
 
 
-
-
     async createUser() {
         RNFetchBlob.fetch('POST', `http://${this.state.connection}:8100/register`, { 'Content-Type': 'application/json' },
             JSON.stringify({
-                userName: this.state.userName,
+                email: this.state.userName,
                 password: this.state.password
             })
         ).then((res) => {
@@ -115,9 +118,10 @@ export default class User extends Component<{ navigation: any }> {
     }
 
     async login() {
+        console.log(this.state.userName, this.state.password);
         RNFetchBlob.fetch('POST', `http://${this.state.connection}:8100/login`, { 'Content-Type': 'application/json' },
             JSON.stringify({
-                userName: this.state.userName,
+                email: this.state.userName,
                 password: this.state.password
             })
         ).then((res) => {
