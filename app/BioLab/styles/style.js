@@ -7,8 +7,7 @@ import {
 
 export const mainStyle = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#F5FCFF'
+    flex: 1
   },
   toolbar: {
     paddingTop: 30,
@@ -21,6 +20,10 @@ export const mainStyle = StyleSheet.create({
   },
   bottom: {
     bottom: 0,
+  },
+  backgroundGradient: {
+    height: "100%",
+    width: "100%",
   }
 });
 
@@ -32,14 +35,15 @@ export const deviceStyle = StyleSheet.create({
     backgroundColor: '#FFF',
     padding: 15,
     borderBottomColor: '#EEE',
-    borderBottomWidth: 1,
+    borderBottomWidth: 1
   },
   deviceContainerOther: {
     backgroundColor: '#FFF',
     padding: 15,
     borderBottomColor: '#EEE',
     borderBottomWidth: 1,
-    opacity: 0.2
+    opacity: 0.2,
+    display: "flex"
   },
   deviceText: {
     color: '#000',
@@ -52,10 +56,13 @@ export const deviceStyle = StyleSheet.create({
   button: {
     backgroundColor: '#3498db',
     padding: 15,
+    borderRadius: 15,
+    marginTop: 15
   },
   buttonRed: {
     backgroundColor: '#e74c3c',
     padding: 15,
+    borderRadius: 15
   },
   buttonText: {
     color: '#FFF',
@@ -63,13 +70,64 @@ export const deviceStyle = StyleSheet.create({
     alignSelf: 'center',
   },
   statusText: {
-    color: '#000',
-    fontSize: 22,
-    alignSelf: 'center'
+    color: '#FFF',
+    fontSize: 25,
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    position: 'absolute',
+    top: 420,
   },
   box: {
     width: 200,
     height: 200,
+  },
+  deviceListContainer: {
+    marginHorizontal: 15,
+    marginTop: 30,
+    backgroundColor: '#FFF'
+  },
+  buttonContainer: {
+    marginLeft: 15,
+    marginRight: 15,
+    marginTop: 30
+  },
+  bottomButtonContainer: {
+    marginLeft: 15,
+    marginRight: 15,
+    bottom: 50,
+    position: "absolute",
+    textAlign: 'center'
+  }, 
+  incubatorLogo: {
+    height: 40,
+    width: 40,
+    right: 15,
+    top: 15,
+    position: "absolute",
+  },
+  backgroundSaved: {
+    alignItems: "center",
+    width: '100%',
+    height: '100%',
+  },
+  waterResultDesc: {
+    position: "absolute",
+    textAlign: 'center',
+    bottom: 220,
+    width: '75%',
+    fontSize: 18,
+    color: 'white'
+  },
+  colorSaved: {
+    width: 60,
+    height: 60,
+    borderRadius: 60 / 2,
+    backgroundColor: 'rgb(50,50,200)',
+    top: -175,
+    borderColor: 'rgb(0,0,0)',
+    borderWidth: 4,
+    justifyContent: "center",
+    alignItems: "center",
   }
 });
 
