@@ -14,15 +14,7 @@ interface Data {
 
 type Methods = "POST" | "GET" | "DELETE" | "PUT" | "post" | "get" | "delete" | "put";
 
-export class Server{
-
-/*  
-  {
-    user: {
-      email,
-      password
-    },
-    data: {
+export default class Server {
 
   /*  
     {
@@ -32,9 +24,17 @@ export class Server{
       },
       data: {
   
+    /*  
+      {
+        user: {
+          email,
+          password
+        },
+        data: {
+    
+        }
       }
-    }
-  */
+    */
 
   serverUrl: string;
 
@@ -55,14 +55,14 @@ export class Server{
    * Get loggedIn user information
    * @returns User | false
    */
-  getUser(): UserInterface | false{
-    if(this.loggedIn){
+  getUser(): UserInterface | false {
+    if (this.loggedIn) {
       let userObject: UserInterface = {
         email: this.userEmail
       }
 
       return userObject;
-    }else{
+    } else {
       return false;
     }
   }
@@ -73,7 +73,7 @@ export class Server{
    * @param password Password
    * @returns Promise (resolve, reject) -> returned data form server
    */
-  login(email: string, password: string){
+  login(email: string, password: string) {
 
     console.log('starting log in procedure');
 
@@ -101,7 +101,7 @@ export class Server{
 
   }
 
-  
+
   /**
    * Register
    * @param email Email adress
@@ -109,7 +109,7 @@ export class Server{
    * @param login Automatic login after registration (default -> true)
    * @returns Promise (resolve, reject) -> returned data form server
    */
-  register(email: string, password: string, login: boolean = true){
+  register(email: string, password: string, login: boolean = true) {
 
     console.log('starting register procedure');
 
@@ -149,9 +149,9 @@ export class Server{
    * @param loggedIn Only allowed if the user is logged in. (default -> true)
    * @returns Promise (resolve, reject) -> returned data form server
    */
-  fetchData(url: string, method: Methods, data: any, loggedIn: boolean = true){
-    if(loggedIn){
-      if(this.loggedIn){
+  fetchData(url: string, method: Methods, data: any, loggedIn: boolean = true) {
+    if (loggedIn) {
+      if (this.loggedIn) {
         let fullData: Data = {
           user: {
             email: this.userEmail,
@@ -160,12 +160,12 @@ export class Server{
           data: data
         }
         return this.executeFetchData(url, method, fullData);
-      }else{
+      } else {
         return new Promise((resolve, reject) => {
           reject('Not logged in.');
         });
       }
-    }else{
+    } else {
       let fullData: Data = {
         user: {
           email: null,
@@ -184,10 +184,11 @@ export class Server{
    * @param fullData Data to be send to server
    * @returns Promise (resolve, reject) -> returned data form server
    */
-  private executeFetchData(url: string, method: Methods, fullData: Data){
+  private executeFetchData(url: string, method: Methods, fullData: Data) {
     return new Promise((resolve, reject) => {
       RNFetchBlob.fetch(method, `${this.serverUrl}${url}`, {
-        'content-Type': 'application/json' },
+        'content-Type': 'application/json'
+      },
         JSON.stringify(fullData)
       ).then((res) => {
         console.log("Request:", `${this.serverUrl}${url}`);
