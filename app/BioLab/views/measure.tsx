@@ -9,6 +9,7 @@ import {
   ScrollView,
   TextInput,
   ImageBackground,
+  ColorValue,
 } from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 
@@ -50,10 +51,10 @@ export default class Measure extends Component<
     let data = {
       userName: "Matthias"
     }
-    this.server.fetchData("location", "get", data, true).then((response) => {
+    this.server.fetchData("location", "get", data, true).then((response: any) => {
       console.log(response);
       this.setState({ locationArray: [] });
-      JSON.parse(response.data).forEach((el: any) => {
+      JSON.parse(response).forEach((el: any) => {
         console.log(el);
         this.state.locationArray.push(
           // {
