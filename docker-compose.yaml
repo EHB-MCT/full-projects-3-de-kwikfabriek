@@ -22,7 +22,7 @@ services:
     # depends_on: db
     build: ./webserver/
     ports:
-      - 8100:80
+      - 8100:8100
     volumes:
       - ./webserver:/usr/src/app
 
