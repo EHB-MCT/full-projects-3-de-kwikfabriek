@@ -15,77 +15,60 @@ import {
 } from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 import RNFS from 'react-native-fs';
-import {template} from '@babel/core';
+import { template } from '@babel/core';
 
 // userStyle
-import {mainStyle, dataStyle, userStyle} from '../styles/style';
-import {thisExpression} from '@babel/types';
+import { mainStyle, dataStyle, userStyle } from '../styles/style';
+import { thisExpression } from '@babel/types';
+import Server from '../functions/Server';
 
-const loggedInUser = 'Matthias';
 
-export default class Data extends Component<
-  {navigation: any},
+
+export default class Data extends Component<{ route: any, navigation: any },
   {
     id: Number[];
     sampleID: String[];
     RGB_values: String[];
     timestamp: String[];
     userName: String;
+    password: String;
     dataContainer: any[];
     images: String[];
     imageViews: any[];
   }
 > {
-  tempFiles = [];
 
+  tempFiles = [];
+  server: Server;
   constructor(props: any) {
     super(props);
 
+    this.server = this.props.route.params.server;
     this.state = {
-      id: [],
+      locationName: "",
+      password: "",
+      files: [],
       sampleID: [],
+      link: require('../assets/Logo_noText.png'),
+      connection: '10.3.208.131',
+      id: [],
       RGB_values: [],
       timestamp: [],
-      userName: loggedInUser,
+      userName: "",
       dataContainer: [] as any,
       images: [],
       imageViews: [],
     };
-
-    // RNFetchBlob.fs.ls(`${RNFS.ExternalDirectoryPath}/Pictures/`).then(files => {
-    //   let tempFiles: String[] = [];
-    //   files.forEach(e => {
-    //     console.log(e);
-    //     RNFetchBlob.fs
-    //       .readFile(`${RNFS.ExternalDirectoryPath}/Pictures/${e}`, 'base64')
-    //       .then(data => {
-    //         // let image = new Image();
-    //         tempFiles.push(`data:image/jpg;base64,${data[0]}`);
-    //         // console.log(data[0]);
-
-    //         let something = (
-    //           <View>
-    //             <Image source={require(`data:image/png;base64,${data[0]}`)} />
-    //           </View>
-    //         );
-
-    //         this.setState(prevState => ({
-    //           imageViews: [...prevState.images, something],
-    //         }));
-    //       });
-    //   });
-
-    //   this.setState({
-    //     images: tempFiles,
-    //   });
-    // });
-    this.getData();
+    // this.getData();
   }
 
-  getData() {
-    RNFetchBlob.fetch('GET', `http://10.3.208.131:8100/data/${loggedInUser}`, {
-      'Content-Type': 'application/json',
-    }).then(res => {
+
+  async getData() {
+    console.log("Getting data..");
+    this.server.fetchData("data", "Sam").then((response: any) => {
+      console.log("response:", response);
+    }, (res) => {
+      console.log(res);
       let newRes = JSON.parse(res.text());
       for (let count in newRes) {
         console.log(newRes[count]);
@@ -104,10 +87,6 @@ export default class Data extends Component<
       }
       this.addData();
     });
-    // console.log(typeof res.data);
-    // for (const sample of res.data) {
-    //   console.log(sample.id);
-    // }
   }
 
   addData() {
@@ -127,6 +106,25 @@ export default class Data extends Component<
     this.setState({});
   }
 
+  deleteUser() {
+    console.log("deleting...")
+    console.log("Credentials:", this.state.userName, this.state.password);
+    fetch(`http://${this.state.connection}:8100/location/delete`,
+      {
+        method: "DELETE",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          userName: this.state.userName,
+          locationName: this.state.locationName,
+        })
+      }
+    ).then(res => {
+      console.log("Response:", res);
+    });
+  }
+
   render() {
     return (
       <ScrollView style={mainStyle.container}>
@@ -134,7 +132,13 @@ export default class Data extends Component<
           <Text>Your samples:</Text>
         </View>
         <View>{this.state.dataContainer}</View>
+        <View>
+          <TouchableHighlight style={userStyle.registerbutton} onPress={() => this.getData()}>
+            <Text style={userStyle.registerbuttontxt} >Delete</Text>
+          </TouchableHighlight>
+        </View>
       </ScrollView>
+
     );
   }
 }
