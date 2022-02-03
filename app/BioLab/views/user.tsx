@@ -23,7 +23,7 @@ import { MMKV } from 'react-native-mmkv'
 
 
 const storage = new MMKV()
-import Server from '../functions/Server';
+import {Server} from '../functions/Server';
 
 // userStyle
 import { homeStyle, mainStyle, userStyle } from '../styles/style';

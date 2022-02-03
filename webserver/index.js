@@ -3,11 +3,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-const port = 8100;
+const port = 80;
 const cors = require('cors');
 
 app.use(bodyParser.json());
 app.use(cors());
+app.use(express.static('public'))
 
 const {
     Database
@@ -63,12 +64,10 @@ function verifyUser(req, res, next) {
 }
 
 
-// Functions without verification middleware
-
-app.get('/', async (req, res) => {
-    res.status(200).send("Welcome to the BioLab server.")
-    console.log("Documentation page called.")
-})
+// app.get('/', async (req, res) => {
+//     res.status(200).send("Welcome to the BioLab server.")
+//     console.log("Documentation page called.")
+// })
 
 app.get('/users', async (req, res) => {
     console.log("All users called.");

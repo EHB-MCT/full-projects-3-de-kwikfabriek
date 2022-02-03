@@ -1,17 +1,28 @@
 import { resolvePlugin } from '@babel/core';
 import RNFetchBlob from 'rn-fetch-blob';
 
-interface User {
+export interface UserInterface {
   email?: string | null,
   password?: string | null
 }
 
 interface Data {
-  user: User,
+  user: UserInterface,
   data: any
 }
 
-class Server {
+
+type Methods = "POST" | "GET" | "DELETE" | "PUT" | "post" | "get" | "delete" | "put";
+
+export class Server{
+
+/*  
+  {
+    user: {
+      email,
+      password
+    },
+    data: {
 
   /*  
     {
@@ -38,12 +49,36 @@ class Server {
     console.log('server:', this.serverUrl);
   }
 
-  login(email: string, password: string) {
+  // user actions
+
+  /**
+   * Get loggedIn user information
+   * @returns User | false
+   */
+  getUser(): UserInterface | false{
+    if(this.loggedIn){
+      let userObject: UserInterface = {
+        email: this.userEmail
+      }
+
+      return userObject;
+    }else{
+      return false;
+    }
+  }
+
+  /**
+   * Log in
+   * @param email Email adress
+   * @param password Password
+   * @returns Promise (resolve, reject) -> returned data form server
+   */
+  login(email: string, password: string){
 
     console.log('starting log in procedure');
 
     return new Promise((resolve, reject) => {
-      this.executeFetchData('login', {
+      this.executeFetchData('login', 'POST', {
         user: {
           email: email,
           password: password
@@ -55,7 +90,7 @@ class Server {
         this.userPassword = password;
         this.loggedIn = true;
         console.log('logged in');
-        resolve(true);
+        resolve(res);
       }, (res) => {
         // failed
         this.loggedIn = false;
@@ -66,12 +101,20 @@ class Server {
 
   }
 
-  register(email: string, password: string, login: boolean = true) {
+  
+  /**
+   * Register
+   * @param email Email adress
+   * @param password Password
+   * @param login Automatic login after registration (default -> true)
+   * @returns Promise (resolve, reject) -> returned data form server
+   */
+  register(email: string, password: string, login: boolean = true){
 
     console.log('starting register procedure');
 
     return new Promise((resolve, reject) => {
-      this.executeFetchData('register', {
+      this.executeFetchData('register', 'POST', {
         user: {
           email: email,
           password: password
@@ -96,23 +139,55 @@ class Server {
 
   }
 
-  fetchData(url: string, data: any) {
-    console.log("Request recieved!");
-    let fullData: Data = {
-      user: {
-        email: this.userEmail,
-        password: this.userPassword
-      },
-      data: data
+  // fetching data
+
+  /**
+   * Receive data from server (formated to include the user credentionals)
+   * @param url Url path to request. example: (example/1)
+   * @param method Fetch method to use (GET, POST, DELETE, PUT)
+   * @param data Data to be send to server
+   * @param loggedIn Only allowed if the user is logged in. (default -> true)
+   * @returns Promise (resolve, reject) -> returned data form server
+   */
+  fetchData(url: string, method: Methods, data: any, loggedIn: boolean = true){
+    if(loggedIn){
+      if(this.loggedIn){
+        let fullData: Data = {
+          user: {
+            email: this.userEmail,
+            password: this.userPassword
+          },
+          data: data
+        }
+        return this.executeFetchData(url, method, fullData);
+      }else{
+        return new Promise((resolve, reject) => {
+          reject('Not logged in.');
+        });
+      }
+    }else{
+      let fullData: Data = {
+        user: {
+          email: null,
+          password: null
+        },
+        data: data
+      }
+      return this.executeFetchData(url, method, fullData);
     }
-    return this.executeFetchData(url, fullData);
   }
 
-  private executeFetchData(url: string, fullData: Data) {
+  /**
+   * Receive data from server
+   * @param url Url path to request. example: (example/1)
+   * @param method Fetch method to use (GET, POST, DELETE, PUT)
+   * @param fullData Data to be send to server
+   * @returns Promise (resolve, reject) -> returned data form server
+   */
+  private executeFetchData(url: string, method: Methods, fullData: Data){
     return new Promise((resolve, reject) => {
-      RNFetchBlob.fetch('POST', `${this.serverUrl}${url}`, {
-        'content-Type': 'application/json'
-      },
+      RNFetchBlob.fetch(method, `${this.serverUrl}${url}`, {
+        'content-Type': 'application/json' },
         JSON.stringify(fullData)
       ).then((res) => {
         console.log("Request:", `${this.serverUrl}${url}`);
@@ -134,4 +209,4 @@ class Server {
 
 
 
-export default Server;
+//export default Server;
