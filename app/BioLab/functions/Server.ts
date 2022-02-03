@@ -11,19 +11,19 @@ interface Data {
   data: any
 }
 
-class Server{
+class Server {
 
-/*  
-  {
-    user: {
-      email,
-      password
-    },
-    data: {
-
+  /*  
+    {
+      user: {
+        email,
+        password
+      },
+      data: {
+  
+      }
     }
-  }
-*/
+  */
 
   serverUrl: string;
 
@@ -32,13 +32,13 @@ class Server{
   userEmail?: string;
   private userPassword?: string;
 
-  constructor(serverUrl: string){
+  constructor(serverUrl: string) {
     this.serverUrl = serverUrl;
     this.loggedIn = false;
     console.log('server:', this.serverUrl);
   }
 
-  login(email: string, password: string){
+  login(email: string, password: string) {
 
     console.log('starting log in procedure');
 
@@ -56,17 +56,17 @@ class Server{
         this.loggedIn = true;
         console.log('logged in');
         resolve(true);
-      }, () => {
+      }, (res) => {
         // failed
         this.loggedIn = false;
         console.log('cannot login');
-        reject(false);
+        reject(res);
       });
     });
 
   }
 
-  register(email: string, password: string, login: boolean = true){
+  register(email: string, password: string, login: boolean = true) {
 
     console.log('starting register procedure');
 
@@ -80,23 +80,24 @@ class Server{
       }).then((res) => {
         // success
         console.log('register success');
-        if(login){
+        if (login) {
           this.userEmail = email;
           this.userPassword = password;
           this.loggedIn = true;
           console.log('logged in');
         }
         resolve(true);
-      }, () => {
+      }, (res) => {
         // failed
         console.log('register failed');
-        reject(false);
+        reject(res);
       });
     });
 
   }
 
-  fetchData(url: string, data: any){
+  fetchData(url: string, data: any) {
+    console.log("Request recieved!");
     let fullData: Data = {
       user: {
         email: this.userEmail,
@@ -107,18 +108,19 @@ class Server{
     return this.executeFetchData(url, fullData);
   }
 
-  private executeFetchData(url: string, fullData: Data){
+  private executeFetchData(url: string, fullData: Data) {
     return new Promise((resolve, reject) => {
       RNFetchBlob.fetch('POST', `${this.serverUrl}${url}`, {
-        'content-Type': 'application/json' },
+        'content-Type': 'application/json'
+      },
         JSON.stringify(fullData)
       ).then((res) => {
-
+        console.log("Request:", `${this.serverUrl}${url}`);
         const status = res.info().status;
-        if(status == 200){
+        if (status == 200) {
           // succes
           resolve(res.data);
-        }else{
+        } else {
           // error
           console.log('error', res.data);
           reject(res.data);

@@ -1,19 +1,19 @@
 // react-native
-import React, {Component, useState} from 'react';
+import React, { Component, useState } from 'react';
 import RNFetchBlob from 'rn-fetch-blob';
 
 // react-native
 import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TextInputProps,
-  TouchableHighlight,
-  View,
-  Alert,
-  Image,
-  ImageBackground,
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TextInputProps,
+    TouchableHighlight,
+    View,
+    Alert,
+    Image,
+    ImageBackground,
 } from 'react-native';
 
 
@@ -54,7 +54,7 @@ export default class User extends Component<{ route: any, navigation: any }, {
     duplicateUser() {
         Alert.alert(
             "Warning",
-            `Account with username:${this.state.userName} already excists! Use different username.`,
+            `Account with username: ${this.state.userName} already excists! Use different username.`,
             [
                 {
                     text: "Cancel",
@@ -115,58 +115,34 @@ export default class User extends Component<{ route: any, navigation: any }, {
 
 
     async createUser() {
-
         this.server.register(this.state.userName, this.state.password).then((response: any) => {
             console.log('register', response);
+            this.welcomeMessage();
+            console.log("Account created!")
+        }, (res) => {
+            if (res == "Password") {
+                this.wrongPassword();
+            } else if (res == "Account") {
+                console.log("Fool, account already excists");
+                this.duplicateUser();
+            }
         });
-
-        // RNFetchBlob.fetch('POST', `http://${this.state.connection}:8100/register`, { 'Content-Type': 'application/json' },
-        //     JSON.stringify({
-        //         userName: this.state.userName,
-        //         password: this.state.password
-        //     })
-        // ).then((res) => {
-        //     let status = res.info().status;
-        //     if (status == 201) {
-        //         console.log("Account created!")
-        //         this.welcomeMessage();
-        //     } else if (status == 500) {
-        //         console.log("Fool, account already excists");
-        //         this.duplicateUser();
-        //     } else if (status == 400) {
-        //         console.log("Fetch didn't work");
-        //     }
-        // })
     }
 
     async login() {
-
         this.server.login(this.state.userName, this.state.password).then((response: any) => {
             console.log('login', response);
+            this.saveUser();
+            this.welcomeMessage();
+        }, (res) => {
+            if (res == "Password") {
+                console.log("Response:", res);
+                this.wrongPassword();
+            } else if (res == "Account") {
+                console.log("Response:", res);
+                this.falseUser();
+            }
         });
-
-        // RNFetchBlob.fetch('POST', `http://${this.state.connection}:8100/login`, { 'Content-Type': 'application/json' },
-        //     JSON.stringify({
-        //         userName: this.state.userName,
-        //         password: this.state.password
-        //     })
-        // ).then((res) => {
-        //     let status = res.info().status;
-        //     if (status == 200) {
-        //         console.log("You are logged in!")
-        //         this.saveUser();
-        //         this.welcomeMessage();
-        //     } else if (status == 500) {
-        //         console.log("Fool, wrong password or username");
-        //         this.wrongPassword();
-        //     } else if (status == 501) {
-        //         console.log("Account doesn't excist");
-        //         this.falseUser();
-        //     }
-        //     else if (status == 400) {
-        //         console.log("Fetch didn't work");
-        //     }
-        // })
     }
 
 

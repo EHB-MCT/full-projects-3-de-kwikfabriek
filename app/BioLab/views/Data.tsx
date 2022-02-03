@@ -15,18 +15,16 @@ import {
 } from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 import RNFS from 'react-native-fs';
-import {template} from '@babel/core';
+import { template } from '@babel/core';
 
 // userStyle
 import { mainStyle, dataStyle, userStyle } from '../styles/style';
 import { thisExpression } from '@babel/types';
+import Server from '../functions/Server';
 
-const loggedInUser = 'Sam';
-const userPassword = '1234';
-const testLocationName = 'Moorslede_Frituur_Nicole';
 
-export default class Data extends Component<
-  { navigation: any },
+
+export default class Data extends Component<{ route: any, navigation: any },
   {
     id: Number[];
     sampleID: String[];
@@ -41,14 +39,17 @@ export default class Data extends Component<
     files: String[];
     link: String;
     locationName: string;
-  }
-> {
+  }>
+
+{
   tempFiles = [];
+  server: Server;
   constructor(props: any) {
     super(props);
+    this.server = this.props.route.params.server;
     this.state = {
-      locationName: testLocationName,
-      password: userPassword,
+      locationName: "",
+      password: "",
       files: [],
       sampleID: [],
       link: require('../assets/Logo_noText.png'),
@@ -56,46 +57,21 @@ export default class Data extends Component<
       id: [],
       RGB_values: [],
       timestamp: [],
-      userName: loggedInUser,
+      userName: "",
       dataContainer: [] as any,
       images: [],
       imageViews: [],
     };
-
-    // RNFetchBlob.fs.ls(`${RNFS.ExternalDirectoryPath}/Pictures/`).then(files => {
-    //   let tempFiles: String[] = [];
-    //   files.forEach(e => {
-    //     console.log(e);
-    //     RNFetchBlob.fs
-    //       .readFile(`${RNFS.ExternalDirectoryPath}/Pictures/${e}`, 'base64')
-    //       .then(data => {
-    //         // let image = new Image();
-    //         tempFiles.push(`data:image/jpg;base64,${data[0]}`);
-    //         // console.log(data[0]);
-
-    //         let something = (
-    //           <View>
-    //             <Image source={require(`data:image/png;base64,${data[0]}`)} />
-    //           </View>
-    //         );
-
-    //         this.setState(prevState => ({
-    //           imageViews: [...prevState.images, something],
-    //         }));
-    //       });
-    //   });
-
-    //   this.setState({
-    //     images: tempFiles,
-    //   });
-    // });
-    this.getData();
+    // this.getData();
   }
 
-  getData() {
-    RNFetchBlob.fetch('GET', `http://10.2.213.15:8100/data/${loggedInUser}`, {
-      'Content-Type': 'application/json',
-    }).then(res => {
+
+  async getData() {
+    console.log("Getting data..");
+    this.server.fetchData("data", "Sam").then((response: any) => {
+      console.log("response:", response);
+    }, (res) => {
+      console.log(res);
       let newRes = JSON.parse(res.text());
       for (let count in newRes) {
         console.log(newRes[count]);
@@ -115,10 +91,6 @@ export default class Data extends Component<
       }
       this.addData();
     });
-    // console.log(typeof res.data);
-    // for (const sample of res.data) {
-    //   console.log(sample.id);
-    // }
   }
 
   addData() {
@@ -166,7 +138,7 @@ export default class Data extends Component<
         </View>
         <View>{this.state.dataContainer}</View>
         <View>
-          <TouchableHighlight style={userStyle.registerbutton} onPress={() => this.deleteUser()}>
+          <TouchableHighlight style={userStyle.registerbutton} onPress={() => this.getData()}>
             <Text style={userStyle.registerbuttontxt} >Delete</Text>
           </TouchableHighlight>
         </View>

@@ -26,7 +26,6 @@ app.use((req, res, next) => {
 });
 
 function verifyUser(req, res, next) {
-    console.log("Running verfication")
     console.log("Verification route called");
     try {
         if (!req.body.user.email || !req.body.user.password) {
@@ -36,28 +35,23 @@ function verifyUser(req, res, next) {
         }
 
         userDB.getUserFromUserName(req.body.user.email).then((result) => {
-                if (result.userName) {
-                    userDB.checkPassword(req.body.user.email, req.body.user.password).then((verifyPass) => {
-                        if (verifyPass) {
-                            console.log(`You are logged in ${req.body.user.email}, have fun!`)
-                            res.status(200).send(`You are logged in ${req.body.user.email}, have fun!`);
-                        } else if (!verifyPass) {
-                            console.log("Fool, wrong password or username!")
-                            res.status(500).send("Fool, wrong password or username!");
-                        }
-                    })
-                } else if (result.userName == undefined) {
-                    console.log(`User ${req.body.user.email} doesn't exists!`)
-                    res.status(501).send(`Fool, now user found with name: ${req.body.user.email} in database!`);
-                    return;
-                }
-            })
+            if (result.userName) {
+                userDB.checkPassword(req.body.user.email, req.body.user.password).then((verifyPass) => {
+                    if (verifyPass) {
+                        console.log(`You are logged in ${req.body.user.email}, have fun!`)
+                        res.status(200).send(`You are logged in ${req.body.user.email}, have fun!`);
+                    } else if (!verifyPass) {
+                        console.log("Fool, wrong password or username!")
+                        res.status(500).send("Password");
+                    }
+                })
+            } else if (result.userName == undefined) {
+                console.log(`User ${req.body.user.email} doesn't exists!`)
+                res.status(501).send(`Account`);
+                return;
+            }
+        })
 
-            <<
-            <<
-            <<
-            <
-            HEAD
     } catch (error) {
         console.log(error)
         res.status(500).send({
@@ -104,19 +98,19 @@ app.get('/location/:userName', async (req, res) => {
     })
 })
 
-app.get('/data/:userName', async (req, res) => {
+app.post('/data', async (req, res) => {
     console.log("Data route called");
     try {
-        if (!req.params.userName) {
+        if (!req.body.data) {
             res.status(400).send('Bad request: Missing userName.');
             console.log('Bad request: Missing userName.');
             return;
         }
-
-        userDB.getData(req.params.userName).then((data) => {
-            if (data.length == 0) {
-                res.status(300).send(`No data found for user: ${req.params.userName}`);
-            } else if (data.length > 0) {
+        userDB.getData(req.body.data).then((data) => {
+            console.log("Username:", data.userName)
+            if (!data.userName) {
+                res.status(300).send(`No data found for user: ${req.body.data.userName}`);
+            } else if (data.userName) {
                 res.status(200).send(data);
                 console.log(data);
             }
@@ -151,12 +145,12 @@ app.post('/login', async (req, res) => {
                         res.status(200).send(`You are logged in ${req.body.user.email}, have fun!`);
                     } else if (!verifyPass) {
                         console.log("Fool, wrong password or username!")
-                        res.status(500).send("Fool, wrong password or username!");
+                        res.status(500).send("Password");
                     }
                 })
             } else if (result.userName == undefined) {
                 console.log(`User ${req.body.user.email} doesn't exists!`)
-                res.status(501).send(`Fool, now user found with name: ${req.body.user.email} in database!`);
+                res.status(501).send(`Account`);
                 return;
             }
         })
@@ -189,12 +183,12 @@ app.post('/register', async (req, res) => {
                         res.status(200).send(`Account created with name:${req.body.user.email}!`);
                     } else if (!result) {
                         console.log("Fool, wrong password or username!")
-                        res.status(500).send("Fool, wrong password or username!");
+                        res.status(500).send("Password");
                     }
                 })
             } else {
                 console.log(`Account: ${req.body.user.email} already exists!`)
-                res.status(500).send(`Account: ${req.body.user.email} already exists!`);
+                res.status(500).send(`Account`);
                 return;
             }
         })
@@ -244,7 +238,7 @@ app.post('/data', async (req, res) => {
 app.post('/location', async (req, res) => {
     console.log("Location route called");
     try {
-        if (!req.body.userName || !req.body.location || !req.body.locationName) {
+        if (!req.body.userName || !req.body.locationName) {
             res.status(400).send('Bad request: Missing username, location or locationName.');
             console.log('Bad request: Missing username, location or locationName.');
             return;

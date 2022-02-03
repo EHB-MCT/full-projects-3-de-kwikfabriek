@@ -104,6 +104,7 @@ class UserDB {
     }
 
     getData(userName) {
+        console.log(userName);
         return new Promise((resolve, reject) => {
             this.getVerbinding().voerSqlQueryUit("SELECT * FROM data WHERE userName = ?", [userName]).then((resultaat) => {
                 // resultaat = this.converteerQueryNaarObject(resultaat);
