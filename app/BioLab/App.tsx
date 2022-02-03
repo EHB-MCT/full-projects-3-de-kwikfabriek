@@ -30,7 +30,7 @@ export default class App extends Component {
 
   constructor(props: any) {
     super(props);
-    this.server = new Server('http://biolab.miguelbilliet.be/api/');
+    this.server = new Server('http://biolab.miguelbilliet.be/');
   }
 
   render() {

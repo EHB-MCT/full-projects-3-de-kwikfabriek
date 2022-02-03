@@ -5,11 +5,10 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
-      MYSQL_ROOT_HOST: 127.0.0.1
-      MYSQL_ROOT_PASSWORD: example
       MYSQL_USER: username
       MYSQL_PASSWORD: username
       MYSQL_DATABASE: BioLab
+      MYSQL_ROOT_PASSWORD: example
     ports: 
       - 3306:3306
     logging:
