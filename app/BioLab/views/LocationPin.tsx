@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Alert,
   Image,
@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {cameraStyle, locationPinStyle} from '../styles/style';
+import { cameraStyle, locationPinStyle } from '../styles/style';
 
 //Get location
 import Geolocation from 'react-native-geolocation-service';
@@ -19,9 +19,10 @@ import Geolocation from 'react-native-geolocation-service';
 //Store location
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFetchBlob from 'rn-fetch-blob';
+import Server from '../functions/Server';
 
 export default class LocationPin extends Component<
-  {navigation: any},
+  { route: any, navigation: any },
   {
     overlayBool: Boolean;
     pinName: string;
@@ -30,8 +31,11 @@ export default class LocationPin extends Component<
     deleteName: String;
   }
 > {
+
+  server: Server;
   constructor(props: any) {
     super(props);
+    this.server = this.props.route.params.server;
     this.test();
     this.state = {
       overlayBool: false,
@@ -41,18 +45,15 @@ export default class LocationPin extends Component<
       deleteName: '',
     };
   }
-  test() {
-    RNFetchBlob.fetch('GET', 'http://10.3.208.131:8100/location/Matthias', {
-      'Content-Type': 'application/json',
-    }).then(res => {
-      this.setState({locationArray: []});
-      JSON.parse(res.data).forEach((el: any) => {
+
+
+  async test() {
+    console.log("Running test function");
+    this.server.fetchData("location", 'GET', "Matthias", true).then((response: any) => {
+      this.setState({ locationArray: [] });
+      JSON.parse(response.data).forEach((el: any) => {
         console.log(el);
         this.state.locationArray.push(
-          // {
-          //   id: el.id,
-          //   locationName: el.locationName
-          // }
           <View key={el.id} style={locationPinStyle.locationContainer}>
             <View style={locationPinStyle.locationContainerText}>
               <Text style={locationPinStyle.locationText}>
@@ -63,8 +64,8 @@ export default class LocationPin extends Component<
               <TouchableOpacity
                 style={locationPinStyle.imageButton}
                 onPress={() => {
-                  this.setState({deleteName: el.locationName});
-                  this.setState({deleteOverlay: true});
+                  this.setState({ deleteName: el.locationName });
+                  this.setState({ deleteOverlay: true });
                 }}>
                 <Image
                   style={locationPinStyle.imageStyle as ImageStyle}
@@ -79,67 +80,46 @@ export default class LocationPin extends Component<
     });
   }
 
+
   async saveLocation() {
     try {
       Geolocation.getCurrentPosition(
         position => {
           let pinPosition = `${position.coords.latitude}, ${position.coords.longitude}`;
           console.log('Matthias', this.state.pinName, pinPosition);
-          RNFetchBlob.fetch(
-            'POST',
-            'http://10.3.208.131:8100/location',
-            {'Content-Type': 'application/json'},
-            JSON.stringify({
-              userName: 'Matthias',
-              locationName: this.state.pinName,
-              location: pinPosition,
-            }),
-          ).then(e => {
-            console.log(e);
-            this.setState({overlayBool: false, pinName: ''});
+          let data = JSON.stringify({
+            userName: 'Matthias',
+            locationName: this.state.pinName,
+            location: pinPosition,
+          })
+          this.server.fetchData("location", 'POST', data, true).then((response: any) => {
+            console.log(response);
+            this.setState({ overlayBool: false, pinName: '' });
             this.test();
           });
         },
         error => {
-          console.log(error + 'errorrrr');
+          console.log(error + 'error');
         },
-        {enableHighAccuracy: true},
+        { enableHighAccuracy: true },
       );
-    } catch (e) {
-      console.log(e + 'azkdah');
+    } catch (error) {
+      console.log(error + 'error');
     }
   }
 
   deleteLocation() {
     try {
-      let testingsomething = {
-        userName: 'Matthias',
-        locationName: this.state.deleteName,
-      };
-      const params: RequestInit = {
-        method: 'DELETE',
-        body: JSON.stringify(testingsomething),
-      };
-      console.log(testingsomething);
-      fetch('http://10.3.208.131:8100/location/delete', params).then(e => {
-        console.log(e);
-        this.setState({deleteOverlay: false});
-      });
-      // RNFetchBlob.fetch(
-      //   'DELETE',
-      //   'http://10.3.208.95:8100/location/delete',
-      //   {'Content-Type': 'application/json'},
-      //   JSON.stringify({
-      //     userName: 'Matthias',
-      //     locationName: this.state.deleteName,
-      //   }),
-      // ).then(e => {
-      //   console.log('Matthias', this.state.deleteName);
-      //   console.log(e);
-      //   this.setState({deleteOverlay: false});
-      // });
-    } catch (err) {
-      console.log(err);
+      let del = JSON.stringify({
+        userName: "Matthias",
+        locationName: "Coolplace"
+      })
+      this.server.fetchData("delete", "delete", del, true).then((response: any) => {
+        console.log(response);
+        this.setState({ deleteOverlay: false });
+      })
+    } catch (error) {
+      console.log(error)
     }
   }
 
@@ -151,7 +131,7 @@ export default class LocationPin extends Component<
             <View style={locationPinStyle.contentContainer}>
               <TouchableOpacity
                 onPress={() => {
-                  this.setState({overlayBool: true});
+                  this.setState({ overlayBool: true });
                 }}
                 style={locationPinStyle.addlocationbutton}>
                 <Image
@@ -173,7 +153,7 @@ export default class LocationPin extends Component<
               <Text style={cameraStyle.assignNameText}>Location name:</Text>
               <TextInput
                 onChangeText={e => {
-                  this.setState({pinName: e});
+                  this.setState({ pinName: e });
                 }}
                 value={this.state.pinName}
                 style={cameraStyle.assignNameBox}></TextInput>
@@ -195,7 +175,7 @@ export default class LocationPin extends Component<
               </Text>
               <View style={locationPinStyle.deleteCancelContainer}>
                 <TouchableOpacity
-                  onPress={() => this.setState({deleteOverlay: false})}>
+                  onPress={() => this.setState({ deleteOverlay: false })}>
                   <Text style={locationPinStyle.deleteCancelButton}>
                     Cancel
                   </Text>

@@ -1,5 +1,5 @@
 // react-native
-import React, {Component, useState} from 'react';
+import React, { Component, useState } from 'react';
 
 // react-native
 import {
@@ -15,27 +15,29 @@ import {
 } from 'react-native';
 
 // dependency
-import {RNCamera} from 'react-native-camera';
-import {useCamera} from 'react-native-camera-hooks';
+import { RNCamera } from 'react-native-camera';
+import { useCamera } from 'react-native-camera-hooks';
 
 // file managers
 import RNFS from 'react-native-fs';
 import RNFetchBlob from 'rn-fetch-blob';
 
 // cameraStyle
-import {cameraStyle} from '../../styles/style';
+import { cameraStyle } from '../../styles/style';
 import ImageColors from 'react-native-image-colors';
 import ImagePicker from 'react-native-image-crop-picker';
 
 
 export default function Camera(props: any) {
+
+
+
   let [shouldShow, setShouldShow] = useState(true);
   const [cameraShow, setCameraShow] = useState(true);
-  const [{cameraRef}, {takePicture}] = useCamera(undefined);
+  const [{ cameraRef }, { takePicture }] = useCamera(undefined);
   let [confirmationShow, setConfirmationShow] = useState(false);
   const [text, onChangeText] = useState(
-    `${new Date().getFullYear()}${
-      new Date().getMonth() + 1
+    `${new Date().getFullYear()}${new Date().getMonth() + 1
     }${new Date().getDate()}_`,
   );
   const [nameInUse, setNameInUse] = useState(false);
@@ -60,7 +62,7 @@ export default function Camera(props: any) {
         mediaType: 'photo',
         cropperRotateButtonsHidden: true,
         hideBottomControls: true,
-      }).then(async (image: {path: string}) => {
+      }).then(async (image: { path: string }) => {
         setCameraShow(false);
         // HexToRgb source: https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
         const hexToRgb = (hex: {
@@ -69,14 +71,14 @@ export default function Camera(props: any) {
             arg1: (m: any, r: any, g: any, b: any) => string,
           ) => {
             (): any;
-            new (): any;
+            new(): any;
             substring: {
               (arg0: number): {
                 (): any;
-                new (): any;
-                match: {(arg0: RegExp): any[]; new (): any};
+                new(): any;
+                match: { (arg0: RegExp): any[]; new(): any };
               };
-              new (): any;
+              new(): any;
             };
           };
         }) =>
@@ -125,8 +127,8 @@ export default function Camera(props: any) {
     console.log(props.route.params.sendingLocationData);
     RNFetchBlob.fetch(
       'POST',
-      'http://10.3.208.131:8100/data',
-      {'Content-Type': 'application/json'},
+      'http://biolab.miguelbilliet.be/data',
+      { 'Content-Type': 'application/json' },
       JSON.stringify({
         userName: 'Matthias',
         timestamp: `${today.toUTCString()}`,
@@ -183,7 +185,7 @@ export default function Camera(props: any) {
             <TouchableHighlight
               style={
                 (cameraStyle.assignNameSubmitHighlight,
-                nameInUse ? cameraStyle.inUse : cameraStyle.notInUse)
+                  nameInUse ? cameraStyle.inUse : cameraStyle.notInUse)
               }
               onPress={() => {
                 RNFetchBlob.fs
@@ -223,8 +225,8 @@ export default function Camera(props: any) {
               </View>
             </View>
             <Text style={cameraStyle.waterResultDesc}>
-              Overall clear and healthy water. It’s not dangerous to drink from
-              this water and it’s good for cooking.
+              Overall clear and healthy water. Its not dangerous to drink from
+              this water and its good for cooking.
             </Text>
 
             <View style={cameraStyle.imageSavedButtonsCont}>
