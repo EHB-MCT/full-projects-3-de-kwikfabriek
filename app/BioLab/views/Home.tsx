@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import RNFS from 'react-native-fs';
 import {LinearGradient} from 'react-native-linear-gradient';
+import Server from '../functions/Server';
 // import { SvgXml, SvgUri } from "react-native-svg"
 
 const svgThing = require('../assets/Logo_waterdruppel.svg');
@@ -22,8 +23,10 @@ const svgThing = require('../assets/Logo_waterdruppel.svg');
 import {mainStyle, homeStyle} from '../styles/style';
 
 export default class Home extends Component<{navigation: any}> {
+
   constructor(props: any) {
     super(props);
+    
   }
 
   render(): React.ReactNode {
