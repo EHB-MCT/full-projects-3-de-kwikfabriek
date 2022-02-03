@@ -11,109 +11,115 @@ import {
   Image,
   TouchableHighlight,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 import RNFS from 'react-native-fs';
-import {template} from '@babel/core';
-
-
+import { template } from '@babel/core';
 
 // userStyle
 import { mainStyle, dataStyle, userStyle } from '../styles/style';
+import { thisExpression } from '@babel/types';
+import Server from '../functions/Server';
 
-export default class Data extends Component {
-  state = {
-    username: '',
-    password: '',
-    sampleID: '',
-    link: ''
+
+
+export default class Data extends Component<{ route: any, navigation: any },
+  {
+    id: Number[];
+    sampleID: String[];
+    RGB_values: String[];
+    timestamp: String[];
+    userName: String;
+    password: String;
+    dataContainer: any[];
+    images: String[];
+    imageViews: any[];
   }
+> {
 
+  tempFiles = [];
+  server: Server;
   constructor(props: any) {
     super(props);
-    this.state = {
-      files: [],
-    };
 
-    RNFetchBlob.fs.ls(`${RNFS.ExternalDirectoryPath}/Pictures/`).then(files => {
-      let tempFiles: String[] = [];
-      files.forEach(e => {
-        RNFetchBlob.fs
-          .readFile(`${RNFS.ExternalDirectoryPath}/Pictures/${e}`, 'base64')
-          .then(data => {
-            tempFiles.push(`data:image/png;base64,${data}`);
-          });
-      });
-      this.setState({
-        files: tempFiles,
-      });
-      console.log(tempFiles);
+    this.server = this.props.route.params.server;
+    this.state = {
+      password: "",
+      sampleID: [],
+      id: [],
+      RGB_values: [],
+      timestamp: [],
+      userName: "",
+      dataContainer: [] as any,
+      images: [],
+      imageViews: [],
+    };
+    this.getData();
+  }
+
+  async getData() {
+    this.server.fetchData("data", "POST", "data", true).then((response: any) => {
+      let newRes = JSON.parse(response);
+      console.log(newRes);
+      for (var data in newRes) {
+        console.log(newRes[data]);
+        // https://stackoverflow.com/questions/26253351/correct-modification-of-state-arrays-in-react-js
+        this.setState(prevState => ({
+          id: [...prevState.id, newRes[data].count],
+          sampleID: [...prevState.sampleID, newRes[data].count],
+          RGB_values: [...prevState.RGB_values, newRes[data].count],
+          timestamp: [...prevState.timestamp, newRes[data].count],
+        }));
+        this.addData();
+      }
+    }, (res) => {
+      console.log("Could not retrieve data");
+      console.log(res);
+    });
+  }
+
+  addData() {
+    this.setState({
+      dataContainer: [],
+
+    });
+    for (let a = 0; a < this.state.id.length; a++) {
+      this.state.dataContainer.push(
+        <View style={dataStyle.dataContainer} key={a}>
+          <Text>{this.state.sampleID[a]}</Text>
+          <Text>Test</Text>
+          <Text>{this.state.RGB_values[a]}</Text>
+          <Text>{this.state.timestamp[a]}</Text>
+          {this.state.imageViews}
+        </View>,
+      );
+    }
+    this.setState({
+
+    });
+  }
+
+  deleteUser() {
+    console.log("Credentials:", this.state.userName, this.state.password);
+    this.server.fetchData("delete", "DELETE", "Sam", true).then((response: any) => {
+
+    }, (res) => {
+      console.log("Could not retrieve data");
+      console.log(res);
     });
   }
 
 
-  async sendData() {
-    RNFetchBlob.fetch('POST', 'http://10.3.208.87:8100/data', { 'Content-Type': 'application/json' },
-      JSON.stringify({
-        sampleID: "20222701",
-        link: "../assets/Logo_waterdruppel.png"
-      })
-    ).then((res) => {
-      let status = res.info().status;
-      console.log("status:", status);
-      if (status == 200) {
-        let text = res.text()
-        console.log(text);
-        console.log(res)
-      }
-      else if (status == 400) {
-        let text = res.text()
-        console.log(text)
-      }
-    })
-  }
-
-  async getData() {
-    RNFetchBlob.fetch('GET', 'http://10.3.208.87:8100/data', { 'Content-Type': 'application/json' },
-      JSON.stringify({
-        sampleID: "20222701",
-      })
-    ).then((res) => {
-      let status = res.info().status;
-      console.log("status:", res);
-      if (status == 200) {
-        let text = res.text()
-        console.log(text);
-        console.log("this is data");
-        this.render();
-      }
-      else if (status == 400) {
-        let text = res.text()
-        console.log(text)
-        console.log("no data recieved")
-      }
-    })
-  }
-
   render() {
     return (
-      <View style={mainStyle.container}>
-        <View style={mainStyle.toolbar}>
-          <View style={userStyle.container}>
-            <View>
-              <TouchableHighlight style={userStyle.loginbutton} onPress={() => this.sendData()}>
-                <Text>Send data</Text>
-              </TouchableHighlight>
-              <TouchableHighlight style={userStyle.registerbutton} onPress={() => this.getData()}>
-                <Text >Get data</Text>
-              </TouchableHighlight>
-
-            </View>
-          </View >
+      <ScrollView style={mainStyle.container}>
+        <View>
+          <Text>Your samples:</Text>
         </View>
-      </View>
+        <View>{this.state.dataContainer}</View>
+      </ScrollView>
 
     );
   }
 }
-

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   StyleSheet,
   Text,
@@ -13,53 +13,63 @@ import {
   ImageBackground,
 } from 'react-native';
 import RNFS from 'react-native-fs';
-import { LinearGradient } from 'react-native-linear-gradient';
+import {LinearGradient} from 'react-native-linear-gradient';
+import Server from '../functions/Server';
 // import { SvgXml, SvgUri } from "react-native-svg"
 
-const svgThing = require("../assets/Logo_waterdruppel.svg");
+const svgThing = require('../assets/Logo_waterdruppel.svg');
 
 // homeStyle
-import { mainStyle, homeStyle } from '../styles/style';
+import {mainStyle, homeStyle} from '../styles/style';
 
+export default class Home extends Component<{navigation: any}> {
 
-
-
-export default class Home extends Component<{ navigation: any }> {
   constructor(props: any) {
     super(props);
+    
   }
 
   render(): React.ReactNode {
     return (
-
       <View style={homeStyle.container}>
-        <ImageBackground style={homeStyle.backgroundGradient}
-          source={require("../assets/gradient.png")}>
-
-
-          <Text style={{ opacity: 0 }}></Text>
+        <ImageBackground
+          style={homeStyle.backgroundGradient}
+          source={require('../assets/gradient.png')}>
+          <Text style={{opacity: 0}}></Text>
 
           <View>
-            <View style={homeStyle.hamburgercontainer}>
-              <TouchableHighlight onPress={() =>
-                this.props.navigation.navigate('User', {})
-              } underlayColor="rgba(0,0,0,0)">
-
-                <Image style={homeStyle.hamburgerbutton} source={require('../assets/Hamburger.png')} />
-
+            <View style={homeStyle.locationpincontainer}>
+              <TouchableHighlight
+                onPress={() =>
+                  this.props.navigation.navigate('LocationPin', {})
+                }
+                underlayColor="rgba(0,0,0,0)">
+                <Image
+                  style={homeStyle.locationpinbutton}
+                  source={require('../assets/LocationPinLogo.png')}></Image>
               </TouchableHighlight>
-
             </View>
 
+            <View style={homeStyle.hamburgercontainer}>
+              <TouchableHighlight
+                onPress={() => this.props.navigation.navigate('User', {})}
+                underlayColor="rgba(0,0,0,0)">
+                <Image
+                  style={homeStyle.hamburgerbutton}
+                  source={require('../assets/Hamburger.png')}
+                />
+              </TouchableHighlight>
+            </View>
           </View>
 
           <View style={homeStyle.logocontainer}>
-            <TouchableHighlight onPress={() =>
-              this.props.navigation.navigate('Measure', {})
-            } underlayColor="rgba(0,0,0,0)">
-
-              <Image style={homeStyle.logo} source={require('../assets/Logo_waterdruppel.png')} />
-
+            <TouchableHighlight
+              onPress={() => this.props.navigation.navigate('Measure', {})}
+              underlayColor="rgba(0,0,0,0)">
+              <Image
+                style={homeStyle.logo}
+                source={require('../assets/Logo_waterdruppel.png')}
+              />
             </TouchableHighlight>
           </View>
 
@@ -71,41 +81,37 @@ export default class Home extends Component<{ navigation: any }> {
           </View> */}
 
             <View style={homeStyle.row}>
-
-              <TouchableHighlight onPress={() =>
-                this.props.navigation.navigate('InfoView', {})
-              } underlayColor="rgba(0,0,0,0)">
-
-                <Image style={homeStyle.logobuttons} source={require('../assets/Info.png')} />
-
+              <TouchableHighlight
+                onPress={() => this.props.navigation.navigate('InfoView', {})}
+                underlayColor="rgba(0,0,0,0)">
+                <Image
+                  style={homeStyle.logobuttons}
+                  source={require('../assets/Info.png')}
+                />
               </TouchableHighlight>
 
-
-
-              <TouchableHighlight onPress={() =>
-                this.props.navigation.navigate('Data', {})
-              } underlayColor="rgba(0,0,0,0)">
-
-                <Image style={homeStyle.logobuttons} source={require('../assets/Data.png')} />
-
+              <TouchableHighlight
+                onPress={() => this.props.navigation.navigate('Data', {})}
+                underlayColor="rgba(0,0,0,0)">
+                <Image
+                  style={homeStyle.logobuttons}
+                  source={require('../assets/Data.png')}
+                />
               </TouchableHighlight>
 
               {/* info, camera, data, kaart */}
             </View>
 
             <View style={homeStyle.bottomMiddleButt}>
-              <TouchableHighlight onPress={() =>
-                this.props.navigation.navigate('Map', {})
-              } underlayColor="rgba(0,0,0,0)">
-
-                <Image style={homeStyle.logobuttons} source={require('../assets/Map.png')} />
-
+              <TouchableHighlight
+                onPress={() => this.props.navigation.navigate('Map', {})}
+                underlayColor="rgba(0,0,0,0)">
+                <Image
+                  style={homeStyle.logobuttons}
+                  source={require('../assets/Map.png')}
+                />
               </TouchableHighlight>
             </View>
-
-
-
-
           </View>
           {/* </LinearGradient> */}
         </ImageBackground>

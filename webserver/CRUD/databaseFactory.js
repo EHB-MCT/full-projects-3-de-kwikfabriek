@@ -9,7 +9,7 @@ class DatabaseFactory {
 
     getDatabase() {
         if (this.verbinding == null) {
-            this.verbinding = new Database("db", "username", "username", "BioLab");
+            this.verbinding = new Database("db", "username", "username", "Biolab");
         }
         return this.verbinding;
     }

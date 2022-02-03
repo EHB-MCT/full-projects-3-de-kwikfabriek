@@ -1,15 +1,15 @@
 version: '3.1'
 services:
   db:
+    container_name: db
     image: mysql:5.7
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
-      MYSQL_ROOT_HOST: 127.0.0.1
-      MYSQL_ROOT_PASSWORD: example
       MYSQL_USER: username
       MYSQL_PASSWORD: username
-      MYSQL_DATABASE: BioLab
+      MYSQL_DATABASE: Biolab
+      MYSQL_ROOT_PASSWORD: example
     ports: 
       - 3306:3306
     logging:
@@ -22,7 +22,7 @@ services:
     # depends_on: db
     build: ./webserver/
     ports:
-      - 8100:8100
+      - 80:80
     volumes:
       - ./webserver:/usr/src/app
 
