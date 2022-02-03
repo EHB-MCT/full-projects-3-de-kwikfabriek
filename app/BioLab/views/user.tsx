@@ -22,7 +22,7 @@ import RNFS from 'react-native-fs';
 import { MMKV } from 'react-native-mmkv'
 
 const storage = new MMKV()
-import Server from '../functions/Server';
+import {Server} from '../functions/Server';
 
 // userStyle
 import { homeStyle, mainStyle, userStyle } from '../styles/style';
@@ -40,7 +40,6 @@ export default class User extends Component<{ route: any, navigation: any}> {
     constructor(props: any) {
         super(props);
         this.server = this.props.route.params.server
-        console.log(this.server);
     }
 
     async duplicateUser() {
