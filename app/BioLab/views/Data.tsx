@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, {Component, useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -35,17 +35,14 @@ export default class Data extends Component<{ route: any, navigation: any },
     dataContainer: any[];
     images: String[];
     imageViews: any[];
-    connection: string;
-    files: String[];
-    link: String;
-    locationName: string;
-  }>
+  }
+> {
 
-{
   tempFiles = [];
   server: Server;
   constructor(props: any) {
     super(props);
+
     this.server = this.props.route.params.server;
     this.state = {
       locationName: "",
@@ -87,7 +84,6 @@ export default class Data extends Component<{ route: any, navigation: any },
         // RGB_values: newRes[count].RGB_values,
         // timestamp: newRes[count].timestamp,
         // userName: loggedInUser,
-
       }
       this.addData();
     });
@@ -130,7 +126,6 @@ export default class Data extends Component<{ route: any, navigation: any },
   }
 
   render() {
-
     return (
       <ScrollView style={mainStyle.container}>
         <View>
