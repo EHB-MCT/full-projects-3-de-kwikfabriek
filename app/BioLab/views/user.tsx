@@ -1,20 +1,22 @@
 // react-native
-import React, { Component, useState } from 'react';
+import React, {Component, useState} from 'react';
 import RNFetchBlob from 'rn-fetch-blob';
 
 // react-native
 import {
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TextInputProps,
-    TouchableHighlight,
-    View,
-    Alert,
-    Image,
-    ImageBackground,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TextInputProps,
+  TouchableHighlight,
+  View,
+  Alert,
+  Image,
+  ImageBackground,
 } from 'react-native';
+
+import login from '../functions/Server';
 
 // dependency
 import RNFS from 'react-native-fs';

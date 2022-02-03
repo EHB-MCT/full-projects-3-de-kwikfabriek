@@ -3,6 +3,7 @@ import {
   Alert,
   Image,
   ImageBackground,
+  ImageStyle,
   ScrollView,
   Text,
   TextInput,
@@ -54,7 +55,9 @@ export default class LocationPin extends Component<
           // }
           <View key={el.id} style={locationPinStyle.locationContainer}>
             <View style={locationPinStyle.locationContainerText}>
-              <Text style={locationPinStyle.locationText}>{el.locationName}</Text>
+              <Text style={locationPinStyle.locationText}>
+                {el.locationName}
+              </Text>
             </View>
             <View style={locationPinStyle.locationContainerImage}>
               <TouchableOpacity
@@ -64,7 +67,7 @@ export default class LocationPin extends Component<
                   this.setState({deleteOverlay: true});
                 }}>
                 <Image
-                  style={locationPinStyle.imageStyle}
+                  style={locationPinStyle.imageStyle as ImageStyle}
                   source={require('../assets/trashIcon.png')}
                 />
               </TouchableOpacity>
@@ -153,7 +156,7 @@ export default class LocationPin extends Component<
                 style={locationPinStyle.addlocationbutton}>
                 <Image
                   source={require('../assets/pluslocation.png')}
-                  style={locationPinStyle.plusbutton}></Image>
+                  style={locationPinStyle.plusbutton as ImageStyle}></Image>
                 <Text style={locationPinStyle.locationbuttontext}>
                   Pin current location
                 </Text>
