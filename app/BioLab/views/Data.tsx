@@ -13,6 +13,7 @@ import {
   ScrollView,
   ActivityIndicator,
   ImageBackground,
+  Dimensions,
 } from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 import RNFS from 'react-native-fs';
@@ -118,7 +119,9 @@ export default class Data extends Component<
     return (
       <ScrollView style={dataStyle.container}>
         <ImageBackground
-          imageStyle={{opacity: 0.6}}
+          imageStyle={{
+            opacity: 0.6,
+          }}
           source={require('../assets/backgroundWavy.png')}>
           <View style={dataStyle.titleContainer}>
             <Text style={dataStyle.titleText}>Your samples:</Text>

@@ -414,7 +414,7 @@ export const cameraStyle = StyleSheet.create({
 export const dataStyle = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgb(0,0,0)',
+    height: Dimensions.get('window').height
   },
   imageContainer: {
     flex: 1,
@@ -429,11 +429,11 @@ export const dataStyle = StyleSheet.create({
   titleContainer: {
     flex: 1,
     width: "100%",
-    justifyContent: "center",
     alignItems: "center",
     paddingTop: 30,
     paddingBottom: 20,
-    marginBottom: 40,
+    minHeight: "100%",
+    height: Dimensions.get('window').height
   },
   titleText: {
     fontSize: 28,
