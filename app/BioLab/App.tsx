@@ -19,8 +19,7 @@ import InfoView from './views/InfoView';
 import DeviceList from './views/measure/DeviceList';
 import User from './views/user';
 import LocationPin from './views/LocationPin';
-
-import {Server} from './functions/Server';
+import Server from './functions/Server';
 
 const Stack = createNativeStackNavigator();
 

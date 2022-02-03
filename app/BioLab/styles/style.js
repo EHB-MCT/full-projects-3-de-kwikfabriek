@@ -419,6 +419,7 @@ export const dataStyle = StyleSheet.create({
     backgroundColor: "red",
     display: "flex",
     flexDirection: "row",
+    color: "red"
   },
   imageContainer: {
     flex: 1,
