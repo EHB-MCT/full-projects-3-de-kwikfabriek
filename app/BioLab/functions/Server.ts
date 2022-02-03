@@ -11,6 +11,7 @@ interface Data {
   data: any
 }
 
+
 type Methods = "POST" | "GET" | "DELETE" | "PUT" | "post" | "get" | "delete" | "put";
 
 export class Server{
@@ -23,9 +24,17 @@ export class Server{
     },
     data: {
 
+  /*  
+    {
+      user: {
+        email,
+        password
+      },
+      data: {
+  
+      }
     }
-  }
-*/
+  */
 
   serverUrl: string;
 
@@ -34,12 +43,11 @@ export class Server{
   userEmail?: string;
   private userPassword?: string;
 
-  constructor(serverUrl: string){
+  constructor(serverUrl: string) {
     this.serverUrl = serverUrl;
     this.loggedIn = false;
     console.log('server:', this.serverUrl);
   }
-
 
   // user actions
 
@@ -93,6 +101,7 @@ export class Server{
 
   }
 
+  
   /**
    * Register
    * @param email Email adress
@@ -114,22 +123,21 @@ export class Server{
       }).then((res) => {
         // success
         console.log('register success');
-        if(login){
+        if (login) {
           this.userEmail = email;
           this.userPassword = password;
           this.loggedIn = true;
           console.log('logged in');
         }
         resolve(true);
-      }, () => {
+      }, (res) => {
         // failed
         console.log('register failed');
-        reject(false);
+        reject(res);
       });
     });
 
   }
-
 
   // fetching data
 
@@ -182,12 +190,12 @@ export class Server{
         'content-Type': 'application/json' },
         JSON.stringify(fullData)
       ).then((res) => {
-
+        console.log("Request:", `${this.serverUrl}${url}`);
         const status = res.info().status;
-        if(status == 200){
+        if (status == 200) {
           // succes
           resolve(res.data);
-        }else{
+        } else {
           // error
           console.log('error', res.data);
           reject(res.data);
