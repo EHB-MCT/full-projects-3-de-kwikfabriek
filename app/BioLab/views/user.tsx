@@ -141,7 +141,7 @@ export default class User extends Component<{ route: any, navigation: any }> {
 
     /**
      * Eerste parameter is de route naar waar de request gestuurd word
-     * 2de parameter is welke methode je gebruikt (GET, POST, DELETE of PATCH)
+     * 2de parameter is welke methode je gebruikt (GET, POST, DELETE of PUT)
      * 3de parameter is de data die je wilt doorsturen
      * 4de parameter is als je de data van de user wilt meegeven.
      */
