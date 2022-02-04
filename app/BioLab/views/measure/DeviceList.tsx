@@ -1,16 +1,15 @@
 // react
-import React, { Component, useState, useEffect } from 'react';
+import React, { Component } from 'react';
 
 // react native
-import { PermissionsAndroid, LogBox, Animated } from 'react-native';
-import { Text, View, ScrollView, Pressable } from 'react-native';
+import { Text, View, ScrollView, Pressable, Image, ImageBackground, PermissionsAndroid, LogBox, Animated } from 'react-native';
 
 // dependency
-import { BleManager, Device, NativeDevice } from 'react-native-ble-plx';
+import { BleManager, Device} from 'react-native-ble-plx';
 import base64 from 'react-native-base64';
 
 // deviceStyle
-import { mainStyle, deviceStyle } from '../../styles/style';
+import { mainStyle, deviceStyle, measureStyle, cameraStyle } from '../../styles/style';
 
 // andere
 import {formatNumber} from '../../functions/formatNumber';
@@ -44,6 +43,8 @@ export default class DeviceList extends Component<{ navigation: any }, {
   sensorDataArray: RGB[],
   status: Number,
   currentColor: string,
+  nMResult: Number | null,
+  resultText: string | null
 }> {
 
   manager: BleManager;
@@ -64,6 +65,8 @@ export default class DeviceList extends Component<{ navigation: any }, {
       sensorDataArray: [],
       status: 1,
       currentColor: "rgb(0, 0, 0)",
+      nMResult: null,
+      resultText: null
     }
 
     this.scanDevices();
@@ -241,14 +244,9 @@ export default class DeviceList extends Component<{ navigation: any }, {
                   const minRGB = 0;
                   const calcRGB = maxRGB - minRGB;
 
-                  fixR = (avgR / calcRGB) * 255;
-                  fixG = (avgG / calcRGB) * 255;
-                  fixB = (avgB / calcRGB) * 255;
-
-                  let test: number = fixB - ((fixG + fixR));
-
-                  // saturatie berekenen
-
+                  fixR = Math.round((avgR / calcRGB) * 255);
+                  fixG = Math.round((avgG / calcRGB) * 255);
+                  fixB = Math.round((avgB / calcRGB) * 255);
 
                   this.setState({
                     data: {
@@ -261,8 +259,76 @@ export default class DeviceList extends Component<{ navigation: any }, {
                     status: 4
                   });
 
-                  console.log(`${avgR}\t${avgG}\t${avgB}\t${test}`);
-                  //console.log(`${test}`);
+                  
+                  
+                  // bereken resultaaat
+
+                  let resultNumber: number = fixB - ((fixG + fixR));
+
+                  const calibratedValues = [
+                    {
+                      nMValue: 0,
+                      rgbValue: -642.53982,
+                      result: 'Water has no mercury in it. Save to drink!'
+                    },
+                    {
+                      nMValue: 10,
+                      rgbValue: -509.96889,
+                      result: 'Water has a very small amount mercury in it. Save to drink!'
+                    },
+                    {
+                      nMValue: 25,
+                      rgbValue: -398.052449999999,
+                      result: 'Water has some mercury in it. Be carefull, dont drink to much!'
+                    },
+                    {
+                      nMValue: 50,
+                      rgbValue: -324.08081,
+                      result: 'Water has mercury in it. Not save to drink!'
+                    },
+                    {
+                      nMValue: 100,
+                      rgbValue: -272.380289999999,
+                      result: 'Water contains a lot of mercury. Do not drink!'
+                    },
+                    {
+                      nMValue: 250,
+                      rgbValue: -185.7216,
+                      result: 'Water is heavely poluted. Do not drink!'
+                    },
+                  ];
+
+
+                  calibratedValues.map((value, index) => {
+                    switch(index){
+                      case 0:
+                        if(value.rgbValue > resultNumber){
+                          this.setState({
+                            nMResult: value.nMValue,
+                            resultText: value.result
+                          });
+                        }
+                        break;
+                      case calibratedValues.length - 1:
+                        if(value.rgbValue < resultNumber){
+                          this.setState({
+                            nMResult: value.nMValue,
+                            resultText: value.result
+                          });
+                        }
+                        break;
+                      default:
+                        if(value.rgbValue > resultNumber && calibratedValues[index - 1].rgbValue < resultNumber){
+                          this.setState({
+                            nMResult: value.nMValue,
+                            resultText: value.result
+                          });
+                        }
+                        break;
+                    }
+                  });
+
+                  console.log(`${avgR}\t${avgG}\t${avgB}\t${resultNumber}`);
                   
                   break;
                 default:
@@ -411,9 +477,19 @@ export default class DeviceList extends Component<{ navigation: any }, {
   renderDevices(device: Device){
     return (
       <Pressable style={device.name == "INCUBATOR" ? (deviceStyle.deviceContainer) : (deviceStyle.deviceContainerOther)} key={ device.id }
-        onPress={() => this.connect(device)}>
+        onPress={() => {
+          device.name == "INCUBATOR" ? this.connect(device) : null
+        }}>
         <Text style={deviceStyle.deviceText}>{ device.name }</Text>
         <Text style={deviceStyle.deviceSubText}>{ device.id }</Text>
+
+        {device.name == "INCUBATOR" ?
+          <Image
+            style={deviceStyle.incubatorLogo}
+            source={require('../../assets/incubatorChoice.png')}
+          />
+          : null }
+
       </Pressable>
     )
   }
@@ -421,80 +497,130 @@ export default class DeviceList extends Component<{ navigation: any }, {
   renderDeviceList(){
     return (
       <View>
-        <ScrollView>
+        <ScrollView style={deviceStyle.deviceListContainer}>
           {
             this.state.devices.map((device) => {
               return this.renderDevices(device);
             })
           }
         </ScrollView>
-        {!this.state.scanning ? (
-          <Pressable
-            style={deviceStyle.button}
-            onPress={() => {
-              this.scanDevices();
-            }}
-          >
-            <Text style={deviceStyle.buttonText}>Scan for devices</Text>
-          </Pressable>
-        ) : (
-          <Pressable
-            style={deviceStyle.buttonRed}
-            onPress={() => {
-              // ...
-            }}
-          >
-            <Text style={deviceStyle.buttonText}>Scanning...</Text>
-          </Pressable>
-        )}
+
+        <View style={deviceStyle.buttonContainer}>
+
+          {!this.state.scanning ? (
+            <Pressable
+              style={deviceStyle.button}
+              onPress={() => {
+                this.scanDevices();
+              }}
+            >
+              <Text style={deviceStyle.buttonText}>Scan for devices</Text>
+            </Pressable>
+          ) : (
+            <Pressable
+              style={deviceStyle.buttonRed}
+              onPress={() => {
+                // ...
+              }}
+            >
+              <Text style={deviceStyle.buttonText}>Scanning...</Text>
+            </Pressable>
+          )}
+
+        </View>
+
       </View>
     )
   }
 
+
   renderIncubator(){
     return (
       <View>
-        <Pressable 
-          style={deviceStyle.buttonRed}
-          onPress={() => {this.disconnect()}}
+        <ImageBackground
+          style={deviceStyle.backgroundSaved}
+          source={require('../../assets/WavyBg_imageSaved.png')}
         >
-          <Text style={deviceStyle.buttonText}>Disconnect</Text>
-        </Pressable>
-        <View style={[mainStyle.center, mainStyle.bottom]}>
 
-          <Text style={deviceStyle.statusText}>{ this.statusToString(this.state.status) }</Text>
-          <Text style={deviceStyle.statusText}>Value: { this.state.currentColor }</Text>
-          <Animated.View 
-      		style={[deviceStyle.box, {backgroundColor: this.state.currentColor}]}
-      	  />
+        {/* Resultaat druppel */}
 
-          <Pressable
-            style={deviceStyle.button}
-            onPress={()=> {this.measure()}}
-          >
-            <Text style={deviceStyle.buttonText}>Measure sample</Text>
-          </Pressable>
+        <View style={cameraStyle.logoSavedCont}>
+          <Image
+            source={require('../../assets/Analyze_backgroundLogo.png')}
+            style={cameraStyle.logoSaved}
+          />
 
-          <Pressable
-            style={deviceStyle.button}
-            onPress={()=> {this.calibrate()}}
-          >
-            <Text style={deviceStyle.buttonText}>Calibrate</Text>
-          </Pressable>
+          {this.state.nMResult !== null ?
+            <View>
+              <Text style={cameraStyle.logoText}>Qty Hg:</Text>
+              <Text style={cameraStyle.logoText}>{ this.state.nMResult }*10^-9 nM Hg2+</Text>
+            </View>
+          : null}
           
+
+          <Text style={cameraStyle.logoTextWater}>Color water</Text>
+          <View style={[deviceStyle.colorSaved, {backgroundColor: this.state.currentColor}]}>
+            <Text style={cameraStyle.rgbvalues}>
+                { this.state.currentColor }
+            </Text>
+          </View>
         </View>
+
+
+        <Text style={deviceStyle.statusText}>{ this.statusToString(this.state.status) }</Text>
+
+        <Text style={deviceStyle.waterResultDesc}>
+          { this.state.resultText }
+        </Text>
+
+        <View style={deviceStyle.bottomButtonContainer}>
+
+          {this.state.status !== 2 ?
+            <Pressable
+              style={deviceStyle.button}
+              onPress={()=> {this.measure()}}
+            >
+              <Text style={deviceStyle.buttonText}>Measure sample</Text>
+            </Pressable>
+          : null}
+
+          {this.state.status == 4 ?
+            <Pressable
+              style={deviceStyle.button}
+              onPress={()=> {}}
+            >
+              <Text style={deviceStyle.buttonText}>Save data</Text>
+            </Pressable>
+          : null}
+          
+
+        </View>
+
+
+        </ImageBackground>
       </View>
     )
   }
 
   render() {
     return (
-      <View style={mainStyle.container}>
+      <View style={measureStyle.menuContainer}>
 
-        {this.state.connected
-          ? this.renderIncubator()
-          : this.renderDeviceList()
-        }
+        {/* <Image
+          style={measureStyle.backgroundLogo}
+          source={require('../../assets/Analyze_backgroundLogo.png')}
+        /> */}
+
+        <View style={measureStyle.contentContainer}>
+
+          {this.state.connected
+            ? this.renderIncubator()
+            : this.renderDeviceList()
+          }
+
+        </View>
+
+        
 
       </View>
     )

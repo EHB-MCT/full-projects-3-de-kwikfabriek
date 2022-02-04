@@ -12,7 +12,7 @@ interface Data {
 }
 
 
-type Methods = "POST" | "GET" | "DELETE" | "PUT" | "post" | "get" | "delete" | "put";
+type Methods = "POST" | "GET" | "DELETE" | "PUT";
 
 export default class Server {
 
@@ -45,7 +45,7 @@ export default class Server {
 
   constructor(serverUrl: string) {
     this.serverUrl = serverUrl;
-    this.loggedIn = false;
+    this.loggedIn = true;
     console.log('server:', this.serverUrl);
   }
 
@@ -85,6 +85,7 @@ export default class Server {
         },
         data: null
       }).then((res) => {
+
         // success
         this.userEmail = email;
         this.userPassword = password;
@@ -144,7 +145,7 @@ export default class Server {
   /**
    * Receive data from server (formated to include the user credentionals)
    * @param url Url path to request. example: (example/1)
-   * @param method Fetch method to use (GET, POST, DELETE, PUT)
+   * @param method Fetch method to use (GET, POST, DELETE, PUT, PATCH)
    * @param data Data to be send to server
    * @param loggedIn Only allowed if the user is logged in. (default -> true)
    * @returns Promise (resolve, reject) -> returned data form server
@@ -185,6 +186,9 @@ export default class Server {
    * @returns Promise (resolve, reject) -> returned data form server
    */
   private executeFetchData(url: string, method: Methods, fullData: Data) {
+
+    console.log(method, url, fullData);
+
     return new Promise((resolve, reject) => {
       RNFetchBlob.fetch(method, `${this.serverUrl}${url}`, {
         'content-Type': 'application/json'
