@@ -63,10 +63,44 @@ function verifyUser(req, res, next) {
     next();
 }
 
-// app.get('/', async (req, res) => {
-//     res.status(200).send("Welcome to the BioLab server.")
-//     console.log("Documentation page called.")
-// })
+
+/**
+ * Middleware om te kijken als de user ingelogd is
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+let authUser = (req, res, next) => {
+    let user = req.body.user;
+    userDB.getUserFromUserName(req.body.user.email).then((result) => {
+        if(result){
+            userDB.checkPassword(req.body.user.email, req.body.user.password).then((result) => {
+                if(result){
+                    next();
+                }else{
+                    res.status(500).send('wrong password');
+                }
+            });
+        }else{
+            res.status(500).send('user not found');
+        }
+    });
+}
+
+
+app.post('/test', authUser, (req, res) => {
+
+    console.log('TEST', req.body.data.param1, req.body.data.param2);
+
+    res.status(200).send({
+        status: 'ok',
+        data: 'Hello world!'
+    });
+
+});
+
+
+
 
 app.get('/users', async (req, res) => {
     console.log("All users called.");

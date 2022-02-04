@@ -112,11 +112,7 @@ export default class User extends Component<{ route: any, navigation: any }> {
 
 
   async login() {
-    console.log("Running loggin function.", this.state.userName, this.state.password)
-    let user = {
-      email: this.state.userName,
-      password: this.state.connection
-    }
+    console.log("Running loggin function.", this.state.userName, this.state.password);
 
     this.server.login(this.state.userName, this.state.connection).then((response: any) => {
       console.log(response);
@@ -138,6 +134,20 @@ export default class User extends Component<{ route: any, navigation: any }> {
     //     console.log("Fetch didn't work");
     //   }
     // })
+  }
+
+
+
+  test(){
+    this.server.fetchData('test', 'post', {param1: 'hello', param2: 'world'}, true).then((response) => {
+      // Alles in orde
+
+      console.log(response);
+
+    }).then((response) => {
+      // error
+      console.log(response);
+    });
   }
 
 
@@ -183,6 +193,18 @@ export default class User extends Component<{ route: any, navigation: any }> {
               onPress={() => this.createUser()}>
               <Text style={userStyle.registerbuttontxt}>Register</Text>
             </TouchableHighlight>
+
+
+
+            <TouchableHighlight
+              style={userStyle.registerbutton}
+              onPress={() => this.test()}>
+              <Text style={userStyle.registerbuttontxt}>Test</Text>
+            </TouchableHighlight>
+
+
+
+
           </View>
         </ImageBackground>
       </View>
