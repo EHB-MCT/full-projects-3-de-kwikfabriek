@@ -21,47 +21,42 @@ const {
 let userDB = new UserDB;
 let dataBase = new Database;
 
-app.use((req, res, next) => {
-    console.log("Running without middleware")
-    next();
-});
+// function verifyUser(req, res, next) {
+//     console.log("Verification route called");
+//     try {
+//         if (!req.body.user.email || !req.body.user.password) {
+//             res.status(400).send('Bad login: Missing username or password! Try again.');
+//             console.log('Bad login: Missing userName or password! Try again.');
+//             return;
+//         }
 
-function verifyUser(req, res, next) {
-    console.log("Verification route called");
-    try {
-        if (!req.body.user.email || !req.body.user.password) {
-            res.status(400).send('Bad login: Missing username or password! Try again.');
-            console.log('Bad login: Missing userName or password! Try again.');
-            return;
-        }
+//         userDB.getUserFromUserName(req.body.user.email).then((result) => {
+//             if (result.userName) {
+//                 userDB.checkPassword(req.body.user.email, req.body.user.password).then((verifyPass) => {
+//                     if (verifyPass) {
+//                         console.log(`You are logged in ${req.body.user.email}, have fun!`)
+//                         res.status(200).send(`You are logged in ${req.body.user.email}, have fun!`);
+//                     } else if (!verifyPass) {
+//                         console.log("Fool, wrong password or username!")
+//                         res.status(500).send("Password");
+//                     }
+//                 })
+//             } else if (result.userName == undefined) {
+//                 console.log(`User ${req.body.user.email} doesn't exists!`)
+//                 res.status(501).send(`Account`);
+//                 return;
+//             }
+//         })
 
-        userDB.getUserFromUserName(req.body.user.email).then((result) => {
-            if (result.userName) {
-                userDB.checkPassword(req.body.user.email, req.body.user.password).then((verifyPass) => {
-                    if (verifyPass) {
-                        console.log(`You are logged in ${req.body.user.email}, have fun!`)
-                        res.status(200).send(`You are logged in ${req.body.user.email}, have fun!`);
-                    } else if (!verifyPass) {
-                        console.log("Fool, wrong password or username!")
-                        res.status(500).send("Password");
-                    }
-                })
-            } else if (result.userName == undefined) {
-                console.log(`User ${req.body.user.email} doesn't exists!`)
-                res.status(501).send(`Account`);
-                return;
-            }
-        })
-
-    } catch (error) {
-        console.log(error)
-        res.status(500).send({
-            error: 'Something went wrong with the query.',
-            value: error
-        })
-    }
-    next();
-}
+//     } catch (error) {
+//         console.log(error)
+//         res.status(500).send({
+//             error: 'Something went wrong with the query.',
+//             value: error
+//         })
+//     }
+//     next();
+// }
 
 
 /**
