@@ -28,7 +28,7 @@ export default class App extends Component {
 
   constructor(props: any) {
     super(props);
-    this.server = new Server('http://biolab.miguelbilliet.be/');
+    this.server = new Server('http://10.1.233.97/');
   }
 
   render() {

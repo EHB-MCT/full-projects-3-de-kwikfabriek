@@ -17,6 +17,9 @@ const {
 const {
     UserDB
 } = require('./CRUD/UserDB.js');
+const {
+    response
+} = require('express');
 
 let userDB = new UserDB;
 let dataBase = new Database;
@@ -97,23 +100,25 @@ app.get('/location', async (req, res) => {
         console.log(`Retrieved locations for user: ${req.body.userName}`)
         res.status(200).send(data)
     })
+
 })
 
-app.post('/data', async (req, res) => {
+app.get('/data', async (req, res) => {
     console.log("Data route called");
+    console.log("Request:", req);
     try {
-        if (!req.body.data) {
+        if (!req.user.email) {
             res.status(400).send('Bad request: Missing userName.');
             console.log('Bad request: Missing userName.');
             return;
         }
-        userDB.getData(req.body.data).then((data) => {
-            console.log("Username:", data.userName)
-            if (!data.userName) {
-                res.status(300).send(`No data found for user: ${req.body.data.userName}`);
-            } else if (data.userName) {
+        userDB.getData(req.body.email).then((data) => {
+            console.log("Username:", data)
+            if (data.length == 0) {
+                res.status(300).send(`No data found for user: ${req.body.email}`);
+            } else if (data.length > 0) {
                 res.status(200).send(data);
-                console.log(data);
+                console.log("Data received");
             }
         })
 
