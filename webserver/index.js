@@ -24,52 +24,55 @@ const {
 let userDB = new UserDB;
 let dataBase = new Database;
 
-app.use((req, res, next) => {
-    console.log("Running without middleware")
+
+app.use((req, res, next) => { // zo maak je een middleware die op alle routes worden uitgevoerd
+    console.log(req.url, req.body);
     next();
 });
 
-function verifyUser(req, res, next) {
-    console.log("Verification route called");
-    try {
-        if (!req.body.user.email || !req.body.user.password) {
-            res.status(400).send('Bad login: Missing username or password! Try again.');
-            console.log('Bad login: Missing userName or password! Try again.');
-            return;
-        }
 
+/**
+ * Middleware om te kijken als de user ingelogd is
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+let authUser = (req, res, next) => {
+    let user = req.body.user;
+
+    if(user.email){
         userDB.getUserFromUserName(req.body.user.email).then((result) => {
-            if (result.userName) {
-                userDB.checkPassword(req.body.user.email, req.body.user.password).then((verifyPass) => {
-                    if (verifyPass) {
-                        console.log(`You are logged in ${req.body.user.email}, have fun!`)
-                        res.status(200).send(`You are logged in ${req.body.user.email}, have fun!`);
-                    } else if (!verifyPass) {
-                        console.log("Fool, wrong password or username!")
-                        res.status(500).send("Password");
+            if(result){
+                userDB.checkPassword(req.body.user.email, req.body.user.password).then((result) => {
+                    if(result){
+                        next(); // next gebruik je als alles in orde is en de rest van de code uitgevoerd mag worden na de middleware
+                    }else{
+                        res.status(500).send('wrong password');
                     }
-                })
-            } else if (result.userName == undefined) {
-                console.log(`User ${req.body.user.email} doesn't exists!`)
-                res.status(501).send(`Account`);
-                return;
+                });
+            }else{
+                res.status(500).send('user not found');
             }
-        })
-
-    } catch (error) {
-        console.log(error)
-        res.status(500).send({
-            error: 'Something went wrong with the query.',
-            value: error
-        })
+        });
+    }else{
+        res.status(500).send('not logged in');
     }
-    next();
 }
 
-// app.get('/', async (req, res) => {
-//     res.status(200).send("Welcome to the BioLab server.")
-//     console.log("Documentation page called.")
-// })
+
+app.post('/test', authUser, (req, res) => { // zo voeg je middleware toe voor deze specifieke route
+
+    console.log('TEST', req.body.data.param1, req.body.data.param2);
+
+    res.status(200).send({
+        status: 'ok',
+        data: 'Hello world!'
+    });
+
+});
+
+
+
 
 app.get('/users', async (req, res) => {
     console.log("All users called.");

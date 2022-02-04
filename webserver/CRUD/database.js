@@ -21,7 +21,7 @@ class Database {
             if (err) {
                 console.error('error connecting database: ', err.stack);
             }
-            console.log('connected to database: ', this.mijnVerbinding);
+            // console.log('connected to database: ', this.mijnVerbinding);
         });
     }
 
@@ -49,7 +49,7 @@ class Database {
 
             if (verbindingAutomatischVerbreken) {
                 this.mijnVerbinding.end(function (err) {
-                    console.log('verbinding verbroken');
+                    // console.log('verbinding verbroken');
                 });
             }
         });
