@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,15 +9,17 @@ import {
   ScrollView,
   TextInput,
   ImageBackground,
+  ColorValue,
 } from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 
-import {mainStyle, measureStyle, settingsStyle} from '../styles/style';
+import { mainStyle, measureStyle, settingsStyle } from '../styles/style';
+import Server from '../functions/Server';
 
 const userName = 'Matthias';
 
 export default class Measure extends Component<
-  {navigation: any},
+  { route: any, navigation: any },
   {
     locationArray: any[];
     locationChosen: Boolean;
@@ -27,8 +29,12 @@ export default class Measure extends Component<
     sendingLocationData: any[];
   }
 > {
+
+  server: Server
+
   constructor(props: any) {
     super(props);
+    this.server = this.props.route.params.server;
     this.state = {
       locationArray: [] as any,
       locationChosen: false,
@@ -40,13 +46,15 @@ export default class Measure extends Component<
     this.displayLocationPins();
   }
 
+
   displayLocationPins() {
-    RNFetchBlob.fetch('GET', `http://10.3.208.131:8100/location/${userName}`, {
-      'Content-Type': 'application/json',
-    }).then(res => {
-      console.log(res);
-      this.setState({locationArray: []});
-      JSON.parse(res.data).forEach((el: any) => {
+    let data = {
+      userName: "Matthias"
+    }
+    this.server.fetchData("location", "get", data, true).then((response: any) => {
+      console.log(response);
+      this.setState({ locationArray: [] });
+      JSON.parse(response).forEach((el: any) => {
         console.log(el);
         this.state.locationArray.push(
           // {
@@ -56,7 +64,7 @@ export default class Measure extends Component<
           <View style={measureStyle.singleLocationContainer} key={el.id}>
             <TouchableOpacity
               onPress={() => {
-                this.setState({setLocationName: el.locationName});
+                this.setState({ setLocationName: el.locationName });
                 this.chooseLocationPin();
                 this.setState({
                   sendingLocationData: [
@@ -80,8 +88,9 @@ export default class Measure extends Component<
     });
   }
 
+
   chooseLocationPin() {
-    this.setState({locationChosen: true});
+    this.setState({ locationChosen: true });
   }
 
   render() {
@@ -91,7 +100,7 @@ export default class Measure extends Component<
           <ImageBackground source={require('../assets/backgroundWavy.png')}>
             <ScrollView
               contentContainerStyle={
-                (measureStyle.menuContainer, {flexGrow: 1})
+                (measureStyle.menuContainer, { flexGrow: 1 })
               }>
               <View style={measureStyle.topTextLocation}>
                 <Text style={measureStyle.topTextLocationText}>
@@ -118,14 +127,14 @@ export default class Measure extends Component<
                 </Text>
                 <TextInput
                   onChangeText={e => {
-                    this.setState({pinName: e});
+                    this.setState({ pinName: e });
                   }}
                   value={this.state.pinName}
                   style={measureStyle.chooseLocationTextInput}></TextInput>
                 <TouchableOpacity
                   onPress={() => {
                     console.log(this.state.pinName);
-                    this.setState({setLocationName: this.state.pinName});
+                    this.setState({ setLocationName: this.state.pinName });
                     this.chooseLocationPin();
                   }}
                   style={measureStyle.chooseLocationButton}>
@@ -186,7 +195,7 @@ export default class Measure extends Component<
                   Your current location is: {this.state.setLocationName}
                 </Text>
                 <TouchableOpacity
-                  onPress={() => this.setState({locationChosen: false})} style={measureStyle.currentLocationChangeButton}>
+                  onPress={() => this.setState({ locationChosen: false })} style={measureStyle.currentLocationChangeButton}>
                   <Text style={measureStyle.currentLocationText}>
                     Change location
                   </Text>

@@ -1,4 +1,4 @@
-import React, {Component, useEffect, useState} from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -17,15 +17,15 @@ import {
 } from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 import RNFS from 'react-native-fs';
-import {template} from '@babel/core';
+import { template } from '@babel/core';
 
 // userStyle
-import {mainStyle, dataStyle, userStyle} from '../styles/style';
-import {thisExpression} from '@babel/types';
+import { mainStyle, dataStyle, userStyle } from '../styles/style';
+import { thisExpression } from '@babel/types';
 import Server from '../functions/Server';
 
 export default class Data extends Component<
-  {route: any; navigation: any},
+  { route: any; navigation: any },
   {
     id: Number[];
     sampleID: String[];
@@ -45,12 +45,12 @@ export default class Data extends Component<
 
     this.server = this.props.route.params.server;
     this.state = {
-      password: '',
+      password: '1234',
       sampleID: [],
       id: [],
       RGB_values: [],
       timestamp: [],
-      userName: '',
+      userName: 'Sam',
       dataContainer: [] as any,
       images: [],
       imageViews: [],
@@ -59,7 +59,7 @@ export default class Data extends Component<
   }
 
   async getData() {
-    this.server.fetchData('data', 'POST', 'data', true).then(
+    this.server.fetchData("data","get", this.state.userName, true).then(
       (response: any) => {
         let newRes = JSON.parse(response);
         console.log(newRes);
@@ -91,7 +91,7 @@ export default class Data extends Component<
         <View
           style={
             (dataStyle.dataContainer,
-            {backgroundColor: `rgb(${this.state.RGB_values[a]})`})
+              { backgroundColor: `rgb(${this.state.RGB_values[a]})` })
           }
           key={a}>
           <Text style={dataStyle.dataSampleID}>{this.state.sampleID[a]}</Text>
@@ -107,7 +107,7 @@ export default class Data extends Component<
   deleteUser() {
     console.log('Credentials:', this.state.userName, this.state.password);
     this.server.fetchData('delete', 'DELETE', 'Sam', true).then(
-      (response: any) => {},
+      (response: any) => { },
       res => {
         console.log('Could not retrieve data');
         console.log(res);
@@ -119,9 +119,7 @@ export default class Data extends Component<
     return (
       <ScrollView style={dataStyle.container}>
         <ImageBackground
-          imageStyle={{
-            opacity: 0.6,
-          }}
+          imageStyle={{ opacity: 0.6 }}
           source={require('../assets/backgroundWavy.png')}>
           <View style={dataStyle.titleContainer}>
             <Text style={dataStyle.titleText}>Your samples:</Text>

@@ -107,7 +107,7 @@ class UserDB {
         console.log(userName);
         return new Promise((resolve, reject) => {
             this.getVerbinding().voerSqlQueryUit("SELECT * FROM data WHERE userName = ?", [userName]).then((resultaat) => {
-                resultaat = this.converteerQueryNaarObject(resultaat);
+                // resultaat = this.converteerQueryNaarObject(resultaat);
                 resolve(resultaat);
             });
         });
@@ -149,7 +149,7 @@ class UserDB {
     }
 
     converteerQueryNaarObject(query) {
-        console.log(query);
+        console.log("Query:", query);
         console.log("Query length:", query.length)
         for (let d in query) {
             console.log(query[d]);

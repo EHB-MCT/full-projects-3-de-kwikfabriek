@@ -1,5 +1,5 @@
 // react-native
-import React, {Component, useState} from 'react';
+import React, { Component, useState } from 'react';
 import RNFetchBlob from 'rn-fetch-blob';
 
 // react-native
@@ -29,8 +29,7 @@ import Server from '../functions/Server';
 export default class User extends Component<{ route: any, navigation: any }> {
   state = {
     userName: '',
-    password: '',
-    connection: '10.3.208.95',
+    password: ''
   };
 
   server: Server;
@@ -38,6 +37,7 @@ export default class User extends Component<{ route: any, navigation: any }> {
   constructor(props: any) {
     super(props);
     this.server = this.props.route.params.server;
+
   }
 
   async duplicateUser() {
@@ -111,6 +111,8 @@ export default class User extends Component<{ route: any, navigation: any }> {
 
 
   async login() {
+    console.log("Running loggin function.", this.state.userName, this.state.password);
+
     this.server.login(this.state.userName, this.state.password).then((response: any) => {
       console.log(response);
       console.log('You are logged in!');
@@ -125,7 +127,30 @@ export default class User extends Component<{ route: any, navigation: any }> {
       } else if (res == "Error") {
         console.log("Fetch didn't work");
       }
+
     })
+  }
+
+
+
+  test(){
+
+    /**
+     * Eerste parameter is de route naar waar de request gestuurd word
+     * 2de parameter is welke methode je gebruikt (GET, POST, DELETE of PUT)
+     * 3de parameter is de data die je wilt doorsturen
+     * 4de parameter is als de user ingelogd moet zijn, ook word de user data dan meegegeven.
+     */
+
+    this.server.fetchData('test', 'POST', {param1: 'hello', param2: 'world'}, true).then((response) => {
+      // Alles in orde
+
+      console.log(response);
+
+    }).then((response) => {
+      // error
+      console.log(response);
+    });
   }
 
 
@@ -171,6 +196,18 @@ export default class User extends Component<{ route: any, navigation: any }> {
               onPress={() => this.createUser()}>
               <Text style={userStyle.registerbuttontxt}>Register</Text>
             </TouchableHighlight>
+
+
+
+            <TouchableHighlight
+              style={userStyle.registerbutton}
+              onPress={() => this.test()}>
+              <Text style={userStyle.registerbuttontxt}>Test</Text>
+            </TouchableHighlight>
+
+
+
+
           </View>
         </ImageBackground>
       </View>
