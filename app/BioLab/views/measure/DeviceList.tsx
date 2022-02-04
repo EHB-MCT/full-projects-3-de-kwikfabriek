@@ -14,22 +14,21 @@ import { mainStyle, deviceStyle, measureStyle, cameraStyle } from '../../styles/
 // andere
 import {formatNumber} from '../../functions/formatNumber';
 
-
 // verberg warning logs in console
 LogBox.ignoreLogs(['new NativeEventEmitter']);
 LogBox.ignoreAllLogs();
-
 
 const SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
 
 const SENSOR_UUID = '6d68efe5-04b6-4a85-abc4-c2670b7bf7fd';
 
 interface RGB {
-  r: number,
-  g: number,
-  b: number,
-  c: number // clear
+  r: number;
+  g: number;
+  b: number;
+  c: number; // clear
 }
+
 
 
 export default class DeviceList extends Component<{ navigation: any }, {
@@ -46,10 +45,10 @@ export default class DeviceList extends Component<{ navigation: any }, {
   nMResult: Number | null,
   resultText: string | null
 }> {
-
+    
   manager: BleManager;
 
-  constructor(props: any){
+  constructor(props: any) {
     super(props);
 
     this.manager = new BleManager();
@@ -75,7 +74,7 @@ export default class DeviceList extends Component<{ navigation: any }, {
   /**
    * Start met scannen van bluetooth apparaten
    */
-  scanDevices(){
+  scanDevices() {
     PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       {
@@ -91,20 +90,24 @@ export default class DeviceList extends Component<{ navigation: any }, {
       this.setState({
         devices: [],
         deviceNames: [],
-        scanning: true
-      })
+        scanning: true,
+      });
 
       // ...
 
       this.manager.startDeviceScan(null, null, (error, scannedDevice) => {
-
         if (error) {
           console.warn(error);
         }
 
-        if(scannedDevice && scannedDevice.name && !this.state.deviceNames.includes(scannedDevice.name)){ // voorkom duplicaties
+        if (
+          scannedDevice &&
+          scannedDevice.name &&
+          !this.state.deviceNames.includes(scannedDevice.name)
+        ) {
+          // voorkom duplicaties
           console.log('device found:', scannedDevice.name);
-          
+
           let devices: Device[] = this.state.devices;
           let deviceNames: String[] = this.state.deviceNames;
 
@@ -113,13 +116,11 @@ export default class DeviceList extends Component<{ navigation: any }, {
 
           this.setState({
             devices: devices,
-            deviceNames: deviceNames
-          })
-          
+            deviceNames: deviceNames,
+          });
         }
 
         if (scannedDevice && scannedDevice.name == 'INCUBATOR') {
-
           //this.manager.stopDeviceScan();
           //connectDevice(scannedDevice);
         }
@@ -129,18 +130,16 @@ export default class DeviceList extends Component<{ navigation: any }, {
       setTimeout(() => {
         this.stopScan();
       }, 10000);
-
     });
-
   }
 
   /**
    * Stop met scannnen van bluetooth apparaten
    */
-  stopScan(){
+  stopScan() {
     this.setState({
-      scanning: false
-    })
+      scanning: false,
+    });
 
     this.manager.stopDeviceScan();
     console.log('stoped with scanning');
@@ -148,11 +147,11 @@ export default class DeviceList extends Component<{ navigation: any }, {
 
   /**
    * Connecteren met het bluetooth apparaat
-   * @param device 
+   * @param device
    */
-  connect(device: Device){
+  connect(device: Device) {
     this.manager.stopDeviceScan();
-    
+
     device
       .connect()
       .then(device => {
@@ -161,19 +160,20 @@ export default class DeviceList extends Component<{ navigation: any }, {
         return device.discoverAllServicesAndCharacteristics();
       })
       .then(device => {
-
         console.log(`Connected with ${device.name}`);
 
         this.setState({
           connected: true,
-          connectedDevice: device
+          connectedDevice: device,
         });
 
         this.manager.onDeviceDisconnected(device.id, () => {
-          device ? console.log(`${device.name} disconnected`) : console.log('device disconnected');
+          device
+            ? console.log(`${device.name} disconnected`)
+            : console.log('device disconnected');
           this.setState({
             connected: false,
-            connectedDevice: null
+            connectedDevice: null,
           });
           this.scanDevices();
         });
@@ -186,22 +186,23 @@ export default class DeviceList extends Component<{ navigation: any }, {
         //   });
         // });
 
-        device.monitorCharacteristicForService(SERVICE_UUID, SENSOR_UUID, (error, characteristic) => {
+        device.monitorCharacteristicForService(
+          SERVICE_UUID,
+          SENSOR_UUID,
+          (error, characteristic) => {
             if (characteristic?.value != null) {
-
               let value: string = base64.decode(characteristic?.value ?? null);
 
-              switch(value){
+              switch (value) {
                 case 'BEGIN':
                   this.setState({
-                    sensorDataArray: []
+                    sensorDataArray: [],
                   });
                   break;
                 case 'END':
-
                   this.setState({
-                    status: 3
-                  })
+                    status: 3,
+                  });
 
                   let sum: number = 0;
 
@@ -219,7 +220,11 @@ export default class DeviceList extends Component<{ navigation: any }, {
                   let arrB: number[] = [];
                   let arrC: number[] = [];
 
-                  for (let index = 0; index < this.state.sensorDataArray.length; index++) {
+                  for (
+                    let index = 0;
+                    index < this.state.sensorDataArray.length;
+                    index++
+                  ) {
                     arrR.push(this.state.sensorDataArray[index].r);
                     arrG.push(this.state.sensorDataArray[index].g);
                     arrB.push(this.state.sensorDataArray[index].b);
@@ -227,18 +232,16 @@ export default class DeviceList extends Component<{ navigation: any }, {
                   }
 
                   sum = arrR.reduce((a, b) => a + b, 0);
-                  avgR = (sum / arrR.length) || 0;
+                  avgR = sum / arrR.length || 0;
 
                   sum = arrG.reduce((a, b) => a + b, 0);
-                  avgG = (sum / arrG.length) || 0;
+                  avgG = sum / arrG.length || 0;
 
                   sum = arrB.reduce((a, b) => a + b, 0);
-                  avgB = (sum / arrB.length) || 0;
+                  avgB = sum / arrB.length || 0;
 
                   sum = arrC.reduce((a, b) => a + b, 0);
-                  avgC = (sum / arrC.length) || 0;
-
-                  
+                  avgC = sum / arrC.length || 0;
 
                   const maxRGB = 25000;
                   const minRGB = 0;
@@ -253,12 +256,11 @@ export default class DeviceList extends Component<{ navigation: any }, {
                       r: fixR,
                       g: fixG,
                       b: fixB,
-                      c: avgC
+                      c: avgC,
                     },
                     currentColor: `rgb(${fixR},${fixG},${fixB})`,
-                    status: 4
+                    status: 4,
                   });
-
                   
                   
                   // bereken resultaaat
@@ -332,9 +334,8 @@ export default class DeviceList extends Component<{ navigation: any }, {
                   
                   break;
                 default:
-                  if(value && value !== "BAD"){
-
-                    let stateSensorData: RGB[]  = this.state.sensorDataArray;
+                  if (value && value !== 'BAD') {
+                    let stateSensorData: RGB[] = this.state.sensorDataArray;
 
                     let splittedValue = value.split(',');
 
@@ -343,25 +344,20 @@ export default class DeviceList extends Component<{ navigation: any }, {
                       g: Number(splittedValue[1]),
                       b: Number(splittedValue[2]),
                       c: Number(splittedValue[3]),
-                    }
+                    };
 
                     stateSensorData.push(currentValue);
                     this.setState({
-                      sensorDataArray: stateSensorData
-                    })
+                      sensorDataArray: stateSensorData,
+                    });
                   }
                   break;
               }
-
             }
-        },
+          },
           'messagetransaction',
         );
-
-
       });
-
-
   }
 
   /**
@@ -369,10 +365,16 @@ export default class DeviceList extends Component<{ navigation: any }, {
    * @param data data om te versturen
    * @param characteristicUUID characteristic UUID
    */
-  sendData(data: string, characteristicUUID: string){
-    if(this.state.connectedDevice?.id){
-      this.manager.writeCharacteristicWithResponseForDevice(this.state.connectedDevice?.id, SERVICE_UUID, characteristicUUID, 
-        base64.encode(data)).then(characteristic => {
+  sendData(data: string, characteristicUUID: string) {
+    if (this.state.connectedDevice?.id) {
+      this.manager
+        .writeCharacteristicWithResponseForDevice(
+          this.state.connectedDevice?.id,
+          SERVICE_UUID,
+          characteristicUUID,
+          base64.encode(data),
+        )
+        .then(characteristic => {
           //console.log(`data sended: ${base64.decode(characteristic.value ?? "Undefined")}`);
         });
     }
@@ -381,38 +383,39 @@ export default class DeviceList extends Component<{ navigation: any }, {
   /**
    * Ontkoppelen met het bluetoothapparaat
    */
-  async disconnect(){
-    if(this.state.connectedDevice){
-      if(await this.state.connectedDevice.isConnected()){
+  async disconnect() {
+    if (this.state.connectedDevice) {
+      if (await this.state.connectedDevice.isConnected()) {
         this.manager.cancelTransaction('messagetransaction');
         this.manager.cancelTransaction('nightmodetransaction');
 
-        this.manager.cancelDeviceConnection(this.state.connectedDevice.id).then(() => {
-          console.log('disconnected');
-        });
+        this.manager
+          .cancelDeviceConnection(this.state.connectedDevice.id)
+          .then(() => {
+            console.log('disconnected');
+          });
       }
 
-      if(! await this.state.connectedDevice.isConnected){
+      if (!(await this.state.connectedDevice.isConnected)) {
         this.setState({
           connected: false,
-          connectedDevice: null
+          connectedDevice: null,
         });
       }
     }
   }
 
-  componentWillUnmount(){
-    if(this.state.scanning) this.stopScan();
-    if(this.state.connectedDevice) this.disconnect();
+  componentWillUnmount() {
+    if (this.state.scanning) this.stopScan();
+    if (this.state.connectedDevice) this.disconnect();
   }
-
 
   /**
    * Start measurement
    */
-  measure(){
+  measure() {
     this.setState({
-      status: 2
+      status: 2,
     });
     this.sendData('status 2', SENSOR_UUID);
   }
@@ -420,47 +423,36 @@ export default class DeviceList extends Component<{ navigation: any }, {
   /**
    * start calibration
    */
-  calibrate(){
-
+  calibrate() {
     let calibrate = false;
 
-    while(!calibrate){
-
-      
-
-
-
-    }
+    while (!calibrate) {}
 
     this.setState({
-      status: 5
+      status: 5,
     });
     this.sendData('status 5', SENSOR_UUID);
-
   }
 
-
-
-
-  statusToString(status: Number){
-    switch(status){
+  statusToString(status: Number) {
+    switch (status) {
       case 0:
-        return "Making connection";
+        return 'Making connection';
         break;
       case 1:
-        return "Connected";
+        return 'Connected';
         break;
       case 2:
-        return "Measuring";
+        return 'Measuring';
         break;
       case 3:
-        return "Processing";
+        return 'Processing';
         break;
       case 4:
-        return "Ready";
+        return 'Ready';
         break;
       case 5:
-        return "Calibrating";
+        return 'Calibrating';
         break;
       default:
         return `Error (${status})`;
@@ -468,13 +460,12 @@ export default class DeviceList extends Component<{ navigation: any }, {
     }
   }
 
-
   /**
-   * 
+   *
    * @param device bluetooth apparaat object
    * @returns JSX - Apparaatknop
    */
-  renderDevices(device: Device){
+  renderDevices(device: Device) {
     return (
       <Pressable style={device.name == "INCUBATOR" ? (deviceStyle.deviceContainer) : (deviceStyle.deviceContainerOther)} key={ device.id }
         onPress={() => {
@@ -491,10 +482,10 @@ export default class DeviceList extends Component<{ navigation: any }, {
           : null }
 
       </Pressable>
-    )
+    );
   }
 
-  renderDeviceList(){
+  renderDeviceList() {
     return (
       <View>
         <ScrollView style={deviceStyle.deviceListContainer}>
@@ -530,9 +521,8 @@ export default class DeviceList extends Component<{ navigation: any }, {
         </View>
 
       </View>
-    )
+    );
   }
-
 
   renderIncubator(){
     return (
@@ -593,23 +583,17 @@ export default class DeviceList extends Component<{ navigation: any }, {
             </Pressable>
           : null}
           
-
         </View>
 
 
         </ImageBackground>
       </View>
-    )
+    );
   }
 
   render() {
     return (
       <View style={measureStyle.menuContainer}>
-
-        {/* <Image
-          style={measureStyle.backgroundLogo}
-          source={require('../../assets/Analyze_backgroundLogo.png')}
-        /> */}
 
         <View style={measureStyle.contentContainer}>
 
@@ -620,10 +604,7 @@ export default class DeviceList extends Component<{ navigation: any }, {
 
         </View>
 
-        
-
       </View>
-    )
+    );
   }
-
 }

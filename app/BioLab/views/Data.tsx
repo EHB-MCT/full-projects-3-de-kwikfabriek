@@ -13,6 +13,7 @@ import {
   ScrollView,
   ActivityIndicator,
   ImageBackground,
+  Dimensions,
 } from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 import RNFS from 'react-native-fs';
