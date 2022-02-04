@@ -29,8 +29,7 @@ import Server from '../functions/Server';
 export default class User extends Component<{ route: any, navigation: any }> {
   state = {
     userName: '',
-    password: '',
-    connection: '10.3.208.95',
+    password: ''
   };
 
   server: Server;
@@ -114,7 +113,7 @@ export default class User extends Component<{ route: any, navigation: any }> {
   async login() {
     console.log("Running loggin function.", this.state.userName, this.state.password);
 
-    this.server.login(this.state.userName, this.state.connection).then((response: any) => {
+    this.server.login(this.state.userName, this.state.password).then((response: any) => {
       console.log(response);
 
     })

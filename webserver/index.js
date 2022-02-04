@@ -21,42 +21,11 @@ const {
 let userDB = new UserDB;
 let dataBase = new Database;
 
-// function verifyUser(req, res, next) {
-//     console.log("Verification route called");
-//     try {
-//         if (!req.body.user.email || !req.body.user.password) {
-//             res.status(400).send('Bad login: Missing username or password! Try again.');
-//             console.log('Bad login: Missing userName or password! Try again.');
-//             return;
-//         }
 
-//         userDB.getUserFromUserName(req.body.user.email).then((result) => {
-//             if (result.userName) {
-//                 userDB.checkPassword(req.body.user.email, req.body.user.password).then((verifyPass) => {
-//                     if (verifyPass) {
-//                         console.log(`You are logged in ${req.body.user.email}, have fun!`)
-//                         res.status(200).send(`You are logged in ${req.body.user.email}, have fun!`);
-//                     } else if (!verifyPass) {
-//                         console.log("Fool, wrong password or username!")
-//                         res.status(500).send("Password");
-//                     }
-//                 })
-//             } else if (result.userName == undefined) {
-//                 console.log(`User ${req.body.user.email} doesn't exists!`)
-//                 res.status(501).send(`Account`);
-//                 return;
-//             }
-//         })
-
-//     } catch (error) {
-//         console.log(error)
-//         res.status(500).send({
-//             error: 'Something went wrong with the query.',
-//             value: error
-//         })
-//     }
-//     next();
-// }
+app.use((req, res, next) => { // zo maak je een middleware die op alle routes worden uitgevoerd
+    console.log(req.url, req.body);
+    next();
+});
 
 
 /**
@@ -73,7 +42,7 @@ let authUser = (req, res, next) => {
             if(result){
                 userDB.checkPassword(req.body.user.email, req.body.user.password).then((result) => {
                     if(result){
-                        next();
+                        next(); // next gebruik je als alles in orde is en de rest van de code uitgevoerd mag worden na de middleware
                     }else{
                         res.status(500).send('wrong password');
                     }
@@ -88,7 +57,7 @@ let authUser = (req, res, next) => {
 }
 
 
-app.post('/test', authUser, (req, res) => {
+app.post('/test', authUser, (req, res) => { // zo voeg je middleware toe voor deze specifieke route
 
     console.log('TEST', req.body.data.param1, req.body.data.param2);
 
