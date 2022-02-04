@@ -16,7 +16,6 @@ import RNFetchBlob from 'rn-fetch-blob';
 import { mainStyle, measureStyle, settingsStyle } from '../styles/style';
 import Server from '../functions/Server';
 
-const userName = 'Matthias';
 
 export default class Measure extends Component<
   { route: any, navigation: any },
@@ -27,6 +26,7 @@ export default class Measure extends Component<
     setLocationName: String;
     pinName: String;
     sendingLocationData: any[];
+    userName: String;
   }
 > {
 
@@ -36,6 +36,7 @@ export default class Measure extends Component<
     super(props);
     this.server = this.props.route.params.server;
     this.state = {
+      userName: "Sam",
       locationArray: [] as any,
       locationChosen: false,
       chosenLocation: [],
@@ -43,16 +44,14 @@ export default class Measure extends Component<
       pinName: '',
       sendingLocationData: [] as any,
     };
-    this.displayLocationPins();
+    // this.displayLocationPins();
   }
 
 
   displayLocationPins() {
-    let data = {
-      userName: "Matthias"
-    }
-    this.server.fetchData("location", "get", data, true).then((response: any) => {
-      console.log(response);
+
+    this.server.fetchData("location", "GET", "Sam", true).then((response: any) => {
+      console.log("Response:", response);
       this.setState({ locationArray: [] });
       JSON.parse(response).forEach((el: any) => {
         console.log(el);

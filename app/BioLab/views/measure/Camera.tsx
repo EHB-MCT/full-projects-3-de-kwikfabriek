@@ -139,6 +139,7 @@ export default function Camera(props: any) {
       }),
     ).then(e => {
       console.log(e);
+      console.log(e.text());
     });
   }
 

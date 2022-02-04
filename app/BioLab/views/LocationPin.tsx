@@ -29,6 +29,7 @@ export default class LocationPin extends Component<
     locationArray: any[];
     deleteOverlay: Boolean;
     deleteName: String;
+    userName: String;
   }
 > {
 
@@ -38,6 +39,7 @@ export default class LocationPin extends Component<
     this.server = this.props.route.params.server;
     this.test();
     this.state = {
+      userName: "Sam",
       overlayBool: false,
       pinName: '',
       locationArray: [],
@@ -49,7 +51,8 @@ export default class LocationPin extends Component<
 
   async test() {
     console.log("Running test function");
-    this.server.fetchData("location", 'GET', "Matthias", true).then((response: any) => {
+    this.server.fetchData("location", 'GET', "Sam", true).then((response: any) => {
+      console.log("Response:", response)
       this.setState({ locationArray: [] });
       JSON.parse(response.data).forEach((el: any) => {
         console.log(el);
@@ -114,7 +117,7 @@ export default class LocationPin extends Component<
         userName: "Matthias",
         locationName: "Coolplace"
       })
-      this.server.fetchData("delete", "delete", del, true).then((response: any) => {
+      this.server.fetchData("delete", "DELETE", del, true).then((response: any) => {
         console.log(response);
         this.setState({ deleteOverlay: false });
       })

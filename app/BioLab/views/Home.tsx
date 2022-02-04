@@ -35,18 +35,6 @@ export default class Home extends Component<{ navigation: any }> {
           <Text style={{ opacity: 0 }}></Text>
 
           <View>
-            <View style={homeStyle.locationpincontainer}>
-              <TouchableHighlight
-                onPress={() =>
-                  this.props.navigation.navigate('LocationPin', {})
-                }
-                underlayColor="rgba(0,0,0,0)">
-                <Image
-                  style={homeStyle.locationpinbutton}
-                  source={require('../assets/LocationPinLogo.png')}></Image>
-              </TouchableHighlight>
-            </View>
-
             <View style={homeStyle.hamburgercontainer}>
               <TouchableHighlight
                 onPress={() => this.props.navigation.navigate('User', {})}
@@ -101,11 +89,11 @@ export default class Home extends Component<{ navigation: any }> {
 
             <View style={homeStyle.bottomMiddleButt}>
               <TouchableHighlight
-                onPress={() => this.props.navigation.navigate('Map', {})}
+                onPress={() => this.props.navigation.navigate('LocationPin', {})}
                 underlayColor="rgba(0,0,0,0)">
                 <Image
                   style={homeStyle.logobuttons}
-                  source={require('../assets/Map.png')}
+                  source={require('../assets/LocationPinLogo.png')}
                 />
               </TouchableHighlight>
             </View>

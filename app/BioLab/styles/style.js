@@ -98,7 +98,7 @@ export const deviceStyle = StyleSheet.create({
     bottom: 50,
     position: "absolute",
     textAlign: 'center'
-  }, 
+  },
   incubatorLogo: {
     height: 40,
     width: 40,

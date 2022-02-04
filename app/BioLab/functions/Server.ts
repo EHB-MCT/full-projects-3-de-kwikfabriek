@@ -187,13 +187,14 @@ export default class Server {
    */
   private executeFetchData(url: string, method: Methods, fullData: Data) {
 
-    console.log(method, url, fullData);
+    console.log("Request info:", method, url, fullData);
 
     return new Promise((resolve, reject) => {
       console.log("Data:", fullData);
       RNFetchBlob.fetch(method, `${this.serverUrl}${url}`, {
         'content-Type': 'application/json'
       },
+
         JSON.stringify(fullData)
       ).then((res) => {
         console.log("Request:", `${this.serverUrl}${url}`);

@@ -69,7 +69,7 @@ export default class User extends Component<{ route: any, navigation: any }> {
   async welcomeMessage() {
     Alert.alert(
       `Welcome to the BioLab app ${this.state.userName}.`,
-      `You have now unlimited acces to the app.`,
+      `You have now acces to the app.`,
       [{ text: 'OK', onPress: () => this.props.navigation.navigate('Home', {}) }],
     );
   }
@@ -90,12 +90,7 @@ export default class User extends Component<{ route: any, navigation: any }> {
   }
 
   async createUser() {
-    let user = {
-      userName: "Bob",
-      password: "1234",
-    };
-
-    this.server.register(user.userName, user.password).then((response: any) => {
+    this.server.register(this.state.userName, this.state.password).then((response: any) => {
       console.log(response)
       console.log('Account created!');
       this.welcomeMessage();
@@ -133,7 +128,7 @@ export default class User extends Component<{ route: any, navigation: any }> {
 
 
 
-  test(){
+  test() {
 
     /**
      * Eerste parameter is de route naar waar de request gestuurd word
@@ -142,7 +137,7 @@ export default class User extends Component<{ route: any, navigation: any }> {
      * 4de parameter is als de user ingelogd moet zijn, ook word de user data dan meegegeven.
      */
 
-    this.server.fetchData('test', 'POST', {param1: 'hello', param2: 'world'}, true).then((response) => {
+    this.server.fetchData('test', 'POST', { param1: 'hello', param2: 'world' }, true).then((response) => {
       // Alles in orde
 
       console.log(response);

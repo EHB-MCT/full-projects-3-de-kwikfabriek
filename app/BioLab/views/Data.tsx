@@ -50,7 +50,7 @@ export default class Data extends Component<
       id: [],
       RGB_values: [],
       timestamp: [],
-      userName: 'Sam',
+      userName: "Sam",
       dataContainer: [] as any,
       images: [],
       imageViews: [],
@@ -59,7 +59,7 @@ export default class Data extends Component<
   }
 
   async getData() {
-    this.server.fetchData("data","get", this.state.userName, true).then(
+    this.server.fetchData("data", "GET", this.state.userName, true).then(
       (response: any) => {
         let newRes = JSON.parse(response);
         console.log(newRes);

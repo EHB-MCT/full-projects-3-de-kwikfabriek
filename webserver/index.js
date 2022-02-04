@@ -40,21 +40,21 @@ app.use((req, res, next) => { // zo maak je een middleware die op alle routes wo
 let authUser = (req, res, next) => {
     let user = req.body.user;
 
-    if(user.email){
+    if (user.email) {
         userDB.getUserFromUserName(req.body.user.email).then((result) => {
-            if(result){
+            if (result) {
                 userDB.checkPassword(req.body.user.email, req.body.user.password).then((result) => {
-                    if(result){
+                    if (result) {
                         next(); // next gebruik je als alles in orde is en de rest van de code uitgevoerd mag worden na de middleware
-                    }else{
+                    } else {
                         res.status(500).send('wrong password');
                     }
                 });
-            }else{
+            } else {
                 res.status(500).send('user not found');
             }
         });
-    }else{
+    } else {
         res.status(500).send('not logged in');
     }
 }
@@ -95,11 +95,14 @@ app.get('/connection', async (req, res) => {
 })
 
 app.get('/location', async (req, res) => {
-    console.log(`Retrieving locations from user:${req.body.userName}`);
-    userDB.getLocation(req.body.userName).then((data) => {
-        console.log(`Retrieved locations for user: ${req.body.userName}`)
-        res.status(200).send(data)
-    })
+    console.log("Headers:", req.headers);
+    console.log("fullData:", req.body);
+    console.log("data:", req.body.user);
+    // console.log(`Retrieving locations from user:${req}`);
+    // userDB.getLocation(req.body.user.email).then((data) => {
+    //     console.log(`Retrieved locations for user: ${req.body.userName}`)
+    //     res.status(200).send(data)
+    // })
 
 })
 
@@ -107,17 +110,17 @@ app.get('/data', async (req, res) => {
     console.log("Data route called");
     console.log("Request:", req);
     try {
-        if (!req.user.email) {
+        if (!req) {
             res.status(400).send('Bad request: Missing userName.');
             console.log('Bad request: Missing userName.');
             return;
         }
-        userDB.getData(req.body.email).then((data) => {
+        userDB.getData(req.body.user).then((data) => {
             console.log("Username:", data)
             if (data.length == 0) {
-                res.status(300).send(`No data found for user: ${req.body.email}`);
+                res.status(300).send(`No data found for user: ${req.body.user}`);
             } else if (data.length > 0) {
-                res.status(200).send(data);
+                res.status(200).send(res.data.user);
                 console.log("Data received");
             }
         })
@@ -212,10 +215,11 @@ app.post('/register', async (req, res) => {
 
 
 //Functions with verification middleware (/verification adding in route)
-app.post('/data', async (req, res) => {
+app.post('/data', authUser, async (req, res) => {
     console.log("Data route called");
+    console.log(req.body.sampleID, req.body.userName, req.body.RGB_values, req.body.locationName)
     try {
-        if (!req.body.sampleID || !req.body.userName || !req.body.RGB_values || !req.body.locationName || !req.body.location) {
+        if (!req.body.sampleID || !req.body.userName || !req.body.RGB_values || !req.body.locationName) {
             res.status(400).send('Bad request: Missing sampleID, userName, RGB_values, missing locationName or location!');
             console.log('Bad request: Missing sampleID, userName or RGB_values of image file.');
             return;
@@ -239,7 +243,7 @@ app.post('/data', async (req, res) => {
 
 })
 
-app.post('/location', async (req, res) => {
+app.post('/location', authUser, async (req, res) => {
     console.log("Location route called");
     try {
         if (!req.body.userName || !req.body.locationName) {
@@ -280,7 +284,7 @@ app.post('/location', async (req, res) => {
 
 })
 
-app.delete('/location/delete', async (req, res) => {
+app.delete('/location/delete', authUser, async (req, res) => {
     console.log("Location delete route called");
     try {
         if (!req.body.userName || !req.body.locationName) {
