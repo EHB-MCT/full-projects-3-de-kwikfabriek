@@ -67,19 +67,24 @@ let dataBase = new Database;
  */
 let authUser = (req, res, next) => {
     let user = req.body.user;
-    userDB.getUserFromUserName(req.body.user.email).then((result) => {
-        if(result){
-            userDB.checkPassword(req.body.user.email, req.body.user.password).then((result) => {
-                if(result){
-                    next();
-                }else{
-                    res.status(500).send('wrong password');
-                }
-            });
-        }else{
-            res.status(500).send('user not found');
-        }
-    });
+
+    if(user.email){
+        userDB.getUserFromUserName(req.body.user.email).then((result) => {
+            if(result){
+                userDB.checkPassword(req.body.user.email, req.body.user.password).then((result) => {
+                    if(result){
+                        next();
+                    }else{
+                        res.status(500).send('wrong password');
+                    }
+                });
+            }else{
+                res.status(500).send('user not found');
+            }
+        });
+    }else{
+        res.status(500).send('not logged in');
+    }
 }
 
 

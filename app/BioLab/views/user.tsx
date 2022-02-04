@@ -139,7 +139,7 @@ export default class User extends Component<{ route: any, navigation: any }> {
 
 
   test(){
-    this.server.fetchData('test', 'post', {param1: 'hello', param2: 'world'}, true).then((response) => {
+    this.server.fetchData('test', 'POST', {param1: 'hello', param2: 'world'}, true).then((response) => {
       // Alles in orde
 
       console.log(response);

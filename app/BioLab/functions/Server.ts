@@ -186,6 +186,9 @@ export default class Server {
    * @returns Promise (resolve, reject) -> returned data form server
    */
   private executeFetchData(url: string, method: Methods, fullData: Data) {
+
+    console.log(method, url, fullData);
+
     return new Promise((resolve, reject) => {
       RNFetchBlob.fetch(method, `${this.serverUrl}${url}`, {
         'content-Type': 'application/json'
