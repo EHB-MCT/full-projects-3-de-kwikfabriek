@@ -115,24 +115,20 @@ export default class User extends Component<{ route: any, navigation: any }> {
 
     this.server.login(this.state.userName, this.state.password).then((response: any) => {
       console.log(response);
+      console.log('You are logged in!');
+      this.welcomeMessage();
+    }, (res) => {
+      if (res == "Password") {
+        console.log('Fool, wrong password or username');
+        this.wrongPassword();
+      } else if (res == "Account") {
+        console.log("Account doesn't excist");
+        this.falseUser();
+      } else if (res == "Error") {
+        console.log("Fetch didn't work");
+      }
 
     })
-
-    // this.server.fetchData("login", "POST", user, true).then((response: any) => {
-    //   console.log(response);
-    //   console.log('You are logged in!');
-    //   this.welcomeMessage();
-    // }, (res) => {
-    //   if (res == "Password") {
-    //     console.log('Fool, wrong password or username');
-    //     this.wrongPassword();
-    //   } else if (res == "Account") {
-    //     console.log("Account doesn't excist");
-    //     this.falseUser();
-    //   } else if (res == "Error") {
-    //     console.log("Fetch didn't work");
-    //   }
-    // })
   }
 
 
