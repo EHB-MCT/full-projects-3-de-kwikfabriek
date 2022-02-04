@@ -138,6 +138,14 @@ export default class User extends Component<{ route: any, navigation: any }> {
 
 
   test(){
+
+    /**
+     * Eerste parameter is de route naar waar de request gestuurd word
+     * 2de parameter is welke methode je gebruikt (GET, POST, DELETE of PATCH)
+     * 3de parameter is de data die je wilt doorsturen
+     * 4de parameter is als je de data van de user wilt meegeven.
+     */
+
     this.server.fetchData('test', 'POST', {param1: 'hello', param2: 'world'}, true).then((response) => {
       // Alles in orde
 
