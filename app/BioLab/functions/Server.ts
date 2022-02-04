@@ -190,6 +190,7 @@ export default class Server {
     console.log(method, url, fullData);
 
     return new Promise((resolve, reject) => {
+      console.log("Data:", fullData);
       RNFetchBlob.fetch(method, `${this.serverUrl}${url}`, {
         'content-Type': 'application/json'
       },
